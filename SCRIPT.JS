@@ -1066,3 +1066,110 @@ function listenToAdminRealtime() {
         )
         .subscribe();
 }
+
+
+// ==========================================
+// بارگذاری خودکار اطلاعات کاربر در صفحه تنظیمات
+// ==========================================
+async function loadUserProfileData() {
+    if (!supabaseClient) return;
+
+    const fullNameInput = document.getElementById('settings-fullname');
+    if (!fullNameInput) return; // اگر در صفحه تنظیمات نیستیم اجرا نشود
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('profiles')
+            .select('full_name, phone, address')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (data && !error) {
+            document.getElementById('settings-fullname').value = data.full_name || '';
+            document.getElementById('settings-phone').value = data.phone || '';
+            document.getElementById('settings-address').value = data.address || '';
+        }
+    } catch (err) {
+        console.error("خطا در بارگذاری اطلاعات پروفایل:", err);
+    }
+}
+
+// ==========================================
+// ذخیره و به‌روزرسانی اطلاعات شخصی
+// ==========================================
+async function updateProfileInfo() {
+    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+
+    // بررسی لاگین بودن کاربر
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
+        alert("لطفاً ابتدا وارد حساب کاربری خود شوید.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const fullName = document.getElementById('settings-fullname').value.trim();
+    const phone = document.getElementById('settings-phone').value.trim();
+    const address = document.getElementById('settings-address').value.trim();
+
+    if (!fullName || !phone || !address) {
+        alert("لطفاً تمامی فیلدها را پر کنید.");
+        return;
+    }
+
+    try {
+        // ثبت یا به‌روزرسانی در دیتابیس با کلید اصلی id
+        const { error } = await supabaseClient
+            .from('profiles')
+            .upsert({
+                id: user.id,
+                full_name: fullName,
+                phone: phone,
+                address: address,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'id' });
+
+        if (error) throw error;
+
+        alert("اطلاعات شما با موفقیت ذخیره شد! ✅");
+    } catch (err) {
+        console.error("خطا در ثبت پروفایل:", err);
+        alert("خطا در ذخیره اطلاعات: " + (err.message || "مشکلی پیش آمده است."));
+    }
+}
+
+// ==========================================
+// تغییر رمز عبور کاربر
+// ==========================================
+async function updatePassword() {
+    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+
+    const newPassword = document.getElementById('settings-new-pass').value;
+    if (!newPassword || newPassword.length < 6) {
+        alert("رمز عبور باید حداقل ۶ کاراکتر باشد.");
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient.auth.updateUser({
+            password: newPassword
+        });
+
+        if (error) throw error;
+
+        alert("رمز عبور با موفقیت تغییر یافت! 🔒");
+        document.getElementById('settings-new-pass').value = '';
+    } catch (err) {
+        console.error("خطا در تغییر رمز عبور:", err);
+        alert("خطا در تغییر رمز عبور: " + err.message);
+    }
+}
+
+// فراخوانی خودکار هنگام لود شدن صفحه
+document.addEventListener('DOMContentLoaded', loadUserProfileData);
