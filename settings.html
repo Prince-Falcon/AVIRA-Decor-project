@@ -10,10 +10,10 @@
 </head>
 <body class="settings-page">
 
-    <!-- Header -->
     <header class="header">
-        <a href="index.html" class="logo">
-            <img src="assets/images/logo.png" alt="AVIRA">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="assets/images/logo.png" alt="AVIRA" style="width: 35px; height: 35px; object-fit: contain;">
+            <span style="color: #fff; font-weight: bold; letter-spacing: 1px;">AVIRA</span>
         </a>
 
         <nav>
@@ -22,7 +22,6 @@
             <a href="custom-order.html">سفارش اختصاصی</a>
         </nav>
 
-        <!-- بخش منوی کاربری -->
         <div id="auth-header-container">
             <div id="logged-out-view">
                 <a href="login.html" class="auth-btn">ورود / ثبت‌نام</a>
@@ -31,7 +30,7 @@
             <div id="logged-in-view" style="display: none;">
                 <div class="user-dropdown">
                     <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
-                        👤 <span id="user-display-email">حساب من</span> ▾
+                        👤 <span id="user-display-name">کاربر</span> ▾
                     </button>
                     <div class="dropdown-menu" id="user-dropdown-menu">
                         <a href="orders.html">📦 سفارشات من</a>
@@ -43,36 +42,26 @@
                 </div>
             </div>
         </div>
-
-        <div class="menu">☰</div>
     </header>
 
-    <!-- کادر اصلی تنظیمات -->
-    <main class="custom-container" style="margin-top: 100px; max-width: 600px;">
-        <h1 style="color: #d4af37; font-size: 2rem; margin-bottom: 20px;">⚙️ تنظیمات حساب کاربری</h1>
+    <main class="custom-container" style="margin-top: 100px; max-width: 550px;">
+        <h1>تنظیمات حساب کاربری</h1>
+        <p class="subtitle">اطلاعات شخصی و آدرس ارسال سفارشات خود را ویرایش کنید</p>
 
-        <!-- بخش ویرایش پروفایل -->
-        <form id="profile-settings-form" onsubmit="event.preventDefault(); updateProfile();">
-            <h3 style="color: #fff; font-size: 1.1rem; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px; margin-bottom: 15px;">اطلاعات شخص</h3>
-
-            <div class="form-group">
-                <label for="settings-email">ایمیل (غیرقابل تغییر):</label>
-                <input type="email" id="settings-email" disabled style="opacity: 0.6; cursor: not-allowed;">
-            </div>
-
+        <form id="profile-settings-form" onsubmit="event.preventDefault(); updateProfileInfo();">
             <div class="form-group">
                 <label for="settings-fullname">نام و نام خانوادگی:</label>
-                <input type="text" id="settings-fullname" placeholder="مثال: علی محمدی">
+                <input type="text" id="settings-fullname" placeholder="مثلاً: علی محمدی" required>
             </div>
 
             <div class="form-group">
-                <label for="settings-phone">شماره همراه:</label>
-                <input type="tel" id="settings-phone" placeholder="۰۹۱۲۱۲۳۴۵۶۷">
+                <label for="settings-phone">شماره تماس جهت هماهنگی ارسال:</label>
+                <input type="tel" id="settings-phone" placeholder="۰۹۱۲۱۲۳۴۵۶۷" required>
             </div>
 
             <div class="form-group">
-                <label for="settings-address">آدرس تحویل سفارش:</label>
-                <textarea id="settings-address" placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد..." style="height: 90px;"></textarea>
+                <label for="settings-address">آدرس دقیق پستی:</label>
+                <textarea id="settings-address" placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد..." style="height: 90px;" required></textarea>
             </div>
 
             <button type="submit" class="btn-submit" style="width: 100%; margin-top: 10px;">ذخیره اطلاعات شخصی</button>
@@ -80,7 +69,6 @@
 
         <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 30px 0;">
 
-        <!-- بخش تغییر رمز عبور -->
         <form id="password-settings-form" onsubmit="event.preventDefault(); updatePassword();">
             <h3 style="color: #fff; font-size: 1.1rem; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom: 8px; margin-bottom: 15px;">تغییر رمز عبور</h3>
 
@@ -94,16 +82,5 @@
     </main>
 
     <script src="script.js"></script>
-    <script>
-        // لود کردن اطلاعات فعلی کاربر هنگام باز شدن صفحه
-        document.addEventListener("DOMContentLoaded", async () => {
-            if (typeof loadUserSettings === "function") {
-                loadUserSettings();
-            }
-        });
-    </script>
-    <div id="user-support-tickets-list"></div>
-    
 </body>
 </html>
-
