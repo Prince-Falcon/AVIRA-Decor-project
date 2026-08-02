@@ -475,124 +475,248 @@ body.custom-order-page, body.collection-page, body.settings-page {
     display: block;
 }
 
-/* MODAL */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
+/* MODAL *//* ===========================
+          PRODUCT MODAL
+=========================== */
+
+.modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,.82);
+    backdrop-filter:blur(12px);
+    z-index:9999;
+    padding:40px;
 }
 
-.modal-content {
-    background: #161616;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 20px;
-    max-width: 650px;
-    width: 100%;
-    padding: 25px;
-    position: relative;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+.modal-content{
+    position:relative;
+    width:min(1200px,95vw);
+    min-height:720px;
+    background:#141414;
+    border:1px solid rgba(212,175,55,.18);
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 35px 80px rgba(0,0,0,.6);
 }
 
-.close-btn {
-    position: absolute;
-    top: 15px;
-    left: 20px;
-    font-size: 28px;
-    color: #d4af37;
-    cursor: pointer;
+.close-btn{
+    position:absolute;
+    top:18px;
+    left:22px;
+    font-size:34px;
+    color:#d4af37;
+    cursor:pointer;
+    z-index:20;
+    transition:.25s;
 }
 
-.close-btn:hover {
-    color: #fff;
+.close-btn:hover{
+    transform:rotate(90deg);
+    color:white;
 }
 
-.modal-body {
-    display: flex;
-    gap: 25px;
-    align-items: center;
-    flex-wrap: wrap;
+.modal-body{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    width:100%;
+    height:100%;
 }
 
-.modal-image {
-    flex: 1;
-    min-width: 220px;
+/* ===========================
+          IMAGE
+=========================== */
+
+.modal-image{
+    background:#0d0d0d;
+    overflow:hidden;
 }
 
-.modal-image img {
-    width: 100%;
-    border-radius: 14px;
-    object-fit: cover;
+.modal-image img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
 }
 
-.modal-details {
-    flex: 1.2;
-    min-width: 250px;
-    text-align: right;
+/* ===========================
+        DETAILS
+=========================== */
+
+.modal-details{
+    direction:rtl;
+    padding:45px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
 }
 
-.modal-details h2 {
-    font-size: 1.5rem;
-    margin-top: 0;
-    color: #d4af37;
+.modal-details h2{
+    color:#d4af37;
+    font-size:2rem;
+    margin-bottom:25px;
 }
 
-.modal-details .price {
-    font-size: 1.2rem;
-    color: #d4af37;
-    font-weight: bold;
-    margin-bottom: 20px;
-    display: block;
+/* ===========================
+        SIZE BUTTONS
+=========================== */
+
+.section-label{
+    display:block;
+    margin-bottom:14px;
+    font-weight:700;
+    font-size:1rem;
 }
 
-.size-selection label {
-    display: block;
-    margin-bottom: 10px;
-    color: #cbd5e1;
-    font-size: 0.95rem;
+.size-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:35px;
 }
 
-.size-options {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+.size-btn{
+    background:#222;
+    color:#fff;
+    border:1px solid #333;
+    border-radius:10px;
+    padding:10px 18px;
+    cursor:pointer;
+    transition:.25s;
 }
 
-.size-btn {
-    background: #202020;
-    border: 1px solid #333;
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.85rem;
-    transition: all 0.2s ease;
+.size-btn:hover{
+    border-color:#d4af37;
 }
 
-.size-btn:hover,
-.size-btn.active {
-    background: #d4af37;
-    border-color: #d4af37;
-    color: #121212;
+.size-btn.active{
+    background:#d4af37;
+    color:#111;
+    border-color:#d4af37;
 }
 
-/* MOBILE RESPONSIVE */
-@media(max-width: 768px) {
-    nav { display: none; }
-    .menu { display: block; }
-    .hero-content h1 { font-size: 50px; letter-spacing: 5px; }
-    .cards { flex-direction: column; align-items: center; }
-    .card { width: 100%; }
+/* ===========================
+        MATERIAL
+=========================== */
+
+.material-selection{
+    margin-bottom:35px;
+}
+
+.material-options{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.material-card{
+    cursor:pointer;
+}
+
+.material-card input{
+    display:none;
+}
+
+.card-content{
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:14px;
+    padding:18px;
+    text-align:center;
+    transition:.25s;
+    background:#1b1b1b;
+}
+
+.material-card:hover .card-content{
+    border-color:#d4af37;
+}
+
+.material-card input:checked + .card-content{
+    background:rgba(212,175,55,.12);
+    border-color:#d4af37;
+}
+
+.material-title{
+    display:block;
+    color:#fff;
+    font-size:1rem;
+    font-weight:700;
+}
+
+.material-desc{
+    display:block;
+    margin-top:6px;
+    color:#999;
+    font-size:.8rem;
+}
+
+/* ===========================
+          PRICE
+=========================== */
+
+.price-display{
+    margin-top:auto;
+    margin-bottom:25px;
+}
+
+.price-display span:first-child{
+    display:block;
+    color:#ccc;
+    margin-bottom:8px;
+}
+
+.price-display .price{
+    color:#d4af37;
+    font-size:2rem;
+    font-weight:bold;
+}
+
+/* ===========================
+          BUTTON
+=========================== */
+
+.add-to-cart-btn{
+    width:100%;
+    height:58px;
+    border:none;
+    border-radius:14px;
+    background:#d4af37;
+    color:#111;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:.25s;
+}
+
+.add-to-cart-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 35px rgba(212,175,55,.25);
+}
+
+/* ===========================
+        RESPONSIVE
+=========================== */
+
+@media(max-width:900px){
+
+    .modal-content{
+        min-height:auto;
+        width:95%;
+    }
+
+    .modal-body{
+        grid-template-columns:1fr;
+    }
+
+    .modal-image{
+        height:360px;
+    }
+
+    .modal-details{
+        padding:25px;
+    }
+
 }
 
 /* استایل وضعیت‌ها در پنل کاربر و ادمین */
