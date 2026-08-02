@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سفارشات من | AVIRA</title>
+    <!-- اتصال به فونت وزیرمتن -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <!-- کتابخانه Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --gold-color: #d4af37;
+            --gold-hover: #f3e5ab;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: rgba(212, 175, 55, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(212, 175, 55, 0.08);
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .header-title {
+            color: var(--gold-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .btn-back {
+            color: var(--gold-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 8px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: var(--gold-color);
+            color: #121212;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+        }
+
+        .order-card {
+            background: #252525;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-card::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background-color: var(--gold-color);
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold-color);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .order-code-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .order-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .order-code {
+            color: var(--gold-color);
+            font-weight: bold;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+        }
+
+        .order-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .order-body {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #ccc;
+        }
+
+        .order-status {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            border-radius: 20px;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .no-orders, .loading-box {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-muted);
+        }
+
+        .no-orders p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .btn-shop {
+            display: inline-block;
+            background-color: var(--gold-color);
+            color: #121212;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .btn-shop:hover {
+            background-color: var(--gold-hover);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-section">
+            <h1 class="header-title">سفارشات من</h1>
+            <a href="index.html" class="btn-back">صفحه اصلی →</a>
+        </div>
+
+        <div id="user-orders-list">
+            <div class="loading-box">در حال دریافت اطلاعات سفارشات...</div>
+        </div>
+    </div>
+
+    <!-- اتصال به اسکریپت اصلی پروژه -->
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof loadUserOrders === "function") {
+                loadUserOrders();
+            }
+        });
+    </script>
+</body>
+</html>
+
+

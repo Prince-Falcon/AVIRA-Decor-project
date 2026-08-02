@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سفارش اختصاصی | AVIRA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="custom-order-page">
+
+    <!-- هدر سایت -->
+    <header class="header">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="assets/images/logo.png" alt="AVIRA" style="width: 35px; height: 35px; object-fit: contain;">
+            <span style="color: #fff; font-weight: bold; letter-spacing: 1px;">AVIRA</span>
+        </a>
+        <nav>
+            <a href="index.html">صفحه اصلی</a>
+            <a href="custom-order.html" class="active">سفارش اختصاصی</a>
+        </nav>
+
+        <div id="auth-header-container">
+            <div id="logged-out-view">
+                <a href="login.html" class="auth-btn">ورود / ثبت‌نام</a>
+            </div>
+
+            <div id="logged-in-view" style="display: none;">
+                <div class="user-dropdown">
+                    <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
+                        👤 <span id="user-display-email">حساب من</span> ▾
+                    </button>
+                    <div class="dropdown-menu" id="user-dropdown-menu">
+                        <a href="orders.html">📦 سفارشات من</a>
+                        <a href="cart.html">🛒 سبد خرید من</a>
+                        <a href="settings.html">⚙️ تنظیمات حساب</a>
+                        <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 5px 0;">
+                        <a href="#" onclick="logoutUser()" style="color: #f87171;">🚪 خروج از حساب</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu">☰</div>
+    </header>
+
+    <main class="custom-container" style="margin-top: 100px;">
+        <h1>سفارش اختصاصی</h1>
+        <p class="subtitle">طرح خود را ارسال کنید تا برای شما تولید کنیم</p>
+
+        <form id="custom-form" onsubmit="event.preventDefault(); showPayment();">
+            <div class="form-group">
+                <label for="design-image">آپلود عکس طرح:</label>
+                <input type="file" id="design-image" accept="image/*" required>
+            </div>
+
+            <div class="form-group">
+                <label for="design-description">توضیحات طرح:</label>
+                <textarea id="design-description" placeholder="توضیحات دقیق ابعاد و جزئیات طرح خود را بنویسید..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">افزودن به سبد خرید و ثبت بیعانه</button>
+        </form>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

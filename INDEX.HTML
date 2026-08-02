@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVIRA | گالری تابلوهای لوکس</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        #support-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+        }
+        .support-modal-box {
+            background: #1a1a1a;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            height: 550px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+        }
+        .floating-support-btn {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: linear-gradient(135deg, #d4af37, #aa8c2c);
+            color: #121212;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(212,175,55,0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s ease;
+        }
+        .floating-support-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="assets/images/logo.png" alt="AVIRA" style="width: 35px; height: 35px; object-fit: contain;">
+            <span style="color: #fff; font-weight: bold; letter-spacing: 1px;">AVIRA</span>
+        </a>
+
+        <nav>
+            <a href="#home">خانه</a>
+            <a href="#collection">مجموعه‌ها</a>
+            <a href="#about">درباره ما</a>
+            <a href="#contact">ارتباط</a>
+        </nav>
+
+        <div id="auth-header-container">
+            <div id="logged-out-view">
+                <a href="login.html" class="auth-btn">ورود / ثبت‌نام</a>
+            </div>
+
+            <div id="logged-in-view" style="display: none;">
+                <div class="user-dropdown">
+                    <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
+                        👤 <span id="user-display-email">حساب من</span> ▾
+                    </button>
+                    <div class="dropdown-menu" id="user-dropdown-menu">
+                        <a href="orders.html">📦 سفارشات من</a>
+                        <a href="cart.html">🛒 سبد خرید من</a>
+                        <a href="support-tickets.html">💬 پیام‌های پشتیبانی</a>
+                        <a href="settings.html">⚙️ تنظیمات حساب</a>
+                        <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 5px 0;">
+                        <a href="#" onclick="logoutUser()" style="color: #f87171;">🚪 خروج از حساب</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu" id="mobile-menu-btn">☰</div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>AVIRA</h1>
+            <h2>هنر، امضای فضای شماست</h2>
+            <p>تابلوهای دکوراتیو لوکس با طراحی منحصر به فرد</p>
+            <a href="#collection" class="btn">مشاهده کالکشن</a>
+        </div>
+    </section>
+
+    <!-- About -->
+    <section class="about" id="about">
+        <div class="section-title">
+            <span>01</span>
+            <h2>داستان آویرا</h2>
+        </div>
+        <p>
+            آویرا با تلفیق هنر مدرن، طراحی معاصر و متریال با کیفیت،
+            تابلوهایی خلق می‌کند که تنها یک اثر تزئینی نیستند؛
+            بلکه شخصیت و احساس یک فضا را شکل می‌دهند.
+        </p>
+    </section>
+
+    <!-- Collections -->
+    <section class="collection" id="collection">
+        <div class="section-title">
+            <span>02</span>
+            <h2>مجموعه‌ها</h2>
+        </div>
+
+        <div class="cards">
+            <a href="collection.html?category=astronomic" class="card">
+                <div class="card-image image-one"></div>
+                <h3>astronomic</h3>
+                <p>نقاشی خداوند | به پهنای هستی | ابدیت</p>
+            </a>
+
+            <a href="collection.html?category=scientific" class="card">
+                <div class="card-image image-two"></div>
+                <h3>scientific</h3>
+                <p>ذهنی زیبا | کاشف | خاص</p>
+            </a>
+
+            <a href="collection.html?category=historical" class="card">
+                <div class="card-image image-four"></div>
+                <h3>historical</h3>
+                <p>از خود گذشته | با تدبیر | شجاع</p>
+            </a>
+
+            <a href="collection.html?category=car" class="card">
+                <div class="card-image image-three"></div>
+                <h3>Car</h3>
+                <p>قدرتمند | پولادین | زیبا</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Custom Order -->
+    <section class="custom">
+        <h2>طراحی اختصاصی</h2>
+        <p>تابلویی که فقط برای فضای شما ساخته می‌شود.</p>
+        <a href="custom-order.html" class="order-btn">شروع سفارش</a>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+        <div class="section-title">
+            <span>03</span>
+            <h2>ارتباط با ما</h2>
+        </div>
+        <div class="contact-box">
+            <p style="font-size: 1.2rem;">
+                اینستاگرام ما: 
+                <a href="https://www.instagram.com/avira_decoratives/" target="_blank" rel="noopener noreferrer" class="social-icon">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+            </p>
+            <p>تلفن تماس: ۰۹۱۲۰۰۰۰۰۰۰</p>
+        </div>
+    </section>
+
+    <footer>
+        <h2>AVIRA</h2>
+        <p>Luxury Decorative Art Gallery</p>
+        <div style="margin: 15px 0;">
+            <a href="https://www.instagram.com/avira_decoratives/" target="_blank" rel="noopener noreferrer" class="social-icon" style="font-size: 1.6rem; color: #d4af37;">
+                <i class="fa-brands fa-instagram"></i>
+            </a>
+        </div>
+        <p>© 2026 AVIRA</p>
+    </footer>
+
+    <!-- دکمه شناور پشتیبانی -->
+    <div class="floating-support-btn" onclick="openSupportModal()">
+        <i class="fa-solid fa-headset" style="font-size: 1.2rem;"></i> پشتیبانی و مشاوره
+    </div>
+
+    <!-- پنجره چت آنلاین زنده -->
+    <div id="support-modal">
+        <div class="support-modal-box">
+            <!-- هدر چت -->
+            <div style="background: rgba(255,255,255,0.05); padding: 15px 20px; border-bottom: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 10px; height: 10px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e;"></div>
+                    <h3 style="color:#d4af37; margin:0; font-size: 1.1rem; font-weight: bold;">پشتیبانی زنده آویرا</h3>
+                </div>
+                <button onclick="closeSupportModal()" style="background: none; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
+            </div>
+
+            <!-- بدنه گفتگو -->
+            <div id="live-chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #141414;">
+                <p style="color: #666; text-align: center; font-size: 0.85rem;">در حال بارگذاری گفتگو...</p>
+            </div>
+
+            <!-- ورودی پیام -->
+            <div style="padding: 12px; background: #1a1a1a; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 8px;">
+                <input type="text" id="sup-msg" placeholder="پیام خود را بنویسید..." style="flex: 1; margin: 0; padding: 10px 14px; background: #242424; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 0.9rem;" onkeypress="if(event.key === 'Enter') submitSupportMessage()">
+                <button type="button" onclick="submitSupportMessage()" style="background: linear-gradient(135deg, #d4af37, #aa8c2c); color: #121212; border: none; padding: 0 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">ارسال</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

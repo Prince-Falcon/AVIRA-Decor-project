@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVIRA | ورود به حساب کاربری</title>
+    <!-- اتصال به فونت وزیرمتن -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <!-- کتابخانه Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background-color: #1e1e1e;
+            border: 1px solid #d4af37;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(212, 175, 55, 0.15);
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .auth-header h2 {
+            color: #d4af37;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .form-group input:focus {
+            border-color: #d4af37;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .toggle-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        .toggle-text a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .toggle-text a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <!-- فرم ورود -->
+        <div id="login-form">
+            <div class="auth-header">
+                <h2>ورود به حساب کاربری</h2>
+                <p>جهت ثبت و پیگیری سفارشات وارد شوید</p>
+            </div>
+            <form id="form-login-action">
+                <div class="form-group">
+                    <label for="login-email">ایمیل</label>
+                    <input type="email" id="login-email" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">رمز عبور</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-login">ورود به حساب</button>
+            </form>
+            <div class="toggle-text">
+                حساب کاربری ندارید؟ <a id="go-to-register">ثبت‌نام کنید</a>
+            </div>
+        </div>
+
+        <!-- فرم ثبت‌نام -->
+        <div id="register-form" class="hidden">
+            <div class="auth-header">
+                <h2>ایجاد حساب کاربری</h2>
+                <p>اطلاعات خود را برای ثبت‌نام وارد کنید</p>
+            </div>
+            <form id="form-register-action">
+                <!-- اضافه شدن فیلد نام و نام خانوادگی -->
+                <div class="form-group">
+                    <label for="register-fullname">نام و نام خانوادگی</label>
+                    <input type="text" id="register-fullname" placeholder="مثال: علی محمدی" style="direction: rtl;" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-email">ایمیل</label>
+                    <input type="email" id="register-email" placeholder="example@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">رمز عبور (حداقل ۶ کاراکتر)</label>
+                    <input type="password" id="register-password" placeholder="••••••••" minlength="6" required>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-register">ثبت‌نام</button>
+            </form>
+            <div class="toggle-text">
+                قبلاً ثبت‌نام کرده‌اید؟ <a id="go-to-login">ورود به حساب</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- اسکریپت‌های اتصال به Supabase و هندل فرم‌ها -->
+    <script src="script.js"></script>
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const goToRegister = document.getElementById('go-to-register');
+        const goToLogin = document.getElementById('go-to-login');
+
+        goToRegister.addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+        });
+
+        goToLogin.addEventListener('click', () => {
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+
+        // هندل فرم ورود
+        document.getElementById('form-login-action').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            if (typeof loginUser === 'function') {
+                await loginUser(email, password);
+            }
+        });
+
+        // هندل فرم ثبت‌نام (ارسال email, password و fullName)
+        document.getElementById('form-register-action').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullName = document.getElementById('register-fullname').value.trim();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            if (typeof registerUser === 'function') {
+                await registerUser(email, password, fullName);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
