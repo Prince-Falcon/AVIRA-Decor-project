@@ -668,3 +668,63 @@ body.custom-order-page, body.collection-page, body.settings-page {
   color: #aaa;
 }
 
+/* تنظیمات کلی گروه‌های انتخاب */
+.option-group {
+    margin-bottom: 20px;
+}
+
+.option-title {
+    display: block;
+    color: #d4af37;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* شبکه بندی دکمه‌های جنس */
+.material-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+}
+
+.material-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.material-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.material-card .card-content {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.material-card .card-content strong {
+    display: block;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.material-card .card-content span {
+    display: block;
+    color: #aaa;
+    font-size: 0.75rem;
+    margin-top: 4px;
+}
+
+/* استایل حالت انتخاب‌شده (Checked) */
+.material-card input[type="radio"]:checked + .card-content {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.15);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+}
