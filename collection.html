@@ -55,6 +55,7 @@
 <main class="products-grid" id="products-grid">
 </main>
 
+<!-- مودال محصول -->
 <div id="product-modal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeProductModal()">&times;</span>
@@ -66,10 +67,10 @@
             
             <div class="modal-details">
                 <h2 id="modal-product-title">نام طرح</h2>
-                <p class="price" id="modal-product-price">۲۵۰,۰۰۰ تومان</p>
 
+                <!-- ۱. انتخاب سایز -->
                 <div class="size-selection">
-                    <label>انتخاب سایز:</label>
+                    <label class="section-label">انتخاب سایز:</label>
                     <div class="size-options">
                         <button type="button" class="size-btn active" onclick="selectSize(this)">۲۰×۲۰ سانتی‌متر</button>
                         <button type="button" class="size-btn" onclick="selectSize(this)">۲۰×۳۰ سانتی‌متر</button>
@@ -79,6 +80,51 @@
                     </div>
                 </div>
 
+                <!-- ۲. انتخاب جنس / کیفیت (انتقال‌یافته به داخل مودال) -->
+                <div class="material-selection">
+                    <label class="section-label">انتخاب جنس / کیفیت:</label>
+                    <div class="material-options">
+                        <label class="material-card">
+                            <input type="radio" name="material" value="economy" data-multiplier="0.85" onchange="updateTotalPrice()">
+                            <div class="card-content">
+                                <span class="material-title">Economy</span>
+                                <span class="material-desc">اقتصادی (-۱۵٪)</span>
+                            </div>
+                        </label>
+
+                        <label class="material-card">
+                            <input type="radio" name="material" value="normal" data-multiplier="1.0" checked onchange="updateTotalPrice()">
+                            <div class="card-content">
+                                <span class="material-title">Normal</span>
+                                <span class="material-desc">استاندارد</span>
+                            </div>
+                        </label>
+
+                        <label class="material-card">
+                            <input type="radio" name="material" value="luxury" data-multiplier="1.35" onchange="updateTotalPrice()">
+                            <div class="card-content">
+                                <span class="material-title">Luxury</span>
+                                <span class="material-desc">لوکس (+۳۵٪)</span>
+                            </div>
+                        </label>
+
+                        <label class="material-card">
+                            <input type="radio" name="material" value="metal" data-multiplier="1.70" onchange="updateTotalPrice()">
+                            <div class="card-content">
+                                <span class="material-title">Metal</span>
+                                <span class="material-desc">پلاک / فلزی (+۷۰٪)</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ۳. نمایش قیمت نهایی محاسبه‌شده -->
+                <div class="price-display">
+                    <span>قیمت نهایی:</span>
+                    <span class="price" id="modal-product-price">۲۵۰,۰۰۰ تومان</span>
+                </div>
+
+                <!-- ۴. دکمه ثبت سفارش -->
                 <button class="btn-submit add-to-cart-btn" onclick="addToCart()">افزودن به سبد خرید</button>
             </div>
         </div>
@@ -86,90 +132,6 @@
 </div>
 
 <script src="script.js"></script>
-
-<!-- بخش انتخاب جنس محصول -->
-<div class="material-selection">
-  <label class="section-label">انتخاب جنس / کیفیت:</label>
-  <div class="material-options">
-    
-    <label class="material-card">
-      <input type="radio" name="material" value="economy" checked>
-      <div class="card-content">
-        <span class="material-title">Economy</span>
-        <span class="material-desc">اقتصادی و به صرفه</span>
-      </div>
-    </label>
-
-    <label class="material-card">
-      <input type="radio" name="material" value="normal">
-      <div class="card-content">
-        <span class="material-title">Normal</span>
-        <span class="material-desc">کیفیت استاندارد</span>
-      </div>
-    </label>
-
-    <label class="material-card">
-      <input type="radio" name="material" value="luxury">
-      <div class="card-content">
-        <span class="material-title">Luxury</span>
-        <span class="material-desc">لوکس با پایان‌کاری ویژه</span>
-      </div>
-    </label>
-
-    <label class="material-card">
-      <input type="radio" name="material" value="metal">
-      <div class="card-content">
-        <span class="material-title">Metal</span>
-        <span class="material-desc">پلاک / صفحه فلزی مقاوم</span>
-      </div>
-    </label>
-
-  </div>
-</div>
-<div class="material-selection">
-  <label class="section-label">انتخاب جنس / کیفیت:</label>
-  <div class="material-options">
-    
-    <label class="material-card">
-      <input type="radio" name="material" value="economy" data-multiplier="0.85" onchange="updateTotalPrice()">
-      <div class="card-content">
-        <span class="material-title">Economy</span>
-        <span class="material-desc">اقتصادی (-۱۵٪)</span>
-      </div>
-    </label>
-
-    <label class="material-card">
-      <input type="radio" name="material" value="normal" data-multiplier="1.0" checked onchange="updateTotalPrice()">
-      <div class="card-content">
-        <span class="material-title">Normal</span>
-        <span class="material-desc">استاندارد</span>
-      </div>
-    </label>
-
-    <label class="material-card">
-      <input type="radio" name="material" value="luxury" data-multiplier="1.35" onchange="updateTotalPrice()">
-      <div class="card-content">
-        <span class="material-title">Luxury</span>
-        <span class="material-desc">لوکس (+۳۵٪)</span>
-      </div>
-    </label>
-
-    <label class="material-card">
-      <input type="radio" name="material" value="metal" data-multiplier="1.70" onchange="updateTotalPrice()">
-      <div class="card-content">
-        <span class="material-title">Metal</span>
-        <span class="material-desc">فلزی (+۷۰٪)</span>
-      </div>
-    </label>
-
-  </div>
-</div>
-
-<!-- نمایش قیمت نهایی محاسبه شده -->
-<div class="price-display">
-  <span>قیمت نهایی:</span>
-  <span id="final-price-text">0 تومان</span>
-</div>
-
 </body>
 </html>
+
