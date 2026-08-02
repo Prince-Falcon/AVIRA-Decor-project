@@ -122,41 +122,41 @@ const collectionsProducts = {
     astronomic: {
         title: "مجموعه Astronomic",
         items: [
-            { id: 101, title: "طرح آندرومدا", price: "۲۹۰,۰۰۰ تومان", img: "assets/images/collection1.png" },
+            { id: 101, title: "طرح آندرومدا", price: "۳۱۰,۰۰۰ تومان", img: "assets/images/collection1.png" },
             { id: 102, title: "طرح سامانه خورشیدی", price: "۳۳۰,۰۰۰ تومان", img: "assets/images/collection6.png" },
             { id: 103, title: "طرح مریخ", price: "۲۸۰,۰۰۰ تومان", img: "assets/images/collection7.png" },
-            { id: 104, title: "طرح خورشید", price: "۳۱۰,۰۰۰ تومان", img: "assets/images/collection8.png" },
-            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "۳۵۰,۰۰۰ تومان", img: "assets/images/collection9.png" }
+            { id: 104, title: "طرح خورشید", price: "۳۳۰,۰۰۰ تومان", img: "assets/images/collection8.png" },
+            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "۳۹۰,۰۰۰ تومان", img: "assets/images/collection9.png" }
         ]
     },
     scientific: {
         title: "مجموعه Scientific",
         items: [
-            { id: 201, title: "طرح آلبرت انیشتین", price: "۲۷۰,۰۰۰ تومان", img: "assets/images/collection4.png" },
-            { id: 202, title: "طرح نیکولا تسلا", price: "۳۲۰,۰۰۰ تومان", img: "assets/images/collection5.png" },
-            { id: 203, title: "طرح مریم میرزا خانی", price: "۲۹۰,۰۰۰ تومان", img: "assets/images/collection10.png" },
-            { id: 204, title: "طرح ورنر هایزنبرگ", price: "۳۱۰,۰۰۰ تومان", img: "assets/images/collection11.png" },
-            { id: 205, title: "طرح ماری کوری", price: "۳۴۰,۰۰۰ تومان", img: "assets/images/collection12.png" }
+            { id: 201, title: "طرح آلبرت انیشتین", price: "۴۷۰,۰۰۰ تومان", img: "assets/images/collection4.png" },
+            { id: 202, title: "طرح نیکولا تسلا", price: "۴۲۰,۰۰۰ تومان", img: "assets/images/collection5.png" },
+            { id: 203, title: "طرح مریم میرزا خانی", price: "۳۹۰,۰۰۰ تومان", img: "assets/images/collection10.png" },
+            { id: 204, title: "طرح ورنر هایزنبرگ", price: "۴۲۰,۰۰۰ تومان", img: "assets/images/collection11.png" },
+            { id: 205, title: "طرح ماری کوری", price: "۳۸۰,۰۰۰ تومان", img: "assets/images/collection12.png" }
         ]
     },
     historical: {
         title: "مجموعه Historical",
         items: [
-            { id: 301, title: "طرح امیر کبیر", price: "۲۵۰,۰۰۰ تومان", img: "assets/images/collection13.png" },
-            { id: 302, title: "طرح نادرشاه", price: "۳۰۰,۰۰۰ تومان", img: "assets/images/collection2.png" },
-            { id: 303, title: "طرح کوروش کبیر", price: "۳۴۰,۰۰۰ تومان", img: "assets/images/collection14.png" },
-            { id: 304, title: "طرح ناپلئون", price: "۳۲۰,۰۰۰ تومان", img: "assets/images/collection15.png" },
-            { id: 305, title: "طرح کریم خان زند", price: "۳۶۰,۰۰۰ تومان", img: "assets/images/collection16.png" }
+            { id: 301, title: "طرح امیر کبیر", price: "۳۵۰,۰۰۰ تومان", img: "assets/images/collection13.png" },
+            { id: 302, title: "طرح نادرشاه", price: "۴۰۰,۰۰۰ تومان", img: "assets/images/collection2.png" },
+            { id: 303, title: "طرح کوروش کبیر", price: "۴۴۰,۰۰۰ تومان", img: "assets/images/collection14.png" },
+            { id: 304, title: "طرح ناپلئون", price: "۳۹۰,۰۰۰ تومان", img: "assets/images/collection15.png" },
+            { id: 305, title: "طرح کریم خان زند", price: "۳۷۰,۰۰۰ تومان", img: "assets/images/collection16.png" }
         ]
     },
     car: {
         title: "مجموعه Car",
         items: [
-            { id: 401, title: "Mercedes-Benz CLS 63", price: "۳۸۰,۰۰۰ تومان", img: "assets/images/collection3.png" },
-            { id: 402, title: "BMW M8", price: "۳۹۰,۰۰۰ تومان", img: "assets/images/collection17.png" },
-            { id: 403, title: "Nissan GTR", price: "۳۶۰,۰۰۰ تومان", img: "assets/images/collection18.png" },
-            { id: 404, title: "Lamborghini Aventador", price: "۴۲۰,۰۰۰ تومان", img: "assets/images/collection19.png" },
-            { id: 405, title: "Bugatti Chiron", price: "۴۵۰,۰۰۰ تومان", img: "assets/images/collection20.png" }
+            { id: 401, title: "Mercedes-Benz CLS 63", price: "۴۶۰,۰۰۰ تومان", img: "assets/images/collection3.png" },
+            { id: 402, title: "BMW M8", price: "۴۹۰,۰۰۰ تومان", img: "assets/images/collection17.png" },
+            { id: 403, title: "Nissan GTR", price: "۴۶۰,۰۰۰ تومان", img: "assets/images/collection18.png" },
+            { id: 404, title: "Lamborghini Aventador", price: "۴۸۰,۰۰۰ تومان", img: "assets/images/collection19.png" },
+            { id: 405, title: "Bugatti Chiron", price: "۵۶۰,۰۰۰ تومان", img: "assets/images/collection20.png" }
         ]
     }
 };
