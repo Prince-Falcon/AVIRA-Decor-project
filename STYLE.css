@@ -604,3 +604,67 @@ body.custom-order-page, body.collection-page, body.settings-page {
     font-weight: bold;
 }
 
+.material-selection {
+  margin: 20px 0;
+}
+
+.material-selection .section-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.material-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.material-card {
+  position: relative;
+  cursor: pointer;
+}
+
+.material-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.material-card .card-content {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 14px 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.material-card:hover .card-content {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.material-card input[type="radio"]:checked + .card-content {
+  border-color: #d4af37; /* رنگ طلایی برند یا رنگ اصلی اکستنت شما */
+  background: rgba(212, 175, 55, 0.12);
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+}
+
+.material-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+.material-desc {
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
