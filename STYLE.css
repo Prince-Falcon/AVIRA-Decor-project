@@ -20,7 +20,9 @@ body {
     color: #000;
 }
 
-/* HEADER */
+/* ==========================================
+   HEADER
+   ========================================== */
 .header {
     position: fixed;
     top: 15px;
@@ -31,12 +33,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(15, 15, 15, .85);
+    background: rgba(15, 15, 15, 0.85);
     backdrop-filter: blur(12px);
     border-radius: 18px;
     z-index: 1000;
-    border: 1px solid rgba(255, 255, 255, .08);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, .35);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
 .logo img {
@@ -51,7 +53,7 @@ nav a {
     text-decoration: none;
     margin: 0 15px;
     font-size: 15px;
-    transition: .3s;
+    transition: 0.3s;
 }
 
 nav a:hover, nav a.active {
@@ -64,10 +66,12 @@ nav a:hover, nav a.active {
     font-size: 25px;
 }
 
-/* HERO */
+/* ==========================================
+   HERO SECTION
+   ========================================== */
 .hero {
     height: 100vh;
-    background: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.85)), url("assets/images/hero.jpg") center/cover fixed;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.85)), url("assets/images/hero.jpg") center/cover fixed;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -102,19 +106,21 @@ nav a:hover, nav a.active {
     background: #151515;
     color: white;
     text-decoration: none;
-    border: 1px solid rgba(212,175,55,.3);
+    border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 16px;
-    transition: .3s ease;
+    transition: 0.3s ease;
 }
 
 .btn:hover {
     background: #202020;
-    border-color: rgba(212,175,55,.8);
-    box-shadow: 0 12px 30px rgba(212,175,55,.2);
+    border-color: rgba(212, 175, 55, 0.8);
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
     transform: translateY(-3px);
 }
 
-/* SECTIONS GENERAL */
+/* ==========================================
+   SECTIONS GENERAL & ABOUT
+   ========================================== */
 section {
     padding: 100px 10%;
 }
@@ -144,7 +150,9 @@ section {
     color: #ccc;
 }
 
-/* COLLECTION CARDS */
+/* ==========================================
+   COLLECTION CARDS
+   ========================================== */
 .collection {
     background: #0d0d0d;
 }
@@ -161,8 +169,8 @@ section {
     background: #111;
     border-radius: 22px;
     overflow: hidden;
-    transition: .4s ease;
-    border: 1px solid rgba(212, 175, 55, .15);
+    transition: 0.4s ease;
+    border: 1px solid rgba(212, 175, 55, 0.15);
     cursor: pointer;
     text-decoration: none;
     display: block;
@@ -171,8 +179,8 @@ section {
 
 .card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 15px 40px rgba(212, 175, 55, .2);
-    border-color: rgba(212, 175, 55, .5);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+    border-color: rgba(212, 175, 55, 0.5);
 }
 
 .card-image {
@@ -199,7 +207,9 @@ section {
     font-size: 14px;
 }
 
-/* CUSTOM SECTION */
+/* ==========================================
+   CUSTOM SECTION
+   ========================================== */
 .custom {
     text-align: center;
     background: #111;
@@ -215,17 +225,19 @@ section {
     color: #121212;
     text-decoration: none;
     border-radius: 16px;
-    transition: .3s ease;
+    transition: 0.3s ease;
     font-weight: bold;
 }
 
 .order-btn:hover {
     transform: translateY(-3px);
     background: #f3e5ab;
-    box-shadow: 0 10px 30px rgba(212, 175, 55, .4);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
 }
 
-/* CONTACT & FOOTER */
+/* ==========================================
+   CONTACT & FOOTER
+   ========================================== */
 .contact-box { text-align: center; line-height: 2.5; color: #ccc; }
 .contact-box a.social-icon { color: #d4af37; font-size: 1.5rem; text-decoration: none; }
 
@@ -238,7 +250,9 @@ footer {
 footer h2 { color: #d4af37; letter-spacing: 6px; }
 footer p { color: #888; font-size: 0.9rem; margin-top: 8px; }
 
-/* CUSTOM ORDER & CONTAINER PAGES */
+/* ==========================================
+   CUSTOM ORDER & CONTAINER PAGES
+   ========================================== */
 body.custom-order-page, body.collection-page, body.settings-page {
     background-color: #0b0c10;
     min-height: 100vh;
@@ -278,7 +292,9 @@ body.custom-order-page, body.collection-page, body.settings-page {
     margin-bottom: 25px;
 }
 
-/* FORM STYLES */
+/* ==========================================
+   FORM STYLES
+   ========================================== */
 .form-group {
     margin-bottom: 20px;
     display: flex;
@@ -318,7 +334,6 @@ body.custom-order-page, body.collection-page, body.settings-page {
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
 }
 
-/* BUTTONS */
 .btn-submit {
     width: 100%;
     padding: 14px;
@@ -338,7 +353,9 @@ body.custom-order-page, body.collection-page, body.settings-page {
     transform: translateY(-1px);
 }
 
-/* AUTH & DROPDOWN HEADER */
+/* ==========================================
+   AUTH & USER DROPDOWN
+   ========================================== */
 .auth-btn {
     display: inline-block;
     padding: 8px 18px;
@@ -413,7 +430,9 @@ body.custom-order-page, body.collection-page, body.settings-page {
     color: #d4af37;
 }
 
-/* PRODUCTS GRID & COLLECTION */
+/* ==========================================
+   PRODUCTS GRID & COLLECTION PAGE
+   ========================================== */
 .collection-header {
     text-align: center;
     padding: 120px 20px 30px 20px;
@@ -475,340 +494,149 @@ body.custom-order-page, body.collection-page, body.settings-page {
     display: block;
 }
 
-/* MODAL *//* ===========================
-          PRODUCT MODAL
-=========================== */
-
-.modal{
-    position:fixed;
-    inset:0;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,.82);
-    backdrop-filter:blur(12px);
-    z-index:9999;
-    padding:40px;
+/* ==========================================
+   PRODUCT MODAL (پاپ‌آپ محصول - اصلاح کامل)
+   ========================================== */
+.modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 9999;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-.modal-content{
-    position:relative;
-    width:min(1200px,95vw);
-    min-height:720px;
-    background:#141414;
-    border:1px solid rgba(212,175,55,.18);
-    border-radius:24px;
-    overflow:hidden;
-    box-shadow:0 35px 80px rgba(0,0,0,.6);
-}
-
-.close-btn{
-    position:absolute;
-    top:18px;
-    left:22px;
-    font-size:34px;
-    color:#d4af37;
-    cursor:pointer;
-    z-index:20;
-    transition:.25s;
-}
-
-.close-btn:hover{
-    transform:rotate(90deg);
-    color:white;
-}
-
-.modal-body{
-    display:grid;
-    grid-template-columns: 1.05fr .95fr;
-    width:100%;
-    height:100%;
-}
-
-/* ===========================
-          IMAGE
-=========================== */
-
-.modal-image{
-    background:#0d0d0d;
-    overflow:hidden;
-}
-
-.modal-image img{
-    width:100%;
-    height:100%;
-    display:block;
-    object-fit:cover;
-}
-
-/* ===========================
-        DETAILS
-=========================== */
-
-.modal-details{
-    direction:rtl;
-    padding:45px;
-    display:flex;
-    flex-direction:column;
-    justify-content:flex-start;
-}
-
-.modal-details h2{
-    color:#d4af37;
-    font-size:2rem;
-    margin-bottom:25px;
-}
-
-/* ===========================
-        SIZE BUTTONS
-=========================== */
-
-.section-label{
-    display:block;
-    margin-bottom:14px;
-    font-weight:700;
-    font-size:1rem;
-}
-
-.size-options{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom:35px;
-}
-
-.size-btn{
-    background:#222;
-    color:#fff;
-    border:1px solid #333;
-    border-radius:10px;
-    padding:10px 18px;
-    cursor:pointer;
-    transition:.25s;
-}
-
-.size-btn:hover{
-    border-color:#d4af37;
-}
-
-.size-btn.active{
-    background:#d4af37;
-    color:#111;
-    border-color:#d4af37;
-}
-
-/* ===========================
-        MATERIAL
-=========================== */
-
-.material-selection{
-    margin-bottom:35px;
-}
-
-.material-options{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-}
-
-.material-card{
-    cursor:pointer;
-}
-
-.material-card input{
-    display:none;
-}
-
-.card-content{
-    border:1px solid rgba(255,255,255,.1);
-    border-radius:14px;
-    padding:18px;
-    text-align:center;
-    transition:.25s;
-    background:#1b1b1b;
-}
-
-.material-card:hover .card-content{
-    border-color:#d4af37;
-}
-
-.material-card input:checked + .card-content{
-    background:rgba(212,175,55,.12);
-    border-color:#d4af37;
-}
-
-.material-title{
-    display:block;
-    color:#fff;
-    font-size:1rem;
-    font-weight:700;
-}
-
-.material-desc{
-    display:block;
-    margin-top:6px;
-    color:#999;
-    font-size:.8rem;
-}
-
-/* ===========================
-          PRICE
-=========================== */
-
-.price-display{
-    margin-top:auto;
-    margin-bottom:25px;
-}
-
-.price-display span:first-child{
-    display:block;
-    color:#ccc;
-    margin-bottom:8px;
-}
-
-.price-display .price{
-    color:#d4af37;
-    font-size:2rem;
-    font-weight:bold;
-}
-
-/* ===========================
-          BUTTON
-=========================== */
-
-.add-to-cart-btn{
-    width:100%;
-    height:58px;
-    border:none;
-    border-radius:14px;
-    background:#d4af37;
-    color:#111;
-    font-size:1rem;
-    font-weight:700;
-    cursor:pointer;
-    transition:.25s;
-}
-
-.add-to-cart-btn:hover{
-    transform:translateY(-2px);
-    box-shadow:0 15px 35px rgba(212,175,55,.25);
-}
-
-/* ===========================
-        RESPONSIVE
-=========================== */
-
-@media(max-width:900px){
-
-    .modal-content{
-        min-height:auto;
-        width:95%;
-    }
-
-    .modal-body{
-        grid-template-columns:1fr;
-    }
-
-    .modal-image{
-        height:360px;
-    }
-
-    .modal-details{
-        padding:25px;
-    }
-
-}
-
-/* استایل وضعیت‌ها در پنل کاربر و ادمین */
-.order-status {
-    display: inline-block;
-    padding: 4px 12px;
+.modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 880px;         /* محدودسازی عرض جهت جلوگیری از عریض شدن */
+    max-height: 90vh;          /* محدودسازی ارتفاع تا از صفحه بیرون نزند */
+    overflow-y: auto;          /* اسکرول داخلی در صورت بلند بودن محتوا */
+    background: #141414;
+    border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
 }
 
-.material-selection {
-  margin: 20px 0;
+/* اسکرول‌بار اختصاصی پاپ‌آپ */
+.modal-content::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-content::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 10px;
+}
+.modal-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
 }
 
-.material-selection .section-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 12px;
-  color: #fff;
-}
-
-.material-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 12px;
-}
-
-.material-card {
-  position: relative;
-  cursor: pointer;
-}
-
-.material-card input[type="radio"] {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.material-card .card-content {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  padding: 14px 10px;
-  text-align: center;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.material-card:hover .card-content {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.material-card input[type="radio"]:checked + .card-content {
-  border-color: #d4af37; /* رنگ طلایی برند یا رنگ اصلی اکستنت شما */
-  background: rgba(212, 175, 55, 0.12);
-  box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
-}
-
-.material-title {
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #fff;
-  text-transform: capitalize;
-}
-
-.material-desc {
-  font-size: 0.75rem;
-  color: #aaa;
-}
-
-/* تنظیمات کلی گروه‌های انتخاب */
-.option-group {
-    margin-bottom: 20px;
-}
-
-.option-title {
-    display: block;
+.close-btn {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 28px;
     color: #d4af37;
-    font-size: 0.95rem;
-    font-weight: bold;
-    margin-bottom: 10px;
+    cursor: pointer;
+    z-index: 20;
+    transition: 0.25s;
 }
 
-/* شبکه بندی دکمه‌های جنس */
+.close-btn:hover {
+    transform: rotate(90deg);
+    color: #fff;
+}
+
+.modal-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    align-items: center;
+}
+
+/* تصویر محصول داخل پاپ‌آپ */
+.modal-image {
+    background: #0d0d0d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 20px 0 0 20px;
+}
+
+.modal-image img {
+    width: 100%;
+    max-height: 420px;          /* عدم بزرگ شدن بیش از حد پوستر */
+    object-fit: contain;        /* حفظ تناسب کامل پوستر بدون لهیدگی */
+    border-radius: 12px;
+}
+
+/* جزئیات محصول داخل پاپ‌آپ */
+.modal-details {
+    direction: rtl;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal-details h2 {
+    color: #d4af37;
+    font-size: 1.6rem;
+    margin-bottom: 18px;
+}
+
+.section-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+/* دکمه‌های انتخاب سایز */
+.size-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 22px;
+}
+
+.size-btn {
+    background: #222;
+    color: #fff;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.size-btn:hover {
+    border-color: #d4af37;
+}
+
+.size-btn.active {
+    background: #d4af37;
+    color: #111;
+    border-color: #d4af37;
+    font-weight: bold;
+}
+
+/* انتخاب جنس / کیفیت */
+.material-selection {
+    margin-bottom: 22px;
+}
+
 .material-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
 }
 
@@ -826,39 +654,142 @@ body.custom-order-page, body.collection-page, body.settings-page {
 
 .material-card .card-content {
     background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 10px;
-    padding: 10px;
+    padding: 10px 8px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: 0.25s;
 }
 
-.material-card .card-content strong {
+.material-card:hover .card-content {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.05);
+}
+
+.material-card input[type="radio"]:checked + .card-content {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: #d4af37;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
+}
+
+.material-title {
     display: block;
     color: #fff;
     font-size: 0.9rem;
+    font-weight: 700;
 }
 
-.material-card .card-content span {
+.material-desc {
     display: block;
+    margin-top: 4px;
     color: #aaa;
     font-size: 0.75rem;
-    margin-top: 4px;
 }
 
-/* استایل حالت انتخاب‌شده (Checked) */
-.material-card input[type="radio"]:checked + .card-content {
-    border-color: #d4af37;
-    background: rgba(212, 175, 55, 0.15);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+/* نمایش قیمت نهایی */
+.price-display {
+    margin-bottom: 18px;
 }
 
-.material-badge{
-display:inline-block;
-padding:4px 12px;
-border-radius:20px;
-background:#d4af37;
-color:#111;
-font-weight:700;
-font-size:.8rem;
+.price-display span:first-child {
+    display: block;
+    color: #ccc;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+
+.price-display .price {
+    color: #d4af37;
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+.add-to-cart-btn {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #d4af37, #aa8c2c);
+    color: #111;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.add-to-cart-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #f3e5ab, #d4af37);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+}
+
+/* ==========================================
+   STATUS & BADGES
+   ========================================== */
+.order-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.material-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #d4af37;
+    color: #111;
+    font-weight: 700;
+    font-size: 0.8rem;
+}
+
+/* ==========================================
+   RESPONSIVE MEDIA QUERIES
+   ========================================== */
+@media (max-width: 850px) {
+    .modal-body {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-image {
+        border-radius: 20px 20px 0 0;
+        padding: 15px;
+    }
+
+    .modal-image img {
+        max-height: 280px;
+    }
+
+    .modal-details {
+        padding: 20px;
+    }
+
+    .material-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .header {
+        padding: 12px 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 55px;
+        letter-spacing: 8px;
+    }
+
+    .hero-content h2 {
+        font-size: 22px;
+    }
+
+    .modal-content {
+        max-height: 95vh;
+        padding: 10px;
+    }
+
+    .material-options {
+        grid-template-columns: 1fr;
+    }
 }
