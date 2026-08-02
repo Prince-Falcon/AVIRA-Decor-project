@@ -852,3 +852,13 @@ body.custom-order-page, body.collection-page, body.settings-page {
     background: rgba(212, 175, 55, 0.15);
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
+
+.material-badge{
+display:inline-block;
+padding:4px 12px;
+border-radius:20px;
+background:#d4af37;
+color:#111;
+font-weight:700;
+font-size:.8rem;
+}

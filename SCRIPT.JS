@@ -27,6 +27,32 @@ const materialMultipliers = {
     'metal': 1.70    // فلزی (+۷۰٪)
 };
 
+function translateMaterial(mat) {
+    const map = {
+        'economy': 'اقتصادی (Economy)',
+        'normal': 'استاندارد (Normal)',
+        'luxury': 'لوکس (Luxury)',
+        'metal': 'فلزی / پلاک (Metal)'
+    };
+    return map[mat] || mat || 'استاندارد';
+}
+
+function formatDatePersian(dateStr) {
+    if (!dateStr) return 'نامشخص';
+    try {
+        const date = new Date(dateStr);
+        return new Intl.DateTimeFormat('fa-IR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(date);
+    } catch (e) {
+        return dateStr;
+    }
+}
+
 function parsePriceToNumber(priceStr) {
     if (!priceStr) return 0;
     const faToEnDigits = priceStr.replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
@@ -47,11 +73,9 @@ function getSelectedMaterial() {
 // ۳. راه‌اندازی و رویدادهای عمومی DOM
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // بارگذاری داده‌های کاربر در صورت وجود عناصر مرتبط
     if (document.getElementById("user-orders-list")) loadUserOrders();
     if (document.getElementById("user-support-list")) loadUserSupportTickets();
 
-    // انیمیشن ظهور بخش‌ها هنگام اسکرول
     const sections = document.querySelectorAll("section");
     if (sections.length > 0) {
         const observer = new IntersectionObserver((entries) => {
@@ -71,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // منوی موبایل
     const menu = document.querySelector(".menu");
     const nav = document.querySelector("nav");
     if (menu && nav) {
@@ -82,16 +105,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // جلوگیری از راست‌کلیک روی تصاویر
     document.querySelectorAll('img').forEach(img => img.addEventListener('contextmenu', (e) => e.preventDefault()));
 
-    // رندر محصولات صفحه کالکشن
     initProductsGrid();
-
-    // رندر سبد خرید
     renderCartPage();
-
-    // مدیریت وضعیت احراز هویت
     initAuthListener();
 });
 
@@ -190,7 +207,6 @@ function openProductModal(productId, catKey) {
     if (imgElem) imgElem.src = product.img;
     if (titleElem) titleElem.textContent = product.title;
 
-    // ریست حالت گزینه‌های سایز
     const sizeBtns = document.querySelectorAll(".size-btn");
     sizeBtns.forEach((btn, index) => {
         if (index === 0) {
@@ -201,7 +217,6 @@ function openProductModal(productId, catKey) {
         }
     });
 
-    // ریست جنس به حالت normal
     const defaultMaterialRadio = document.querySelector('input[name="material"][value="normal"]');
     if (defaultMaterialRadio) defaultMaterialRadio.checked = true;
 
@@ -265,6 +280,7 @@ function showPayment() {
             type: "custom",
             title: "سفارش اختصاصی تابلو",
             price: "بیعانه ۲۵۰,۰۰۰ تومان",
+            size: "اختصاصی",
             material: selectedMat,
             description: descriptionInput.value.trim(),
             img: base64Image
@@ -302,7 +318,7 @@ function addToCart() {
     });
 
     localStorage.setItem("avira_cart", JSON.stringify(cart));
-    alert(`طرح "${currentSelectedProduct.title}" با جنس (${chosenMaterial}) به سبد خرید اضافه شد!`);
+    alert(`طرح "${currentSelectedProduct.title}" با جنس (${translateMaterial(chosenMaterial)}) به سبد خرید اضافه شد!`);
     closeProductModal();
 }
 
@@ -326,9 +342,9 @@ function renderCartPage() {
             <div>
                 <h4 style="color: #fff; margin-bottom: 5px;">${item.title}</h4>
                 <p style="font-size: 0.85rem; color: #aaa;">
-                    سایز: ${item.size || 'اختصاصی'} | 
-                    جنس: <span style="color: #d4af37; text-transform: uppercase;">${item.material || 'normal'}</span> | 
-                    قیمت: ${item.price}
+                    سایز: <span style="color:#fff;">${item.size || 'اختصاصی'}</span> | 
+                    جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
+                    قیمت: <span style="color: #4ade80;">${item.price}</span>
                 </p>
             </div>
             <button onclick="removeFromCart(${index})" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف</button>
@@ -374,7 +390,10 @@ async function submitFinalOrder() {
         return item.img;
     }).join(' | ');
 
-    const descriptionText = cart.map(item => `${item.title} (سایز: ${item.size || 'اختصاصی'} - جنس: ${item.material || 'normal'})`).join('؛ ');
+    const descriptionText = cart.map(item => `${item.title} (سایز: ${item.size || 'اختصاصی'} - جنس: ${translateMaterial(item.material)})`).join('؛ ');
+
+    const materialsList = [...new Set(cart.map(i => translateMaterial(i.material)))].join(', ');
+    const sizesList = [...new Set(cart.map(i => i.size || 'اختصاصی'))].join(', ');
 
     const { error } = await supabaseClient
         .from('custom_orders')
@@ -382,7 +401,11 @@ async function submitFinalOrder() {
             order_code: orderCode,
             description: `سبد خرید (${cart.length} آیتم): ${descriptionText}`,
             image_url: imagesList,
-            user_id: user.id
+            user_id: user.id,
+            items: cart,
+            material: materialsList,
+            size: sizesList,
+            status: 'در انتظار بررسی'
         }]);
 
     if (error) {
@@ -390,7 +413,7 @@ async function submitFinalOrder() {
     } else {
         alert("سفارش شما ثبت شد! لطفاً پس از واریز بیعانه، عکس رسید را به پشتیبانی ارسال کنید.");
         localStorage.removeItem("avira_cart");
-        window.location.href = "index.html";
+        window.location.href = "orders.html";
     }
 }
 
@@ -450,7 +473,9 @@ async function registerUser(email, password, fullName = '') {
 
 async function loginUser(email, password) {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
     if (error) {
         alert("خطا در ورود: " + error.message);
     } else {
@@ -474,57 +499,20 @@ function toggleUserDropdown() {
 window.addEventListener("click", (e) => {
     const btn = document.querySelector(".user-dropdown-btn");
     const menu = document.getElementById("user-dropdown-menu");
-    if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+    if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
         menu.classList.remove("show");
     }
 });
 
-async function loadUserSettings() {
-    if (!supabaseClient) return;
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-        alert("لطفاً ابتدا وارد حساب کاربری خود شوید.");
-        window.location.href = "login.html";
-        return;
-    }
-
-    const emailElem = document.getElementById("settings-email");
-    if (emailElem) emailElem.value = user.email || "";
-
-    const { data } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-    if (data) {
-        if (document.getElementById("settings-fullname")) document.getElementById("settings-fullname").value = data.full_name || "";
-        if (document.getElementById("settings-phone")) document.getElementById("settings-phone").value = data.phone || "";
-        if (document.getElementById("settings-address")) document.getElementById("settings-address").value = data.address || "";
-    } else if (user.user_metadata?.full_name) {
-        if (document.getElementById("settings-fullname")) document.getElementById("settings-fullname").value = user.user_metadata.full_name;
-    }
-}
-
-async function updateProfile() {
+async function updateUserSettings() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
 
     const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) {
-        alert("لطفاً ابتدا وارد حساب کاربری خود شوید.");
-        return;
-    }
+    if (!user) return alert("لطفاً ابتدا وارد شوید.");
 
     const fullName = document.getElementById("settings-fullname")?.value.trim() || "";
     const phone = document.getElementById("settings-phone")?.value.trim() || "";
     const address = document.getElementById("settings-address")?.value.trim() || "";
-
-    if (!fullName || !phone || !address) {
-        alert("لطفاً تمامی فیلدهای نام، شماره تماس و آدرس را تکمیل کنید.");
-        return;
-    }
 
     const { error } = await supabaseClient
         .from('profiles')
@@ -537,7 +525,7 @@ async function updateProfile() {
         });
 
     if (error) {
-        alert("خطا در ذخیره اطلاعات: " + error.message);
+        alert("خطا در به روزرسانی اطلاعات: " + error.message);
     } else {
         alert("اطلاعات حساب شما با موفقیت ذخیره شد!");
     }
@@ -574,8 +562,9 @@ async function loadUserOrders() {
     if (!listContainer || !supabaseClient) return;
 
     const { data: { user } } = await supabaseClient.auth.getUser();
+
     if (!user) {
-        listContainer.innerHTML = `<p style="color: #aaa; text-align: center;">لطفاً وارد حساب کاربری شوید.</p>`;
+        listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">لطفاً ابتدا وارد حساب کاربری شوید.</p>`;
         return;
     }
 
@@ -586,27 +575,62 @@ async function loadUserOrders() {
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
 
-        if (error || !orders || orders.length === 0) {
-            listContainer.innerHTML = `<p style="color: #aaa; text-align: center;">سفارشی یافت نشد.</p>`;
+        if (error) {
+            listContainer.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت سفارشات!</p>`;
             return;
         }
 
-        const statusMap = {
-            'pending': { text: 'در حال بررسی', color: '#d4af37', bg: 'rgba(212,175,55,0.15)' },
-            'processing': { text: 'در حال ساخت', color: '#60a5fa', bg: 'rgba(96,165,250,0.15)' },
-            'completed': { text: 'تکمیل شده', color: '#4ade80', bg: 'rgba(74,222,128,0.15)' },
-            'cancelled': { text: 'لغو شده', color: '#f87171', bg: 'rgba(248,113,113,0.15)' }
-        };
+        if (!orders || orders.length === 0) {
+            listContainer.innerHTML = `
+                <div class="no-orders" style="text-align: center; padding: 40px 20px;">
+                    <p style="color: #aaa; margin-bottom: 15px;">شما هنوز هیچ سفارشی ثبت نکرده‌اید.</p>
+                    <a href="index.html#collection" class="btn-shop">مشاهده مجموعه‌ها</a>
+                </div>
+            `;
+            return;
+        }
 
-        listContainer.innerHTML = orders.map(ord => {
-            const statusInfo = statusMap[ord.status || 'pending'] || statusMap['pending'];
-            return `
-                <div class="order-card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color:#d4af37; font-weight:bold;">کد: ${ord.order_code}</span>
-                        <span style="background: ${statusInfo.bg}; color: ${statusInfo.color}; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid ${statusInfo.color};">${statusInfo.text}</span>
+        listContainer.innerHTML = orders.map(order => {
+            let itemsHtml = '';
+            if (order.items && Array.isArray(order.items) && order.items.length > 0) {
+                itemsHtml = order.items.map(item => `
+                    <div style="background: rgba(255,255,255,0.03); border-right: 3px solid #d4af37; padding: 8px 12px; margin: 6px 0; border-radius: 6px; font-size: 0.88rem;">
+                        <div><strong style="color: #fff;">${item.title}</strong></div>
+                        <div style="color: #aaa; font-size: 0.8rem; margin-top: 3px;">
+                            سایز: <span style="color: #e0e0e0;">${item.size || 'اختصاصی'}</span> | 
+                            جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
+                            قیمت: <span style="color: #4ade80;">${item.price || '---'}</span>
+                        </div>
                     </div>
-                    <p style="color:#fff; margin:0;">${ord.description || ''}</p>
+                `).join('');
+            } else {
+                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${order.description || 'توضیحات در دسترس نیست'}</p>`;
+            }
+
+            return `
+                <div class="order-card" style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 20px; margin-bottom: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                    <div class="order-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 12px;">
+                        <div class="order-code-box">
+                            <span class="order-label" style="color: #aaa; font-size: 0.85rem;">کد سفارش:</span>
+                            <span class="order-code" style="color: #d4af37; font-weight: bold; font-size: 1.05rem;">${order.order_code || '---'}</span>
+                        </div>
+                        <div class="order-date" style="font-size: 0.82rem; color: #aaa; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px;">📅 ${formatDatePersian(order.created_at)}</div>
+                    </div>
+                    
+                    <div class="order-body">
+                        <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 8px;">
+                            🏷️ <b>متریال کلی:</b> <span style="color: #d4af37;">${order.material || 'استاندارد'}</span> &nbsp;|&nbsp; 
+                            📏 <b>سایز کلی:</b> <span style="color: #fff;">${order.size || 'اختصاصی'}</span>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <strong style="color: #fff; font-size: 0.9rem;">آیتم‌های خرید:</strong>
+                            ${itemsHtml}
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <span class="order-status" style="display: inline-block; padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3);">وضعیت: ${order.status || 'در انتظار بررسی'}</span>
+                    </div>
                 </div>
             `;
         }).join('');
@@ -614,20 +638,20 @@ async function loadUserOrders() {
 
     await fetchAndRender();
 
-    if (userOrdersSubscription) supabaseClient.removeChannel(userOrdersSubscription);
-
-    userOrdersSubscription = supabaseClient
-        .channel('user-orders-realtime')
-        .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'custom_orders', filter: `user_id=eq.${user.id}` },
-            () => { fetchAndRender(); }
-        )
-        .subscribe();
+    if (!userOrdersSubscription) {
+        userOrdersSubscription = supabaseClient
+            .channel('user-orders-changes-' + user.id)
+            .on(
+                'postgres_changes',
+                { event: '*', schema: 'public', table: 'custom_orders', filter: `user_id=eq.${user.id}` },
+                () => { fetchAndRender(); }
+            )
+            .subscribe();
+    }
 }
 
 // ==========================================
-// ۹. سیستم پشتیبانی و چت آنلاین کاربر
+// ۹. چت آنلاین و پشتیبانی (پشتیبانی Realtime)
 // ==========================================
 let chatRealtimeChannel = null;
 
@@ -672,50 +696,37 @@ async function loadLiveChatMessages() {
         .order('created_at', { ascending: true });
 
     if (error) {
-        chatBox.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت پیام‌ها</p>`;
+        chatBox.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت پیام‌ها!</p>`;
         return;
     }
 
     if (!messages || messages.length === 0) {
-        chatBox.innerHTML = `<p style="color: #666; text-align: center; margin: auto; font-size: 0.85rem;">سلام! چطور می‌توانیم کمکتان کنیم؟ پیام بگذارید.</p>`;
+        chatBox.innerHTML = `<p style="color: #666; text-align: center; margin: auto; font-size: 0.85rem;">سلام! چطور می‌توانیم کمکتان کنیم؟ پیام خود را بنویسید.</p>`;
         return;
     }
 
-    chatBox.innerHTML = messages.map(msg => {
-        const userText = msg.message || msg.text || '';
-        let html = '';
-
-        if (userText) {
-            html += `
-                <div style="align-self: flex-start; max-width: 80%; background: #262626; color: #fff; padding: 10px 14px; border-radius: 12px 12px 12px 2px; font-size: 0.9rem; line-height: 1.4; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 8px;">
-                    ${userText}
-                </div>
-            `;
-        }
-
-        if (msg.admin_reply) {
-            html += `
-                <div style="align-self: flex-end; max-width: 80%; background: rgba(212, 175, 55, 0.15); color: #d4af37; padding: 10px 14px; border-radius: 12px 12px 2px 12px; font-size: 0.9rem; line-height: 1.4; border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 8px;">
-                    <strong style="display:block; font-size:0.75rem; margin-bottom: 3px; color:#fff;">پشتیبانی آویرا:</strong>
+    chatBox.innerHTML = messages.map(msg => `
+        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+            <div style="background: #d4af37; color: #121212; padding: 8px 12px; border-radius: 12px 12px 0 12px; max-width: 80%; font-size: 0.9rem;">
+                ${msg.message}
+            </div>
+            <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">${formatDatePersian(msg.created_at)}</span>
+        </div>
+        ${msg.admin_reply ? `
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <div style="background: #2a2a2a; border: 1px solid rgba(212,175,55,0.3); color: #fff; padding: 8px 12px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 0.9rem;">
+                    <small style="color: #d4af37; display: block; font-size: 0.75rem; margin-bottom: 2px;">پشتیبانی آویرا:</small>
                     ${msg.admin_reply}
                 </div>
-            `;
-        }
-
-        return html;
-    }).join('');
+            </div>
+        ` : ''}
+    `).join('');
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-async function submitSupportMessage() {
+async function sendSupportMessage() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
-    const msgElem = document.getElementById("sup-msg");
-    if (!msgElem) return;
-
-    const msg = msgElem.value.trim();
-    if (!msg) return;
 
     const { data: { user } } = await supabaseClient.auth.getUser();
 
@@ -725,22 +736,24 @@ async function submitSupportMessage() {
         return;
     }
 
-    const displayName = user.user_metadata?.full_name || user.email;
+    const msgElem = document.getElementById("sup-msg");
+    const messageText = msgElem ? msgElem.value.trim() : "";
+
+    if (!messageText) return alert("لطفاً پیام خود را بنویسید.");
 
     const { error } = await supabaseClient
         .from('support_messages')
-        .insert([{ 
-            sender_name: displayName, 
-            contact_info: user.email, 
-            message: msg, 
-            status: 'pending', 
-            user_id: user.id 
+        .insert([{
+            user_id: user.id,
+            user_email: user.email,
+            message: messageText,
+            status: 'pending'
         }]);
 
     if (error) {
-        alert("خطا در ارسال: " + error.message);
+        alert("خطا در ارسال پیام: " + error.message);
     } else {
-        msgElem.value = "";
+        if (msgElem) msgElem.value = "";
         await loadLiveChatMessages();
         loadUserSupportTickets();
     }
@@ -748,6 +761,7 @@ async function submitSupportMessage() {
 
 async function listenToChatRealtime() {
     if (!supabaseClient) return;
+
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) return;
 
@@ -778,58 +792,43 @@ async function loadUserSupportTickets() {
             .from('support_messages')
             .select('*')
             .eq('user_id', user.id)
-            .order('created_at', { ascending: true });
+            .order('created_at', { ascending: false });
 
         if (error) throw error;
 
         if (!messages || messages.length === 0) {
-            listContainer.innerHTML = "<p style='color:#aaa; text-align:center;'>شما هنوز هیچ پیامی ثبت نکرده‌اید.</p>";
+            listContainer.innerHTML = "<p style='color:#aaa; text-align:center;'>پیامی ثبت نشده است.</p>";
             return;
         }
 
-        listContainer.innerHTML = messages.map(msg => {
-            const userText = msg.message || msg.text || '';
-            let html = '';
-
-            if (userText) {
-                html += `
-                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; margin-bottom: 8px;">
-                        <p style="color: #fff; margin: 0 0 5px 0;"><strong>شما:</strong> ${userText}</p>
-                        <span style="font-size: 0.7rem; color: #888;">${msg.created_at ? new Date(msg.created_at).toLocaleString('fa-IR') : ''}</span>
-                    </div>
-                `;
-            }
-
-            if (msg.admin_reply) {
-                html += `
-                    <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 12px; margin-right: 20px;">
-                        <p style="color: #d4af37; margin: 0 0 5px 0;"><strong>پاسخ پشتیبانی:</strong> ${msg.admin_reply}</p>
-                    </div>
-                `;
-            }
-
-            return html;
-        }).join('');
-
-        listContainer.scrollTop = listContainer.scrollHeight;
+        listContainer.innerHTML = messages.map(msg => `
+            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 6px;">
+                    <span>📅 ${formatDatePersian(msg.created_at)}</span>
+                    <span style="color: ${msg.status === 'replied' ? '#4ade80' : '#f59e0b'};">${msg.status === 'replied' ? 'پاسخ داده شده' : 'در انتظار پاسخ'}</span>
+                </div>
+                <p style="color: #fff; font-size: 0.9rem; margin-bottom: 6px;"><strong>پیام شما:</strong> ${msg.message}</p>
+                ${msg.admin_reply ? `<p style="color: #d4af37; font-size: 0.88rem; background: rgba(212,175,55,0.08); padding: 8px; border-radius: 6px; border-right: 3px solid #d4af37;"><strong>پاسخ پشتیبانی:</strong> ${msg.admin_reply}</p>` : ''}
+            </div>
+        `).join('');
 
     } catch (err) {
-        console.error("خطا در دریافت تیکت‌های کاربر:", err);
-        listContainer.innerHTML = "<p style='color:#f87171; text-align:center;'>خطا در دریافت اطلاعات پیام‌ها.</p>";
+        console.error("خطا در بارگذاری تیکت‌های پشتیبانی:", err);
+        listContainer.innerHTML = "<p style='color:#f87171; text-align:center;'>خطا در دریافت تیکت‌ها!</p>";
     }
 }
 
 // ==========================================
-// ۱۰. پنل مدیریت (Admin Dashboard)
+// ۱۰. پنل مدیریت (Admin Panel)
 // ==========================================
 let adminRealtimeChannel = null;
 
 function checkAdminLogin() {
-    const userInput = document.getElementById("admin-user");
-    const passInput = document.getElementById("admin-pass");
+    const userElem = document.getElementById("admin-user");
+    const passElem = document.getElementById("admin-pass");
 
-    const username = userInput ? userInput.value.trim() : "";
-    const password = passInput ? passInput.value.trim() : "";
+    const username = userElem ? userElem.value.trim() : "";
+    const password = passElem ? passElem.value.trim() : "";
 
     if (username === "amir" && password === "Amir1390") {
         const loginBox = document.getElementById("login-box");
@@ -850,7 +849,7 @@ function logoutAdmin() {
 
     if (loginBox) loginBox.style.display = "block";
     if (adminDashboard) adminDashboard.style.display = "none";
-    
+
     if (document.getElementById("admin-user")) document.getElementById("admin-user").value = "";
     if (document.getElementById("admin-pass")) document.getElementById("admin-pass").value = "";
 }
@@ -866,12 +865,12 @@ function switchAdminTab(tab) {
         if (tabSupport) tabSupport.style.display = "none";
         if (btnOrders) btnOrders.style.opacity = "1";
         if (btnSupport) btnSupport.style.opacity = "0.5";
+        loadAdminDashboard();
     } else {
         if (tabOrders) tabOrders.style.display = "none";
         if (tabSupport) tabSupport.style.display = "block";
         if (btnOrders) btnOrders.style.opacity = "0.5";
         if (btnSupport) btnSupport.style.opacity = "1";
-
         loadAdminSupportTickets();
     }
 }
@@ -880,47 +879,83 @@ async function loadAdminDashboard() {
     const ordersList = document.getElementById("orders-list");
     if (!ordersList || !supabaseClient) return;
 
-    ordersList.innerHTML = `<p style="color: #aaa; text-align: center;">در حال دریافت اطلاعات...</p>`;
+    ordersList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت سفارشات از دیتابیس...</p>`;
 
     try {
-        const { data, error } = await supabaseClient
+        const { data: orders, error } = await supabaseClient
             .from('custom_orders')
             .select('*')
             .order('created_at', { ascending: false });
 
         if (error) throw error;
 
-        if (!data || data.length === 0) {
-            ordersList.innerHTML = `<p style="color: #aaa; text-align: center;">هنوز سفارشی ثبت نشده است.</p>`;
+        if (!orders || orders.length === 0) {
+            ordersList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ سفارشی در دیتابیس ثبت نشده است.</p>`;
             return;
         }
 
-        ordersList.innerHTML = data.map(order => {
-            const currentStatus = order.status || 'pending';
-            const code = order.order_code;
-            const isBase64 = order.image_url && order.image_url.startsWith("data:image");
-            
-            return `
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 18px; margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <p style="color: #d4af37; font-weight: bold; margin: 0;">کد سفارش: ${code || '---'}</p>
-                        <select onchange="updateOrderStatus('${code}', this.value)" style="background: #1a1a1a; color: #fff; border: 1px solid #d4af37; padding: 6px 12px; border-radius: 8px; cursor: pointer; outline: none;">
-                            <option value="pending" ${currentStatus === 'pending' ? 'selected' : ''}>در حال بررسی</option>
-                            <option value="processing" ${currentStatus === 'processing' ? 'selected' : ''}>در حال ساخت</option>
-                            <option value="completed" ${currentStatus === 'completed' ? 'selected' : ''}>تکمیل شده</option>
-                            <option value="cancelled" ${currentStatus === 'cancelled' ? 'selected' : ''}>لغو شده</option>
-                        </select>
+        ordersList.innerHTML = orders.map(order => {
+            let itemsHtml = '';
+            if (order.items && Array.isArray(order.items) && order.items.length > 0) {
+                itemsHtml = order.items.map(item => `
+                    <div style="background: rgba(255,255,255,0.03); border-right: 3px solid #d4af37; padding: 8px 12px; margin: 6px 0; border-radius: 6px; font-size: 0.88rem;">
+                        <div><strong style="color: #fff;">${item.title}</strong></div>
+                        <div style="color: #aaa; font-size: 0.8rem; margin-top: 3px;">
+                            سایز: <span style="color: #fff;">${item.size || 'اختصاصی'}</span> | 
+                            جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
+                            قیمت: <span style="color: #4ade80;">${item.price || 'نامشخص'}</span>
+                        </div>
                     </div>
-                    <p style="margin-bottom: 8px; color: #ddd;"><strong>توضیحات:</strong> ${order.description || 'بدون توضیحات'}</p>
-                    ${order.image_url ? (isBase64 ? `<p style="margin-bottom: 5px;"><img src="${order.image_url}" style="max-width:150px; border-radius:8px;"></p>` : `<p style="margin-bottom: 5px;"><a href="${order.image_url}" target="_blank" style="color: #60a5fa;">مشاهده تصویر</a></p>`) : ''}
-                    <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">تاریخ ثبت: ${order.created_at ? new Date(order.created_at).toLocaleString('fa-IR') : 'ثبت شده'}</p>
+                `).join('');
+            } else {
+                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${order.description || 'توضیحات موجود نیست'}</p>`;
+            }
+
+            const materialDisplay = order.material ? order.material : 'استاندارد';
+            const sizeDisplay = order.size ? order.size : 'اختصاصی';
+
+            return `
+                <div class="order-card" style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.35); border-radius: 14px; padding: 20px; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.4);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 14px;">
+                        <div>
+                            <span style="color: #d4af37; font-weight: bold; font-size: 1.15rem;">🛍️ کد سفارش: ${order.order_code || 'بدون کد'}</span>
+                            <span style="display: block; color: #888; font-size: 0.8rem; margin-top: 4px;">📅 تاریخ ثبت: ${formatDatePersian(order.created_at)}</span>
+                        </div>
+                        <div>
+                            <select onchange="updateOrderStatus('${order.order_code}', this.value)" style="background: #242424; color: #d4af37; border: 1px solid #d4af37; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; outline: none;">
+                                <option value="در انتظار بررسی" ${order.status === 'در انتظار بررسی' ? 'selected' : ''}>⏳ در انتظار بررسی</option>
+                                <option value="تایید شده" ${order.status === 'تایید شده' ? 'selected' : ''}>✅ تایید شده</option>
+                                <option value="در حال ساخت" ${order.status === 'در حال ساخت' ? 'selected' : ''}>🛠️ در حال ساخت</option>
+                                <option value="ارسال شده" ${order.status === 'ارسال شده' ? 'selected' : ''}>🚚 ارسال شده</option>
+                                <option value="لغو شده" ${order.status === 'لغو شده' ? 'selected' : ''}>❌ لغو شده</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 0.88rem; color: #aaa; margin-bottom: 8px;">
+                            🏷️ <b>متریال سفارش:</b> <span class="material-badge" style="background: rgba(212,175,55,0.15); color: #d4af37; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(212,175,55,0.3);">${materialDisplay}</span>
+                            &nbsp;|&nbsp;
+                            📏 <b>سایز سفارش:</b> <span style="color: #fff; font-weight: bold;">${sizeDisplay}</span>
+                        </div>
+                        <div style="margin-top: 12px;">
+                            <strong style="color: #fff; font-size: 0.95rem;">📦 لیست اقلام سفارش:</strong>
+                            ${itemsHtml}
+                        </div>
+                    </div>
+
+                    ${order.image_url && order.image_url !== '[تصویر فایل اختصاصی کاربر]' ? `
+                        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 0.82rem; color: #aaa;">
+                            🖼️ <b>تصاویر / فایل‌ها:</b> <a href="${order.image_url}" target="_blank" style="color: #60a5fa; text-decoration: underline; margin-right: 5px;">مشاهده یا دانلود فایل</a>
+                        </div>
+                    ` : ''}
                 </div>
             `;
         }).join('');
 
     } catch (err) {
-        console.error("خطا در دریافت سفارشات:", err);
-        ordersList.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت اطلاعات!</p>`;
+        console.error("خطا در دریافت سفارشات ادمین:", err);
+        ordersList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 20px;">خطا در دریافت اطلاعات سفارشات از دیتابیس!</p>`;
     }
 }
 
@@ -935,7 +970,7 @@ async function updateOrderStatus(orderCode, newStatus) {
     if (error) {
         alert("خطا در تغییر وضعیت: " + error.message);
     } else {
-        alert("وضعیت سفارش به روزرسانی شد.");
+        alert("وضعیت سفارش با موفقیت به روزرسانی شد.");
         loadAdminDashboard();
     }
 }
@@ -945,7 +980,7 @@ async function loadAdminSupportTickets() {
     if (!supportList || !supabaseClient) return;
 
     listenToAdminRealtime();
-    supportList.innerHTML = `<p style="color: #aaa; text-align: center;">در حال دریافت تیکت‌ها...</p>`;
+    supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">در حال دریافت پیام‌های پشتیبانی...</p>`;
 
     try {
         const { data: messages, error } = await supabaseClient
@@ -956,26 +991,26 @@ async function loadAdminSupportTickets() {
         if (error) throw error;
 
         if (!messages || messages.length === 0) {
-            supportList.innerHTML = `<p style="color: #aaa; text-align: center;">پیام پشتیبانی جدیدی وجود ندارد.</p>`;
+            supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">هیچ پیام پشتیبانی دریافت نشده است.</p>`;
             return;
         }
 
         supportList.innerHTML = messages.map(msg => `
-            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <strong style="color: #d4af37;">فرستنده: ${msg.sender_name || msg.contact_info || 'ناشناس'}</strong>
-                    <span style="font-size: 0.75rem; color: #888;">${msg.created_at ? new Date(msg.created_at).toLocaleString('fa-IR') : ''}</span>
+            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; color: #aaa;">
+                    <span>👤 کاربر: <strong style="color: #fff;">${msg.user_email || msg.user_id}</strong></span>
+                    <span>📅 ${formatDatePersian(msg.created_at)}</span>
                 </div>
-                <p style="color: #ddd; margin-bottom: 10px;"><strong>پیام:</strong> ${msg.message || msg.text || ''}</p>
-                
+                <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; color: #fff; margin-bottom: 10px; font-size: 0.95rem;">
+                    💬 <strong>متن پیام:</strong> ${msg.message}
+                </div>
                 ${msg.admin_reply ? `
-                    <div style="background: rgba(74, 222, 128, 0.1); border: 1px solid rgba(74, 222, 128, 0.3); padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;">
-                        <p style="color: #4ade80; margin: 0; font-size: 0.85rem;"><strong>پاسخ داده شده:</strong> ${msg.admin_reply}</p>
+                    <div style="background: rgba(212,175,55,0.1); border-right: 3px solid #d4af37; padding: 10px; border-radius: 6px; color: #d4af37; font-size: 0.9rem; margin-bottom: 10px;">
+                        <strong>پاسخ ثبت‌شده ادمین:</strong> ${msg.admin_reply}
                     </div>
                 ` : ''}
-
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="reply-input-${msg.id}" placeholder="متن پاسخ ادمین..." style="flex: 1; background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 8px 12px; border-radius: 6px; outline: none; font-size: 0.85rem;">
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="reply-input-${msg.id}" placeholder="پاسخ خود را بنویسید..." style="flex: 1; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.88rem; outline: none;">
                     <button onclick="sendAdminReply('${msg.id}')" style="background: #d4af37; color: #121212; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">ارسال پاسخ</button>
                 </div>
             </div>
@@ -983,7 +1018,7 @@ async function loadAdminSupportTickets() {
 
     } catch (err) {
         console.error("خطا در دریافت پیام‌ها توسط ادمین:", err);
-        supportList.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت اطلاعات پشتیبانی!</p>`;
+        supportList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 20px;">خطا در دریافت اطلاعات پشتیبانی!</p>`;
     }
 }
 
@@ -1019,11 +1054,15 @@ function listenToAdminRealtime() {
     if (!supabaseClient || adminRealtimeChannel) return;
 
     adminRealtimeChannel = supabaseClient
-        .channel('admin-chat-room')
+        .channel('admin-support-channel')
         .on(
             'postgres_changes',
             { event: '*', schema: 'public', table: 'support_messages' },
-            () => { loadAdminSupportTickets(); }
+            () => {
+                const sound = document.getElementById("notification-sound");
+                if (sound) sound.play().catch(() => {});
+                loadAdminSupportTickets();
+            }
         )
         .subscribe();
 }
