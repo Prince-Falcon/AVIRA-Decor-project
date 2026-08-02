@@ -80,12 +80,12 @@
                     </div>
                 </div>
 
-                <!-- ۲. انتخاب جنس / کیفیت (انتقال‌یافته به داخل مودال) -->
+                <!-- ۲. انتخاب جنس / کیفیت -->
                 <div class="material-selection">
                     <label class="section-label">انتخاب جنس / کیفیت:</label>
                     <div class="material-options">
                         <label class="material-card">
-                            <input type="radio" name="material" value="economy" data-multiplier="0.85" onchange="updateTotalPrice()">
+                            <input type="radio" name="material" value="economy" data-multiplier="0.85" onchange="updatePriceView()">
                             <div class="card-content">
                                 <span class="material-title">Economy</span>
                                 <span class="material-desc">اقتصادی (-۱۵٪)</span>
@@ -93,7 +93,7 @@
                         </label>
 
                         <label class="material-card">
-                            <input type="radio" name="material" value="normal" data-multiplier="1.0" checked onchange="updateTotalPrice()">
+                            <input type="radio" name="material" value="normal" data-multiplier="1.0" checked onchange="updatePriceView()">
                             <div class="card-content">
                                 <span class="material-title">Normal</span>
                                 <span class="material-desc">استاندارد</span>
@@ -101,7 +101,7 @@
                         </label>
 
                         <label class="material-card">
-                            <input type="radio" name="material" value="luxury" data-multiplier="1.35" onchange="updateTotalPrice()">
+                            <input type="radio" name="material" value="luxury" data-multiplier="1.35" onchange="updatePriceView()">
                             <div class="card-content">
                                 <span class="material-title">Luxury</span>
                                 <span class="material-desc">لوکس (+۳۵٪)</span>
@@ -109,7 +109,7 @@
                         </label>
 
                         <label class="material-card">
-                            <input type="radio" name="material" value="metal" data-multiplier="1.70" onchange="updateTotalPrice()">
+                            <input type="radio" name="material" value="metal" data-multiplier="1.70" onchange="updatePriceView()">
                             <div class="card-content">
                                 <span class="material-title">Metal</span>
                                 <span class="material-desc">پلاک / فلزی (+۷۰٪)</span>
@@ -134,4 +134,3 @@
 <script src="script.js"></script>
 </body>
 </html>
-
