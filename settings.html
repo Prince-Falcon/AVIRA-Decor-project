@@ -46,9 +46,9 @@
 
     <main class="custom-container" style="margin-top: 100px; max-width: 550px;">
         <h1>تنظیمات حساب کاربری</h1>
-        <p class="subtitle">اطلاعات شخصی و آدرس ارسال سفارشات خود را ویرایش کنید</p>
+        <p class="subtitle">اطلاعات شخصی، کد پستی و آدرس ارسال سفارشات خود را ویرایش کنید</p>
 
-        <form id="profile-settings-form" onsubmit="event.preventDefault(); updateProfileInfo();">
+        <form id="profile-settings-form" onsubmit="event.preventDefault(); updateUserSettings();">
             
             <div class="form-group">
                 <label for="settings-email">ایمیل حساب کاربری:</label>
@@ -63,6 +63,11 @@
             <div class="form-group">
                 <label for="settings-phone">شماره تماس جهت هماهنگی ارسال:</label>
                 <input type="tel" id="settings-phone" placeholder="۰۹۱۲۱۲۳۴۵۶۷" required>
+            </div>
+
+            <div class="form-group">
+                <label for="settings-postcode">کد پستی ۱۰ رقمی:</label>
+                <input type="text" id="settings-postcode" placeholder="مثلاً: ۱۲۳۴۵۶۷۸۹۰" maxlength="10" style="direction: ltr; text-align: right;" required>
             </div>
 
             <div class="form-group">
@@ -83,10 +88,17 @@
                 <input type="password" id="settings-new-pass" placeholder="حداقل ۶ کاراکتر" required minlength="6">
             </div>
 
-            <button type="submit" class="btn-submit" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #4b5563, #374151) !important; color: #fff !important;">به‌روزرسانی رمز عبور</button>
+            <button type="submit" class="btn-submit" style="width: 100%; margin-top: 10px;">بروزرسانی رمز عبور</button>
         </form>
     </main>
 
     <script src="script.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (typeof loadUserSettings === "function") {
+                loadUserSettings();
+            }
+        });
+    </script>
 </body>
 </html>

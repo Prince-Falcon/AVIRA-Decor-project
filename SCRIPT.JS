@@ -73,6 +73,7 @@ function getSelectedMaterial() {
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("user-orders-list")) loadUserOrders();
     if (document.getElementById("user-support-list")) loadUserSupportTickets();
+    if (document.getElementById("profile-settings-form")) loadUserSettings();
 
     const sections = document.querySelectorAll("section");
     if (sections.length > 0) {
@@ -307,7 +308,7 @@ function showPayment() {
 }
 
 // ==========================================
-// ۶. مدیریت سبد خرید و فاکتور (بارگذاری آدرس و شماره تلفن کاربر)
+// ۶. مدیریت سبد خرید و فاکتور
 // ==========================================
 function getCart() {
     return JSON.parse(localStorage.getItem("avira_cart") || "[]");
@@ -385,16 +386,17 @@ async function renderCartPage() {
         }
     }
 
-    // پیش‌فرض پر کردن شماره و آدرس از پروفایل کاربر
     if (supabaseClient) {
         const { data: { user } } = await supabaseClient.auth.getUser();
         if (user) {
-            const { data: profile } = await supabaseClient.from('profiles').select('phone, address').eq('id', user.id).single();
+            const { data: profile } = await supabaseClient.from('profiles').select('phone, address, postcode').eq('id', user.id).single();
             if (profile) {
                 const phoneInput = document.getElementById("checkout-phone");
                 const addressInput = document.getElementById("checkout-address");
+                const postcodeInputs = document.getElementById("checkout-postcode");
                 if (phoneInput && profile.phone) phoneInput.value = profile.phone;
                 if (addressInput && profile.address) addressInput.value = profile.address;
+                if (postcodeInputs && profile.postcode) postcodeInputs.value = profile.postcode;
             }
         }
     }
@@ -419,11 +421,18 @@ async function submitFinalOrder() {
     }
 
     const phoneVal = document.getElementById("checkout-phone")?.value.trim() || "";
+    const postcodeVal = document.getElementById("checkout-postcode")?.value.trim() || "";
     const addressVal = document.getElementById("checkout-address")?.value.trim() || "";
 
     if (!phoneVal) {
         alert("لطفاً شماره تلفن همراه خود را برای ثبت سفارش وارد کنید.");
         document.getElementById("checkout-phone")?.focus();
+        return;
+    }
+
+    if (!postcodeVal) {
+        alert("لطفاً کد پستی ۱۰ رقمی خود را جهت ثبت سفارش وارد کنید.");
+        document.getElementById("checkout-postcode")?.focus();
         return;
     }
 
@@ -433,11 +442,11 @@ async function submitFinalOrder() {
         return;
     }
 
-    // بروزرسانی شماره تلفن و آدرس در پروفایل کاربر
     await supabaseClient.from('profiles').upsert({
         id: user.id,
         phone: phoneVal,
         address: addressVal,
+        postcode: postcodeVal,
         updated_at: new Date().toISOString()
     });
 
@@ -462,7 +471,7 @@ async function submitFinalOrder() {
         .from('custom_orders')
         .insert([{
             order_code: orderCode,
-            description: `سبد خرید (${cart.length} آیتم): ${descriptionText} | 📍 آدرس تحویل: ${addressVal} | 📞 تلفن: ${phoneVal}`,
+            description: `سبد خرید (${cart.length} آیتم): ${descriptionText} | 📍 آدرس تحویل: ${addressVal} | 📮 کد پستی: ${postcodeVal} | 📞 تلفن: ${phoneVal}`,
             image_url: imagesList,
             user_id: user.id,
             items: cart,
@@ -481,14 +490,14 @@ async function submitFinalOrder() {
 }
 
 // ==========================================
-// ۷. مدیریت حساب کاربری و پروفایل (ثبت شماره تلفن در ثبت‌نام)
+// ۷. مدیریت حساب کاربری و پروفایل
 // ==========================================
 function initAuthListener() {
     if (!supabaseClient) return;
 
     const loggedOutView = document.getElementById("logged-out-view");
     const loggedInView = document.getElementById("logged-in-view");
-    const userEmailElem = document.getElementById("user-display-email");
+    const userEmailElem = document.getElementById("user-display-email") || document.getElementById("user-display-name");
 
     supabaseClient.auth.onAuthStateChange((event, session) => {
         const user = session ? session.user : null;
@@ -508,7 +517,7 @@ function initAuthListener() {
     });
 }
 
-async function registerUser(email, password, fullName = '', phone = '') {
+async function registerUser(email, password, fullName = '', phone = '', postcode = '') {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
     
     if (!phone) {
@@ -519,7 +528,7 @@ async function registerUser(email, password, fullName = '', phone = '') {
     const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
-        options: { data: { full_name: fullName, phone: phone } }
+        options: { data: { full_name: fullName, phone: phone, postcode: postcode } }
     });
 
     if (error) {
@@ -532,6 +541,7 @@ async function registerUser(email, password, fullName = '', phone = '') {
             id: data.user.id,
             full_name: fullName,
             phone: phone,
+            postcode: postcode,
             updated_at: new Date().toISOString()
         });
     }
@@ -573,6 +583,28 @@ window.addEventListener("click", (e) => {
     }
 });
 
+async function loadUserSettings() {
+    if (!supabaseClient) return;
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const emailElem = document.getElementById("settings-email");
+    if (emailElem) emailElem.value = user.email || "";
+
+    const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+    if (profile) {
+        const fullnameElem = document.getElementById("settings-fullname");
+        const phoneElem = document.getElementById("settings-phone");
+        const postcodeElem = document.getElementById("settings-postcode");
+        const addressElem = document.getElementById("settings-address");
+
+        if (fullnameElem) fullnameElem.value = profile.full_name || "";
+        if (phoneElem) phoneElem.value = profile.phone || "";
+        if (postcodeElem) postcodeElem.value = profile.postcode || "";
+        if (addressElem) addressElem.value = profile.address || "";
+    }
+}
+
 async function updateUserSettings() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
 
@@ -581,6 +613,7 @@ async function updateUserSettings() {
 
     const fullName = document.getElementById("settings-fullname")?.value.trim() || "";
     const phone = document.getElementById("settings-phone")?.value.trim() || "";
+    const postcode = document.getElementById("settings-postcode")?.value.trim() || "";
     const address = document.getElementById("settings-address")?.value.trim() || "";
 
     const { error } = await supabaseClient
@@ -589,6 +622,7 @@ async function updateUserSettings() {
             id: user.id,
             full_name: fullName,
             phone: phone,
+            postcode: postcode,
             address: address,
             updated_at: new Date().toISOString()
         });
@@ -599,6 +633,8 @@ async function updateUserSettings() {
         alert("اطلاعات حساب شما با موفقیت ذخیره شد!");
     }
 }
+
+const updateProfileInfo = updateUserSettings;
 
 async function updatePassword() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
@@ -890,7 +926,7 @@ async function loadUserSupportTickets() {
 }
 
 // ==========================================
-// ۱۰. پنل مدیریت (Admin Panel) + مدیریت کاربران
+// ۱۰. پنل مدیریت (Admin Panel)
 // ==========================================
 function checkAdminLogin() {
     const userElem = document.getElementById("admin-user");
@@ -976,7 +1012,6 @@ async function loadAdminDashboard() {
 
         if (error) throw error;
 
-        // دریافت پروفایل‌ها جهت نمایش آدرس و شماره تلفن خریدار
         const { data: profiles } = await supabaseClient.from('profiles').select('*');
         const profilesMap = {};
         if (profiles) {
@@ -997,78 +1032,103 @@ async function loadAdminDashboard() {
                     <div style="background: rgba(255,255,255,0.03); border-right: 3px solid #d4af37; padding: 8px 12px; margin: 6px 0; border-radius: 6px; font-size: 0.88rem;">
                         <div><strong style="color: #fff;">${item.title}</strong></div>
                         <div style="color: #aaa; font-size: 0.8rem; margin-top: 3px;">
-                            سایز: <span style="color: #fff;">${item.size || 'اختصاصی'}</span> | 
+                            سایز: <span style="color: #e0e0e0;">${item.size || 'اختصاصی'}</span> | 
                             جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
-                            قیمت: <span style="color: #4ade80;">${item.price || 'نامشخص'}</span>
+                            قیمت: <span style="color: #4ade80;">${item.price || '---'}</span>
                         </div>
                     </div>
                 `).join('');
             } else {
-                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${order.description || 'توضیحات موجود نیست'}</p>`;
+                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${order.description || 'توضیحات در دسترس نیست'}</p>`;
             }
 
-            const materialDisplay = order.material ? order.material : 'استاندارد';
-            const sizeDisplay = order.size ? order.size : 'اختصاصی';
+            const phone = userProfile.phone || 'ثبت نشده';
+            const address = userProfile.address || 'ثبت نشده';
+            const postcode = userProfile.postcode || 'ثبت نشده';
+            const fullName = userProfile.full_name || 'کاربر بدون نام';
 
             return `
-                <div class="order-card" style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.35); border-radius: 14px; padding: 20px; margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.4);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 14px;">
+                <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 12px;">
                         <div>
-                            <span style="color: #d4af37; font-weight: bold; font-size: 1.15rem;">🛍️ کد سفارش: ${order.order_code || 'بدون کد'}</span>
-                            <span style="display: block; color: #888; font-size: 0.8rem; margin-top: 4px;">📅 تاریخ ثبت: ${formatDatePersian(order.created_at)}</span>
+                            <span style="color: #aaa; font-size: 0.85rem;">کد سفارش:</span>
+                            <span style="color: #d4af37; font-weight: bold; font-size: 1.1rem; margin-right: 5px;">${order.order_code || '---'}</span>
                         </div>
+                        <span style="font-size: 0.82rem; color: #aaa; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px;">📅 ${formatDatePersian(order.created_at)}</span>
+                    </div>
+
+                    <div style="margin-bottom: 12px; font-size: 0.9rem; line-height: 1.6;">
+                        <p style="color: #60a5fa; margin-bottom: 4px;">👤 <strong>خریدار:</strong> ${fullName}</p>
+                        <p style="color: #4ade80; margin-bottom: 4px;">📞 <strong>شماره تماس:</strong> <span style="direction: ltr; display: inline-block;">${phone}</span></p>
+                        <p style="color: #f59e0b; margin-bottom: 4px;">📮 <strong>کد پستی:</strong> <span style="direction: ltr; display: inline-block;">${postcode}</span></p>
+                        <p style="color: #e0e0e0; margin-bottom: 4px;">📍 <strong>آدرس پستی:</strong> ${address}</p>
+                        <p style="color: #aaa; margin-bottom: 4px;">🏷️ <strong>متریال / سایز:</strong> ${order.material || 'استاندارد'} / ${order.size || 'اختصاصی'}</p>
+                    </div>
+
+                    <div style="margin: 12px 0;">
+                        <strong style="color: #fff; font-size: 0.9rem;">آیتم‌های سفارش:</strong>
+                        ${itemsHtml}
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; flex-wrap: wrap; gap: 10px;">
                         <div>
-                            <select onchange="updateOrderStatus('${order.order_code}', this.value)" style="background: #242424; color: #d4af37; border: 1px solid #d4af37; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; outline: none;">
-                                <option value="در انتظار بررسی" ${order.status === 'در انتظار بررسی' ? 'selected' : ''}>⏳ در انتظار بررسی</option>
-                                <option value="تایید شده" ${order.status === 'تایید شده' ? 'selected' : ''}>✅ تایید شده</option>
-                                <option value="در حال ساخت" ${order.status === 'در حال ساخت' ? 'selected' : ''}>🛠️ در حال ساخت</option>
-                                <option value="ارسال شده" ${order.status === 'ارسال شده' ? 'selected' : ''}>🚚 ارسال شده</option>
-                                <option value="لغو شده" ${order.status === 'لغو شده' ? 'selected' : ''}>❌ لغو شده</option>
+                            <label style="color: #aaa; font-size: 0.85rem; margin-left: 8px;">تغییر وضعیت:</label>
+                            <select onchange="updateOrderStatus('${order.id}', this.value)" style="background: #2a2a2a; color: #fff; border: 1px solid #d4af37; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                                <option value="در انتظار بررسی" ${order.status === 'در انتظار بررسی' ? 'selected' : ''}>در انتظار بررسی</option>
+                                <option value="تایید شده و در حال ساخت" ${order.status === 'تایید شده و در حال ساخت' ? 'selected' : ''}>تایید شده و در حال ساخت</option>
+                                <option value="ارسال شده" ${order.status === 'ارسال شده' ? 'selected' : ''}>ارسال شده</option>
+                                <option value="تحویل داده شده" ${order.status === 'تحویل داده شده' ? 'selected' : ''}>تحویل داده شده</option>
+                                <option value="لغو شده" ${order.status === 'لغو شده' ? 'selected' : ''}>لغو شده</option>
                             </select>
                         </div>
+                        <button onclick="deleteOrder('${order.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف سفارش</button>
                     </div>
-
-                    <!-- نمایش مشخصات خریدار (آدرس و شماره تلفن) -->
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem;">
-                        <strong style="color: #d4af37; display: block; margin-bottom: 6px;">👤 مشخصات خریدار:</strong>
-                        <div style="color: #ccc; margin-bottom: 3px;">نام: <span style="color: #fff; font-weight: bold;">${userProfile.full_name || 'ثبت نشده'}</span></div>
-                        <div style="color: #ccc; margin-bottom: 3px;">📞 شماره تلفن: <span style="color: #60a5fa; font-weight: bold;">${userProfile.phone || 'ثبت نشده'}</span></div>
-                        <div style="color: #ccc;">📍 آدرس پستی: <span style="color: #fff; font-weight: bold;">${userProfile.address || 'ثبت نشده'}</span></div>
-                    </div>
-
-                    <div style="margin-bottom: 12px;">
-                        <div style="font-size: 0.88rem; color: #aaa; margin-bottom: 8px;">
-                            🏷️ <b>متریال سفارش:</b> <span class="material-badge" style="background: rgba(212,175,55,0.15); color: #d4af37; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(212,175,55,0.3);">${materialDisplay}</span>
-                            &nbsp;|&nbsp;
-                            📏 <b>سایز سفارش:</b> <span style="color: #fff; font-weight: bold;">${sizeDisplay}</span>
-                        </div>
-                        <div style="margin-top: 12px;">
-                            <strong style="color: #fff; font-size: 0.95rem;">📦 لیست اقلام سفارش:</strong>
-                            ${itemsHtml}
-                        </div>
-                    </div>
-
-                    ${order.image_url && order.image_url !== '[تصویر فایل اختصاصی کاربر]' ? `
-                        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.08); font-size: 0.82rem; color: #aaa;">
-                            🖼️ <b>تصاویر / فایل‌ها:</b> <a href="${order.image_url}" target="_blank" style="color: #60a5fa; text-decoration: underline; margin-right: 5px;">مشاهده یا دانلود فایل</a>
-                        </div>
-                    ` : ''}
                 </div>
             `;
         }).join('');
 
     } catch (err) {
-        console.error("خطا در دریافت سفارشات ادمین:", err);
-        ordersList.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت اطلاعات سفارشات!</p>`;
+        console.error("خطا در بارگذاری پنل مدیریت:", err);
+        ordersList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 30px;">خطا در دریافت سفارشات!</p>`;
     }
 }
 
-// تابع جدید بارگذاری لیست کاربران در ادمین
-async function loadAdminUsers() {
-    const usersListContainer = document.getElementById("admin-users-list");
-    if (!usersListContainer || !supabaseClient) return;
+async function updateOrderStatus(orderId, newStatus) {
+    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+    const { error } = await supabaseClient
+        .from('custom_orders')
+        .update({ status: newStatus })
+        .eq('id', orderId);
 
-    usersListContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت اطلاعات کاربران...</p>`;
+    if (error) {
+        alert("خطا در به روزرسانی وضعیت: " + error.message);
+    } else {
+        alert("وضعیت سفارش با موفقیت بروزرسانی شد.");
+    }
+}
+
+async function deleteOrder(orderId) {
+    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+    if (!confirm("آیا از حذف این سفارش اطمینان دارید؟")) return;
+
+    const { error } = await supabaseClient
+        .from('custom_orders')
+        .delete()
+        .eq('id', orderId);
+
+    if (error) {
+        alert("خطا در حذف سفارش: " + error.message);
+    } else {
+        alert("سفارش حذف شد.");
+        loadAdminDashboard();
+    }
+}
+
+async function loadAdminUsers() {
+    const usersList = document.getElementById("admin-users-list");
+    if (!usersList || !supabaseClient) return;
+
+    usersList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت اطلاعات کاربران...</p>`;
 
     try {
         const { data: profiles, error } = await supabaseClient
@@ -1079,48 +1139,30 @@ async function loadAdminUsers() {
         if (error) throw error;
 
         if (!profiles || profiles.length === 0) {
-            usersListContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ کاربری ثبت نشده است.</p>`;
+            usersList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ کاربری ثبت نشده است.</p>`;
             return;
         }
 
-        usersListContainer.innerHTML = profiles.map(user => `
-            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 18px; margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;">
-                    <h4 style="color: #d4af37; margin: 0; font-size: 1.1rem;">👤 ${user.full_name || 'کاربر بدون نام'}</h4>
-                    <span style="font-size: 0.78rem; color: #888;">بروزرسانی: ${formatDatePersian(user.updated_at)}</span>
-                </div>
-                <p style="font-size: 0.9rem; color: #ccc; margin-bottom: 6px;">📞 <strong>شماره تلفن همراه:</strong> <span style="color: #60a5fa; direction: ltr; display: inline-block;">${user.phone || 'ثبت نشده'}</span></p>
-                <p style="font-size: 0.9rem; color: #ccc; margin-bottom: 6px;">📍 <strong>آدرس پستی:</strong> <span style="color: #fff;">${user.address || 'ثبت نشده'}</span></p>
-                <p style="font-size: 0.75rem; color: #666; margin-top: 8px;">شناسه کاربری: ${user.id}</p>
+        usersList.innerHTML = profiles.map(user => `
+            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.2); border-radius: 10px; padding: 15px; margin-bottom: 12px;">
+                <h4 style="color: #d4af37; margin-bottom: 8px;">${user.full_name || 'کاربر بدون نام'}</h4>
+                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📞 شماره تلفن: <span style="direction: ltr; display: inline-block;">${user.phone || 'ثبت نشده'}</span></p>
+                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📮 کد پستی: <span style="direction: ltr; display: inline-block;">${user.postcode || 'ثبت نشده'}</span></p>
+                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📍 آدرس: ${user.address || 'ثبت نشده'}</p>
+                <p style="color: #666; font-size: 0.78rem;">آخرین بروزرسانی: ${formatDatePersian(user.updated_at)}</p>
             </div>
         `).join('');
-
     } catch (err) {
-        console.error("خطا در بارگذاری کاربران:", err);
-        usersListContainer.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت کاربران!</p>`;
-    }
-}
-
-async function updateOrderStatus(orderCode, newStatus) {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
-    const { error } = await supabaseClient
-        .from('custom_orders')
-        .update({ status: newStatus })
-        .eq('order_code', orderCode);
-
-    if (error) {
-        alert("خطا در به روزرسانی وضعیت: " + error.message);
-    } else {
-        alert(`وضعیت سفارش ${orderCode} به "${newStatus}" تغییر یافت.`);
+        console.error("خطا در دریافت لیست کاربران:", err);
+        usersList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 30px;">خطا در دریافت کاربران!</p>`;
     }
 }
 
 async function loadAdminSupportTickets() {
-    const listContainer = document.getElementById("admin-support-list");
-    if (!listContainer || !supabaseClient) return;
+    const supportList = document.getElementById("admin-support-list");
+    if (!supportList || !supabaseClient) return;
 
-    listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت پیام‌های پشتیبانی...</p>`;
+    supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت پیام‌های پشتیبانی...</p>`;
 
     try {
         const { data: messages, error } = await supabaseClient
@@ -1131,38 +1173,38 @@ async function loadAdminSupportTickets() {
         if (error) throw error;
 
         if (!messages || messages.length === 0) {
-            listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ پیامی ثبت نشده است.</p>`;
+            supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ پیام پشتیبانی ثبت نشده است.</p>`;
             return;
         }
 
-        listContainer.innerHTML = messages.map(msg => `
-            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 16px; margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #aaa; margin-bottom: 8px;">
-                    <span>👤 کاربر: ${msg.user_email || msg.user_id}</span>
+        supportList.innerHTML = messages.map(msg => `
+            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.25); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 8px;">
+                    <span>👤 ${msg.user_email || 'کاربر'}</span>
                     <span>📅 ${formatDatePersian(msg.created_at)}</span>
                 </div>
-                <p style="color: #fff; font-size: 0.92rem; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;"><strong>پیام:</strong> ${msg.message}</p>
-                
+                <p style="color: #fff; font-size: 0.95rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    ${msg.message}
+                </p>
                 ${msg.admin_reply ? `
-                    <p style="color: #4ade80; font-size: 0.88rem; margin-bottom: 8px;"><strong>پاسخ قبلی شما:</strong> ${msg.admin_reply}</p>
+                    <p style="color: #4ade80; font-size: 0.88rem; background: rgba(74, 222, 128, 0.1); padding: 8px; border-radius: 6px; margin-bottom: 10px;">
+                        <strong>پاسخ شما:</strong> ${msg.admin_reply}
+                    </p>
                 ` : ''}
-
                 <div style="display: flex; gap: 8px; margin-top: 10px;">
-                    <input type="text" id="reply-input-${msg.id}" placeholder="پاسخ ادمین..." style="flex: 1; padding: 8px 12px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 0.88rem;">
-                    <button onclick="sendAdminReply('${msg.id}')" style="background: #d4af37; color: #121212; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">ارسال پاسخ</button>
+                    <input type="text" id="reply-input-${msg.id}" placeholder="پاسخ به این پیام..." style="flex: 1; padding: 8px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 0.85rem;">
+                    <button onclick="replyToSupportMessage('${msg.id}')" style="background: #d4af37; color: #121212; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">ارسال پاسخ</button>
                 </div>
             </div>
         `).join('');
-
     } catch (err) {
-        console.error("خطا در دریافت پیام‌های پشتیبانی ادمین:", err);
-        listContainer.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در بارگذاری پیام‌ها!</p>`;
+        console.error("خطا در بارگذاری پیام‌های پشتیبانی:", err);
+        supportList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 30px;">خطا در دریافت پیام‌ها!</p>`;
     }
 }
 
-async function sendAdminReply(msgId) {
+async function replyToSupportMessage(msgId) {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
     const inputElem = document.getElementById(`reply-input-${msgId}`);
     const replyText = inputElem ? inputElem.value.trim() : "";
 
@@ -1177,9 +1219,9 @@ async function sendAdminReply(msgId) {
         .eq('id', msgId);
 
     if (error) {
-        alert("خطا در ارسال پاسخ: " + error.message);
+        alert("خطا در ثبت پاسخ: " + error.message);
     } else {
-        alert("پاسخ شما با موفقیت ارسال شد.");
+        alert("پاسخ شما با موفقیت ثبت و ارسال شد.");
         loadAdminSupportTickets();
     }
 }
