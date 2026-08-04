@@ -793,3 +793,31 @@ body.custom-order-page, body.collection-page, body.settings-page {
         grid-template-columns: 1fr;
     }
 }
+.form-group {
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: right;
+}
+
+.form-group label {
+  color: #e0e0e0;
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #242424; /* رنگ زمینه تیره‌ی ورودی‌ها */
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus {
+  border-color: #cda24d; /* رنگ فوکوس طلایی هماهنگ با دکمه ذخیره */
+}

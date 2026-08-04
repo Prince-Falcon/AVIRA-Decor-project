@@ -73,7 +73,20 @@
             <div class="form-group">
                 <label for="settings-address">آدرس دقیق پستی:</label>
                 <textarea id="settings-address" placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد..." style="height: 90px;" required></textarea>
-            </div>
+                <!-- فیلد کد پستی -->
+               <div class="form-group">
+             <label for="postal-code">کد پستی (۱۰ رقمی):</label>
+             <input 
+             type="text" 
+              id="postal-code" 
+              name="postalCode" 
+              laceholder="مثلاً: ۱۲۳۴۵۶۷۸۹۰" 
+              maxlength="10" 
+              pattern="\d{10}"
+              inputmode="numeric"
+              />
+             </div>
+             </div>
 
             <button type="submit" class="btn-submit" style="width: 100%; margin-top: 10px;">ذخیره اطلاعات شخصی</button>
         </form>
