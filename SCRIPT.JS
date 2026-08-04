@@ -20,7 +20,6 @@ const sizeMultipliers = {
     '۴۰×۴۰ سانتی‌متر': 2.0
 };
 
-// حذف متریال فلزی (metal)
 const materialMultipliers = {
     'economy': 0.85, // اقتصادی (-۱۵٪)
     'normal': 1.0,   // استاندارد
@@ -160,7 +159,6 @@ const collectionsProducts = {
             { id: 405, title: "Bugatti Chiron", price: "۵۶۰,۰۰۰ تومان", img: "assets/images/collection20.png" }
         ]
     },
-    // مجموعه جدید گیمینگ
     gaming: {
         title: "مجموعه Gaming",
         items: [
@@ -262,7 +260,7 @@ function updatePriceView() {
 }
 
 // ==========================================
-// ۵. ثبت سفارش اختصاصی (همراه با محاسبات کلاس اقتصادی)
+// ۵. ثبت سفارش اختصاصی
 // ==========================================
 function showPayment() {
     const imageInput = document.getElementById("design-image");
@@ -284,7 +282,7 @@ function showPayment() {
     reader.onload = function (e) {
         const base64Image = e.target.result;
         const selectedMat = getSelectedMaterial();
-        const customBasePrice = 400000; // پایه قیمت سفارش اختصاصی
+        const customBasePrice = 400000;
         const materialMult = materialMultipliers[selectedMat] || 1.0;
         const finalCustomPrice = formatToPersianPrice(customBasePrice * materialMult);
 
@@ -309,7 +307,7 @@ function showPayment() {
 }
 
 // ==========================================
-// ۶. مدیریت سبد خرید و فاکتور (بیعانه ۳۰ درصد پویا)
+// ۶. مدیریت سبد خرید و فاکتور (بارگذاری آدرس و شماره تلفن کاربر)
 // ==========================================
 function getCart() {
     return JSON.parse(localStorage.getItem("avira_cart") || "[]");
@@ -336,7 +334,7 @@ function addToCart() {
     closeProductModal();
 }
 
-function renderCartPage() {
+async function renderCartPage() {
     const container = document.getElementById("cart-items-container");
     const checkoutBox = document.getElementById("cart-checkout-box");
     const codeElem = document.getElementById("checkout-order-code");
@@ -369,7 +367,6 @@ function renderCartPage() {
         </div>
     `).join('');
 
-    // محاسبه مجموع خرید و بیعانه ۳۰٪
     let grandTotal = 0;
     cart.forEach(item => {
         grandTotal += parsePriceToNumber(item.price);
@@ -385,6 +382,20 @@ function renderCartPage() {
         checkoutBox.style.display = "block";
         if (codeElem.textContent === "---" || !codeElem.textContent) {
             codeElem.textContent = "AVR-" + Math.floor(100000 + Math.random() * 900000);
+        }
+    }
+
+    // پیش‌فرض پر کردن شماره و آدرس از پروفایل کاربر
+    if (supabaseClient) {
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        if (user) {
+            const { data: profile } = await supabaseClient.from('profiles').select('phone, address').eq('id', user.id).single();
+            if (profile) {
+                const phoneInput = document.getElementById("checkout-phone");
+                const addressInput = document.getElementById("checkout-address");
+                if (phoneInput && profile.phone) phoneInput.value = profile.phone;
+                if (addressInput && profile.address) addressInput.value = profile.address;
+            }
         }
     }
 }
@@ -407,6 +418,29 @@ async function submitFinalOrder() {
         return;
     }
 
+    const phoneVal = document.getElementById("checkout-phone")?.value.trim() || "";
+    const addressVal = document.getElementById("checkout-address")?.value.trim() || "";
+
+    if (!phoneVal) {
+        alert("لطفاً شماره تلفن همراه خود را برای ثبت سفارش وارد کنید.");
+        document.getElementById("checkout-phone")?.focus();
+        return;
+    }
+
+    if (!addressVal) {
+        alert("لطفاً آدرس دقیق پستی خود را جهت ارسال سفارش ثبت نمایید.");
+        document.getElementById("checkout-address")?.focus();
+        return;
+    }
+
+    // بروزرسانی شماره تلفن و آدرس در پروفایل کاربر
+    await supabaseClient.from('profiles').upsert({
+        id: user.id,
+        phone: phoneVal,
+        address: addressVal,
+        updated_at: new Date().toISOString()
+    });
+
     let cart = getCart();
     const codeElem = document.getElementById("checkout-order-code");
     let orderCode = codeElem ? codeElem.textContent : ("AVR-" + Math.floor(100000 + Math.random() * 900000));
@@ -421,7 +455,6 @@ async function submitFinalOrder() {
     }).join(' | ');
 
     const descriptionText = cart.map(item => `${item.title} (سایز: ${item.size || 'اختصاصی'} - جنس: ${translateMaterial(item.material)})`).join('؛ ');
-
     const materialsList = [...new Set(cart.map(i => translateMaterial(i.material)))].join(', ');
     const sizesList = [...new Set(cart.map(i => i.size || 'اختصاصی'))].join(', ');
 
@@ -429,7 +462,7 @@ async function submitFinalOrder() {
         .from('custom_orders')
         .insert([{
             order_code: orderCode,
-            description: `سبد خرید (${cart.length} آیتم): ${descriptionText}`,
+            description: `سبد خرید (${cart.length} آیتم): ${descriptionText} | 📍 آدرس تحویل: ${addressVal} | 📞 تلفن: ${phoneVal}`,
             image_url: imagesList,
             user_id: user.id,
             items: cart,
@@ -441,14 +474,14 @@ async function submitFinalOrder() {
     if (error) {
         alert("خطا در ثبت سفارش: " + error.message);
     } else {
-        alert("سفارش شما ثبت شد! لطفاً پس از واریز بیعانه، عکس رسید را به پشتیبانی ارسال کنید.");
+        alert("سفارش شما با موفقیت ثبت شد! لطفاً پس از واریز بیعانه، عکس رسید را ارسال فرمایید.");
         localStorage.removeItem("avira_cart");
         window.location.href = "orders.html";
     }
 }
 
 // ==========================================
-// ۷. مدیریت حساب کاربری و پروفایل
+// ۷. مدیریت حساب کاربری و پروفایل (ثبت شماره تلفن در ثبت‌نام)
 // ==========================================
 function initAuthListener() {
     if (!supabaseClient) return;
@@ -475,13 +508,18 @@ function initAuthListener() {
     });
 }
 
-async function registerUser(email, password, fullName = '') {
+async function registerUser(email, password, fullName = '', phone = '') {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
     
+    if (!phone) {
+        alert("ورود شماره تلفن همراه اجباری است.");
+        return;
+    }
+
     const { data, error } = await supabaseClient.auth.signUp({
         email: email,
         password: password,
-        options: { data: { full_name: fullName } }
+        options: { data: { full_name: fullName, phone: phone } }
     });
 
     if (error) {
@@ -493,6 +531,7 @@ async function registerUser(email, password, fullName = '') {
         await supabaseClient.from('profiles').upsert({
             id: data.user.id,
             full_name: fullName,
+            phone: phone,
             updated_at: new Date().toISOString()
         });
     }
@@ -583,7 +622,7 @@ async function updatePassword() {
 }
 
 // ==========================================
-// ۸. سفارشات کاربر (با پشتیبانی Realtime)
+// ۸. سفارشات کاربر
 // ==========================================
 let userOrdersSubscription = null;
 
@@ -681,7 +720,7 @@ async function loadUserOrders() {
 }
 
 // ==========================================
-// ۹. چت آنلاین و پشتیبانی (تعریف تابع submitSupportMessage برای رفع ارور)
+// ۹. چت آنلاین و پشتیبانی
 // ==========================================
 let chatRealtimeChannel = null;
 
@@ -755,7 +794,6 @@ async function loadLiveChatMessages() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// تابع اصلی ارسال پیام که توسط دکمه‌های چت فراخوانی می‌شود
 async function submitSupportMessage() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
 
@@ -790,7 +828,6 @@ async function submitSupportMessage() {
     }
 }
 
-// نام جایگزین برای سازگاری کامل
 const sendSupportMessage = submitSupportMessage;
 
 async function listenToChatRealtime() {
@@ -853,10 +890,8 @@ async function loadUserSupportTickets() {
 }
 
 // ==========================================
-// ۱۰. پنل مدیریت (Admin Panel)
+// ۱۰. پنل مدیریت (Admin Panel) + مدیریت کاربران
 // ==========================================
-let adminRealtimeChannel = null;
-
 function checkAdminLogin() {
     const userElem = document.getElementById("admin-user");
     const passElem = document.getElementById("admin-pass");
@@ -890,20 +925,38 @@ function logoutAdmin() {
 
 function switchAdminTab(tab) {
     const tabOrders = document.getElementById("tab-orders");
+    const tabUsers = document.getElementById("tab-users");
     const tabSupport = document.getElementById("tab-support");
+
     const btnOrders = document.getElementById("btn-tab-orders");
+    const btnUsers = document.getElementById("btn-tab-users");
     const btnSupport = document.getElementById("btn-tab-support");
 
     if (tab === 'orders') {
         if (tabOrders) tabOrders.style.display = "block";
+        if (tabUsers) tabUsers.style.display = "none";
         if (tabSupport) tabSupport.style.display = "none";
+
         if (btnOrders) btnOrders.style.opacity = "1";
+        if (btnUsers) btnUsers.style.opacity = "0.5";
         if (btnSupport) btnSupport.style.opacity = "0.5";
         loadAdminDashboard();
+    } else if (tab === 'users') {
+        if (tabOrders) tabOrders.style.display = "none";
+        if (tabUsers) tabUsers.style.display = "block";
+        if (tabSupport) tabSupport.style.display = "none";
+
+        if (btnOrders) btnOrders.style.opacity = "0.5";
+        if (btnUsers) btnUsers.style.opacity = "1";
+        if (btnSupport) btnSupport.style.opacity = "0.5";
+        loadAdminUsers();
     } else {
         if (tabOrders) tabOrders.style.display = "none";
+        if (tabUsers) tabUsers.style.display = "none";
         if (tabSupport) tabSupport.style.display = "block";
+
         if (btnOrders) btnOrders.style.opacity = "0.5";
+        if (btnUsers) btnUsers.style.opacity = "0.5";
         if (btnSupport) btnSupport.style.opacity = "1";
         loadAdminSupportTickets();
     }
@@ -923,12 +976,21 @@ async function loadAdminDashboard() {
 
         if (error) throw error;
 
+        // دریافت پروفایل‌ها جهت نمایش آدرس و شماره تلفن خریدار
+        const { data: profiles } = await supabaseClient.from('profiles').select('*');
+        const profilesMap = {};
+        if (profiles) {
+            profiles.forEach(p => profilesMap[p.id] = p);
+        }
+
         if (!orders || orders.length === 0) {
             ordersList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ سفارشی در دیتابیس ثبت نشده است.</p>`;
             return;
         }
 
         ordersList.innerHTML = orders.map(order => {
+            const userProfile = profilesMap[order.user_id] || {};
+
             let itemsHtml = '';
             if (order.items && Array.isArray(order.items) && order.items.length > 0) {
                 itemsHtml = order.items.map(item => `
@@ -966,6 +1028,14 @@ async function loadAdminDashboard() {
                         </div>
                     </div>
 
+                    <!-- نمایش مشخصات خریدار (آدرس و شماره تلفن) -->
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 12px; margin-bottom: 12px; font-size: 0.88rem;">
+                        <strong style="color: #d4af37; display: block; margin-bottom: 6px;">👤 مشخصات خریدار:</strong>
+                        <div style="color: #ccc; margin-bottom: 3px;">نام: <span style="color: #fff; font-weight: bold;">${userProfile.full_name || 'ثبت نشده'}</span></div>
+                        <div style="color: #ccc; margin-bottom: 3px;">📞 شماره تلفن: <span style="color: #60a5fa; font-weight: bold;">${userProfile.phone || 'ثبت نشده'}</span></div>
+                        <div style="color: #ccc;">📍 آدرس پستی: <span style="color: #fff; font-weight: bold;">${userProfile.address || 'ثبت نشده'}</span></div>
+                    </div>
+
                     <div style="margin-bottom: 12px;">
                         <div style="font-size: 0.88rem; color: #aaa; margin-bottom: 8px;">
                             🏷️ <b>متریال سفارش:</b> <span class="material-badge" style="background: rgba(212,175,55,0.15); color: #d4af37; padding: 3px 10px; border-radius: 6px; font-weight: bold; border: 1px solid rgba(212,175,55,0.3);">${materialDisplay}</span>
@@ -989,7 +1059,45 @@ async function loadAdminDashboard() {
 
     } catch (err) {
         console.error("خطا در دریافت سفارشات ادمین:", err);
-        ordersList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 20px;">خطا در دریافت اطلاعات سفارشات از دیتابیس!</p>`;
+        ordersList.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت اطلاعات سفارشات!</p>`;
+    }
+}
+
+// تابع جدید بارگذاری لیست کاربران در ادمین
+async function loadAdminUsers() {
+    const usersListContainer = document.getElementById("admin-users-list");
+    if (!usersListContainer || !supabaseClient) return;
+
+    usersListContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت اطلاعات کاربران...</p>`;
+
+    try {
+        const { data: profiles, error } = await supabaseClient
+            .from('profiles')
+            .select('*')
+            .order('updated_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!profiles || profiles.length === 0) {
+            usersListContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ کاربری ثبت نشده است.</p>`;
+            return;
+        }
+
+        usersListContainer.innerHTML = profiles.map(user => `
+            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 18px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 8px;">
+                    <h4 style="color: #d4af37; margin: 0; font-size: 1.1rem;">👤 ${user.full_name || 'کاربر بدون نام'}</h4>
+                    <span style="font-size: 0.78rem; color: #888;">بروزرسانی: ${formatDatePersian(user.updated_at)}</span>
+                </div>
+                <p style="font-size: 0.9rem; color: #ccc; margin-bottom: 6px;">📞 <strong>شماره تلفن همراه:</strong> <span style="color: #60a5fa; direction: ltr; display: inline-block;">${user.phone || 'ثبت نشده'}</span></p>
+                <p style="font-size: 0.9rem; color: #ccc; margin-bottom: 6px;">📍 <strong>آدرس پستی:</strong> <span style="color: #fff;">${user.address || 'ثبت نشده'}</span></p>
+                <p style="font-size: 0.75rem; color: #666; margin-top: 8px;">شناسه کاربری: ${user.id}</p>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error("خطا در بارگذاری کاربران:", err);
+        usersListContainer.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت کاربران!</p>`;
     }
 }
 
@@ -1002,37 +1110,17 @@ async function updateOrderStatus(orderCode, newStatus) {
         .eq('order_code', orderCode);
 
     if (error) {
-        alert("خطا در تغییر وضعیت: " + error.message);
+        alert("خطا در به روزرسانی وضعیت: " + error.message);
     } else {
-        alert("وضعیت سفارش با موفقیت به روزرسانی شد.");
-        loadAdminDashboard();
+        alert(`وضعیت سفارش ${orderCode} به "${newStatus}" تغییر یافت.`);
     }
 }
 
-function listenToAdminRealtime() {
-    if (!supabaseClient || adminRealtimeChannel) return;
-
-    adminRealtimeChannel = supabaseClient
-        .channel('admin-global-changes')
-        .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'support_messages' },
-            () => { loadAdminSupportTickets(); }
-        )
-        .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'custom_orders' },
-            () => { loadAdminDashboard(); }
-        )
-        .subscribe();
-}
-
 async function loadAdminSupportTickets() {
-    const supportList = document.getElementById("admin-support-list") || document.getElementById("support-list");
-    if (!supportList || !supabaseClient) return;
+    const listContainer = document.getElementById("admin-support-list");
+    if (!listContainer || !supabaseClient) return;
 
-    listenToAdminRealtime();
-    supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">در حال دریافت پیام‌های پشتیبانی...</p>`;
+    listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت پیام‌های پشتیبانی...</p>`;
 
     try {
         const { data: messages, error } = await supabaseClient
@@ -1043,63 +1131,55 @@ async function loadAdminSupportTickets() {
         if (error) throw error;
 
         if (!messages || messages.length === 0) {
-            supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">هیچ پیام پشتیبانی دریافت نشده است.</p>`;
+            listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ پیامی ثبت نشده است.</p>`;
             return;
         }
 
-        supportList.innerHTML = messages.map(msg => `
-            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 16px; margin-bottom: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; color: #aaa;">
-                    <span>👤 کاربر: <strong style="color: #fff;">${msg.user_email || msg.user_id}</strong></span>
+        listContainer.innerHTML = messages.map(msg => `
+            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 16px; margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: #aaa; margin-bottom: 8px;">
+                    <span>👤 کاربر: ${msg.user_email || msg.user_id}</span>
                     <span>📅 ${formatDatePersian(msg.created_at)}</span>
                 </div>
-                <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; color: #fff; margin-bottom: 10px; font-size: 0.95rem;">
-                    💬 <strong>متن پیام:</strong> ${msg.message}
-                </div>
+                <p style="color: #fff; font-size: 0.92rem; margin-bottom: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px;"><strong>پیام:</strong> ${msg.message}</p>
+                
                 ${msg.admin_reply ? `
-                    <div style="background: rgba(212,175,55,0.1); border-right: 3px solid #d4af37; padding: 10px; border-radius: 6px; color: #d4af37; font-size: 0.9rem; margin-bottom: 10px;">
-                        <strong>پاسخ ثبت‌شده ادمین:</strong> ${msg.admin_reply}
-                    </div>
+                    <p style="color: #4ade80; font-size: 0.88rem; margin-bottom: 8px;"><strong>پاسخ قبلی شما:</strong> ${msg.admin_reply}</p>
                 ` : ''}
-                <div style="display: flex; gap: 8px; margin-top: 8px;">
-                    <input type="text" id="reply-input-${msg.id}" placeholder="پاسخ خود را بنویسید..." style="flex: 1; background: #2a2a2a; border: 1px solid #444; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 0.88rem; outline: none;">
-                    <button onclick="sendAdminReply('${msg.id}')" style="background: #d4af37; color: #121212; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">ارسال پاسخ</button>
+
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <input type="text" id="reply-input-${msg.id}" placeholder="پاسخ ادمین..." style="flex: 1; padding: 8px 12px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 0.88rem;">
+                    <button onclick="sendAdminReply('${msg.id}')" style="background: #d4af37; color: #121212; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">ارسال پاسخ</button>
                 </div>
             </div>
         `).join('');
 
     } catch (err) {
-        console.error("خطا در دریافت پیام‌ها توسط ادمین:", err);
-        supportList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 20px;">خطا در دریافت اطلاعات پشتیبانی!</p>`;
+        console.error("خطا در دریافت پیام‌های پشتیبانی ادمین:", err);
+        listContainer.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در بارگذاری پیام‌ها!</p>`;
     }
 }
 
-async function sendAdminReply(messageId) {
+async function sendAdminReply(msgId) {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
 
-    const inputElem = document.getElementById(`reply-input-${messageId}`);
-    if (!inputElem) return;
+    const inputElem = document.getElementById(`reply-input-${msgId}`);
+    const replyText = inputElem ? inputElem.value.trim() : "";
 
-    const replyText = inputElem.value.trim();
     if (!replyText) return alert("لطفاً متن پاسخ را وارد کنید.");
 
-    try {
-        const { error } = await supabaseClient
-            .from('support_messages')
-            .update({ 
-                admin_reply: replyText,
-                status: 'replied'
-            })
-            .eq('id', messageId);
+    const { error } = await supabaseClient
+        .from('support_messages')
+        .update({
+            admin_reply: replyText,
+            status: 'replied'
+        })
+        .eq('id', msgId);
 
-        if (error) {
-            alert("خطا در ارسال پاسخ: " + error.message);
-        } else {
-            alert("پاسخ شما ارسال شد.");
-            loadAdminSupportTickets();
-        }
-    } catch (err) {
-        console.error("خطا در ارسال پاسخ ادمین:", err);
-        alert("خطا در ارسال پاسخ!");
+    if (error) {
+        alert("خطا در ارسال پاسخ: " + error.message);
+    } else {
+        alert("پاسخ شما با موفقیت ارسال شد.");
+        loadAdminSupportTickets();
     }
 }

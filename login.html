@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -158,10 +158,13 @@
                 <p>اطلاعات خود را برای ثبت‌نام وارد کنید</p>
             </div>
             <form id="form-register-action">
-                <!-- اضافه شدن فیلد نام و نام خانوادگی -->
                 <div class="form-group">
                     <label for="register-fullname">نام و نام خانوادگی</label>
                     <input type="text" id="register-fullname" placeholder="مثال: علی محمدی" style="direction: rtl;" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-phone">شماره تلفن همراه (اجباری)</label>
+                    <input type="tel" id="register-phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" style="direction: ltr; text-align: right;" required>
                 </div>
                 <div class="form-group">
                     <label for="register-email">ایمیل</label>
@@ -179,7 +182,6 @@
         </div>
     </div>
 
-    <!-- اسکریپت‌های اتصال به Supabase و هندل فرم‌ها -->
     <script src="script.js"></script>
     <script>
         const loginForm = document.getElementById('login-form');
@@ -207,19 +209,17 @@
             }
         });
 
-        // هندل فرم ثبت‌نام (ارسال email, password و fullName)
+        // هندل فرم ثبت‌نام (ارسال email, password, fullName و phone)
         document.getElementById('form-register-action').addEventListener('submit', async (e) => {
             e.preventDefault();
             const fullName = document.getElementById('register-fullname').value.trim();
+            const phone = document.getElementById('register-phone').value.trim();
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
             if (typeof registerUser === 'function') {
-                await registerUser(email, password, fullName);
+                await registerUser(email, password, fullName, phone);
             }
         });
     </script>
 </body>
 </html>
-
-
-
