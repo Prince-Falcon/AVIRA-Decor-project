@@ -45,7 +45,7 @@
         <div class="menu">☰</div>
     </header>
 
-    <main class="custom-container" style="margin-top: 100px;">
+    <main class="custom-container show" style="margin-top: 100px;">
         <h1>سفارش اختصاصی</h1>
         <p class="subtitle">طرح خود را ارسال کنید تا برای شما تولید کنیم</p>
 
@@ -55,12 +55,42 @@
                 <input type="file" id="design-image" accept="image/*" required>
             </div>
 
+            <!-- انتخاب کلاس اقتصادی / متریال -->
+            <div class="form-group">
+                <label class="section-label" style="display: block; margin-bottom: 10px; color: #e0e0e0;">انتخاب کلاس اقتصادی / کیفیت:</label>
+                <div class="material-options" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <label class="material-card" style="flex: 1; min-width: 130px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="radio" name="material" value="economy">
+                        <div class="card-content">
+                            <span class="material-title" style="display: block; font-weight: bold; color: #fff;">Economy</span>
+                            <span class="material-desc" style="font-size: 0.8rem; color: #aaa;">اقتصادی (-۱۵٪)</span>
+                        </div>
+                    </label>
+
+                    <label class="material-card" style="flex: 1; min-width: 130px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="radio" name="material" value="normal" checked>
+                        <div class="card-content">
+                            <span class="material-title" style="display: block; font-weight: bold; color: #fff;">Normal</span>
+                            <span class="material-desc" style="font-size: 0.8rem; color: #aaa;">استاندارد</span>
+                        </div>
+                    </label>
+
+                    <label class="material-card" style="flex: 1; min-width: 130px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="radio" name="material" value="luxury">
+                        <div class="card-content">
+                            <span class="material-title" style="display: block; font-weight: bold; color: #fff;">Luxury</span>
+                            <span class="material-desc" style="font-size: 0.8rem; color: #aaa;">لوکس (+۳۵٪)</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="design-description">توضیحات طرح:</label>
                 <textarea id="design-description" placeholder="توضیحات دقیق ابعاد و جزئیات طرح خود را بنویسید..." required></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">افزودن به سبد خرید و ثبت بیعانه</button>
+            <button type="submit" class="btn-submit">افزودن به سبد خرید و ثبت سفارش</button>
         </form>
     </main>
 

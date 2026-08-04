@@ -20,19 +20,18 @@ const sizeMultipliers = {
     '۴۰×۴۰ سانتی‌متر': 2.0
 };
 
+// حذف متریال فلزی (metal)
 const materialMultipliers = {
     'economy': 0.85, // اقتصادی (-۱۵٪)
     'normal': 1.0,   // استاندارد
-    'luxury': 1.35,  // لوکس (+۳۵٪)
-    'metal': 1.70    // فلزی (+۷۰٪)
+    'luxury': 1.35   // لوکس (+۳۵٪)
 };
 
 function translateMaterial(mat) {
     const map = {
         'economy': 'اقتصادی (Economy)',
         'normal': 'استاندارد (Normal)',
-        'luxury': 'لوکس (Luxury)',
-        'metal': 'فلزی / پلاک (Metal)'
+        'luxury': 'لوکس (Luxury)'
     };
     return map[mat] || mat || 'استاندارد';
 }
@@ -55,7 +54,7 @@ function formatDatePersian(dateStr) {
 
 function parsePriceToNumber(priceStr) {
     if (!priceStr) return 0;
-    const faToEnDigits = priceStr.replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+    const faToEnDigits = String(priceStr).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
     const cleanNum = faToEnDigits.replace(/[^0-9]/g, '');
     return parseInt(cleanNum, 10) || 0;
 }
@@ -160,6 +159,17 @@ const collectionsProducts = {
             { id: 404, title: "Lamborghini Aventador", price: "۴۸۰,۰۰۰ تومان", img: "assets/images/collection19.png" },
             { id: 405, title: "Bugatti Chiron", price: "۵۶۰,۰۰۰ تومان", img: "assets/images/collection20.png" }
         ]
+    },
+    // مجموعه جدید گیمینگ
+    gaming: {
+        title: "مجموعه Gaming",
+        items: [
+            { id: 501, title: "طرح Cyberpunk 2077", price: "۴۵۰,۰۰۰ تومان", img: "assets/images/collection21.png" },
+            { id: 502, title: "طرح God of War", price: "۴۸۰,۰۰۰ تومان", img: "assets/images/collection22.png" },
+            { id: 503, title: "طرح The Witcher 3", price: "۴۶۰,۰۰۰ تومان", img: "assets/images/collection23.png" },
+            { id: 504, title: "طرح Elden Ring", price: "۴۹۰,۰۰۰ تومان", img: "assets/images/collection24.png" },
+            { id: 505, title: "طرح GTA V", price: "۴۴۰,۰۰۰ تومان", img: "assets/images/collection25.png" }
+        ]
     }
 };
 
@@ -252,7 +262,7 @@ function updatePriceView() {
 }
 
 // ==========================================
-// ۵. ثبت سفارش اختصاصی
+// ۵. ثبت سفارش اختصاصی (همراه با محاسبات کلاس اقتصادی)
 // ==========================================
 function showPayment() {
     const imageInput = document.getElementById("design-image");
@@ -274,12 +284,16 @@ function showPayment() {
     reader.onload = function (e) {
         const base64Image = e.target.result;
         const selectedMat = getSelectedMaterial();
+        const customBasePrice = 400000; // پایه قیمت سفارش اختصاصی
+        const materialMult = materialMultipliers[selectedMat] || 1.0;
+        const finalCustomPrice = formatToPersianPrice(customBasePrice * materialMult);
+
         let cart = getCart();
 
         cart.push({
             type: "custom",
             title: "سفارش اختصاصی تابلو",
-            price: "بیعانه ۲۵۰,۰۰۰ تومان",
+            price: finalCustomPrice,
             size: "اختصاصی",
             material: selectedMat,
             description: descriptionInput.value.trim(),
@@ -295,7 +309,7 @@ function showPayment() {
 }
 
 // ==========================================
-// ۶. مدیریت سبد خرید و فاکتور
+// ۶. مدیریت سبد خرید و فاکتور (بیعانه ۳۰ درصد پویا)
 // ==========================================
 function getCart() {
     return JSON.parse(localStorage.getItem("avira_cart") || "[]");
@@ -327,6 +341,10 @@ function renderCartPage() {
     const checkoutBox = document.getElementById("cart-checkout-box");
     const codeElem = document.getElementById("checkout-order-code");
 
+    const totalPriceElem = document.getElementById("checkout-total-price");
+    const depositPriceElem = document.getElementById("checkout-deposit-price");
+    const warningDepositElem = document.getElementById("checkout-warning-deposit");
+
     if (!container) return;
 
     let cart = getCart();
@@ -350,6 +368,18 @@ function renderCartPage() {
             <button onclick="removeFromCart(${index})" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف</button>
         </div>
     `).join('');
+
+    // محاسبه مجموع خرید و بیعانه ۳۰٪
+    let grandTotal = 0;
+    cart.forEach(item => {
+        grandTotal += parsePriceToNumber(item.price);
+    });
+
+    const deposit30Percent = Math.round(grandTotal * 0.30);
+
+    if (totalPriceElem) totalPriceElem.textContent = formatToPersianPrice(grandTotal);
+    if (depositPriceElem) depositPriceElem.textContent = formatToPersianPrice(deposit30Percent);
+    if (warningDepositElem) warningDepositElem.textContent = formatToPersianPrice(deposit30Percent);
 
     if (checkoutBox && codeElem) {
         checkoutBox.style.display = "block";
@@ -651,7 +681,7 @@ async function loadUserOrders() {
 }
 
 // ==========================================
-// ۹. چت آنلاین و پشتیبانی (پشتیبانی Realtime)
+// ۹. چت آنلاین و پشتیبانی (تعریف تابع submitSupportMessage برای رفع ارور)
 // ==========================================
 let chatRealtimeChannel = null;
 
@@ -725,7 +755,8 @@ async function loadLiveChatMessages() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-async function sendSupportMessage() {
+// تابع اصلی ارسال پیام که توسط دکمه‌های چت فراخوانی می‌شود
+async function submitSupportMessage() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
 
     const { data: { user } } = await supabaseClient.auth.getUser();
@@ -758,6 +789,9 @@ async function sendSupportMessage() {
         loadUserSupportTickets();
     }
 }
+
+// نام جایگزین برای سازگاری کامل
+const sendSupportMessage = submitSupportMessage;
 
 async function listenToChatRealtime() {
     if (!supabaseClient) return;
@@ -975,6 +1009,24 @@ async function updateOrderStatus(orderCode, newStatus) {
     }
 }
 
+function listenToAdminRealtime() {
+    if (!supabaseClient || adminRealtimeChannel) return;
+
+    adminRealtimeChannel = supabaseClient
+        .channel('admin-global-changes')
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'support_messages' },
+            () => { loadAdminSupportTickets(); }
+        )
+        .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'custom_orders' },
+            () => { loadAdminDashboard(); }
+        )
+        .subscribe();
+}
+
 async function loadAdminSupportTickets() {
     const supportList = document.getElementById("admin-support-list") || document.getElementById("support-list");
     if (!supportList || !supabaseClient) return;
@@ -1040,257 +1092,14 @@ async function sendAdminReply(messageId) {
             })
             .eq('id', messageId);
 
-        if (error) throw error;
-
-        alert("پاسخ شما با موفقیت ثبت شد.");
-        loadAdminSupportTickets();
-
-    } catch (err) {
-        alert("خطا در ارسال پاسخ: " + err.message);
-    }
-}
-
-function listenToAdminRealtime() {
-    if (!supabaseClient || adminRealtimeChannel) return;
-
-    adminRealtimeChannel = supabaseClient
-        .channel('admin-support-channel')
-        .on(
-            'postgres_changes',
-            { event: '*', schema: 'public', table: 'support_messages' },
-            () => {
-                const sound = document.getElementById("notification-sound");
-                if (sound) sound.play().catch(() => {});
-                loadAdminSupportTickets();
-            }
-        )
-        .subscribe();
-}
-
-
-// ==========================================
-// بارگذاری خودکار اطلاعات کاربر در صفحه تنظیمات
-// ==========================================
-async function loadUserProfileData() {
-    if (!supabaseClient) return;
-
-    const fullNameInput = document.getElementById('settings-fullname');
-    if (!fullNameInput) return; // اگر در صفحه تنظیمات نیستیم اجرا نشود
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    try {
-        const { data, error } = await supabaseClient
-            .from('profiles')
-            .select('full_name, phone, address')
-            .eq('id', user.id)
-            .maybeSingle();
-
-        if (data && !error) {
-            document.getElementById('settings-fullname').value = data.full_name || '';
-            document.getElementById('settings-phone').value = data.phone || '';
-            document.getElementById('settings-address').value = data.address || '';
+        if (error) {
+            alert("خطا در ارسال پاسخ: " + error.message);
+        } else {
+            alert("پاسخ شما ارسال شد.");
+            loadAdminSupportTickets();
         }
     } catch (err) {
-        console.error("خطا در بارگذاری اطلاعات پروفایل:", err);
+        console.error("خطا در ارسال پاسخ ادمین:", err);
+        alert("خطا در ارسال پاسخ!");
     }
 }
-
-// ==========================================
-// ذخیره و به‌روزرسانی اطلاعات شخصی
-// ==========================================
-async function updateProfileInfo() {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
-    // بررسی لاگین بودن کاربر
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) {
-        alert("لطفاً ابتدا وارد حساب کاربری خود شوید.");
-        window.location.href = "login.html";
-        return;
-    }
-
-    const fullName = document.getElementById('settings-fullname').value.trim();
-    const phone = document.getElementById('settings-phone').value.trim();
-    const address = document.getElementById('settings-address').value.trim();
-
-    if (!fullName || !phone || !address) {
-        alert("لطفاً تمامی فیلدها را پر کنید.");
-        return;
-    }
-
-    try {
-        // ثبت یا به‌روزرسانی در دیتابیس با کلید اصلی id
-        const { error } = await supabaseClient
-            .from('profiles')
-            .upsert({
-                id: user.id,
-                full_name: fullName,
-                phone: phone,
-                address: address,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'id' });
-
-        if (error) throw error;
-
-        alert("اطلاعات شما با موفقیت ذخیره شد! ✅");
-    } catch (err) {
-        console.error("خطا در ثبت پروفایل:", err);
-        alert("خطا در ذخیره اطلاعات: " + (err.message || "مشکلی پیش آمده است."));
-    }
-}
-
-// ==========================================
-// تغییر رمز عبور کاربر
-// ==========================================
-async function updatePassword() {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
-    const newPassword = document.getElementById('settings-new-pass').value;
-    if (!newPassword || newPassword.length < 6) {
-        alert("رمز عبور باید حداقل ۶ کاراکتر باشد.");
-        return;
-    }
-
-    try {
-        const { error } = await supabaseClient.auth.updateUser({
-            password: newPassword
-        });
-
-        if (error) throw error;
-
-        alert("رمز عبور با موفقیت تغییر یافت! 🔒");
-        document.getElementById('settings-new-pass').value = '';
-    } catch (err) {
-        console.error("خطا در تغییر رمز عبور:", err);
-        alert("خطا در تغییر رمز عبور: " + err.message);
-    }
-}
-
-// فراخوانی خودکار هنگام لود شدن صفحه
-document.addEventListener('DOMContentLoaded', loadUserProfileData);
-
-
-// ==========================================
-// بارگذاری خودکار اطلاعات کاربر در صفحه تنظیمات (شامل ایمیل)
-// ==========================================
-async function loadUserProfileData() {
-    if (!supabaseClient) return;
-
-    const fullNameInput = document.getElementById('settings-fullname');
-    if (!fullNameInput) return; // اگر در صفحه تنظیمات نیستیم اجرا نشود
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    // ۱. قرار دادن ایمیل کاربر در فیلد اختصاصی ایمیل
-    const emailInput = document.getElementById('settings-email');
-    if (emailInput && user.email) {
-        emailInput.value = user.email;
-    }
-
-    // ۲. دریافت اطلاعات نام، تلفن و آدرس از جدول profiles
-    try {
-        const { data, error } = await supabaseClient
-            .from('profiles')
-            .select('full_name, phone, address')
-            .eq('id', user.id)
-            .maybeSingle();
-
-        if (data && !error) {
-            if (document.getElementById('settings-fullname')) {
-                document.getElementById('settings-fullname').value = data.full_name || '';
-            }
-            if (document.getElementById('settings-phone')) {
-                document.getElementById('settings-phone').value = data.phone || '';
-            }
-            if (document.getElementById('settings-address')) {
-                document.getElementById('settings-address').value = data.address || '';
-            }
-        }
-    } catch (err) {
-        console.error("خطا در بارگذاری اطلاعات پروفایل:", err);
-    }
-}
-
-// ==========================================
-// ذخیره و به‌روزرسانی اطلاعات شخصی
-// ==========================================
-async function updateProfileInfo() {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
-    // بررسی لاگین بودن کاربر
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) {
-        alert("لطفاً ابتدا وارد حساب کاربری خود شوید.");
-        window.location.href = "login.html";
-        return;
-    }
-
-    const fullName = document.getElementById('settings-fullname').value.trim();
-    const phone = document.getElementById('settings-phone').value.trim();
-    const address = document.getElementById('settings-address').value.trim();
-
-    if (!fullName || !phone || !address) {
-        alert("لطفاً تمامی فیلدها را پر کنید.");
-        return;
-    }
-
-    try {
-        // ثبت یا به‌روزرسانی در دیتابیس با کلید اصلی id
-        const { error } = await supabaseClient
-            .from('profiles')
-            .upsert({
-                id: user.id,
-                full_name: fullName,
-                phone: phone,
-                address: address,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'id' });
-
-        if (error) throw error;
-
-        alert("اطلاعات شما با موفقیت ذخیره شد! ✅");
-    } catch (err) {
-        console.error("خطا در ثبت پروفایل:", err);
-        alert("خطا در ذخیره اطلاعات: " + (err.message || "مشکلی پیش آمده است."));
-    }
-}
-
-// ==========================================
-// تغییر رمز عبور کاربر
-// ==========================================
-async function updatePassword() {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
-    const newPassword = document.getElementById('settings-new-pass').value;
-    if (!newPassword || newPassword.length < 6) {
-        alert("رمز عبور باید حداقل ۶ کاراکتر باشد.");
-        return;
-    }
-
-    try {
-        const { error } = await supabaseClient.auth.updateUser({
-            password: newPassword
-        });
-
-        if (error) throw error;
-
-        alert("رمز عبور با موفقیت تغییر یافت! 🔒");
-        document.getElementById('settings-new-pass').value = '';
-    } catch (err) {
-        console.error("خطا در تغییر رمز عبور:", err);
-        alert("خطا در تغییر رمز عبور: " + err.message);
-    }
-}
-
-// اجرای خودکار دریافت اطلاعات به محض لود شدن صفحه
-document.addEventListener('DOMContentLoaded', loadUserProfileData);
-
