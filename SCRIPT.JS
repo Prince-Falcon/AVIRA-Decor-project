@@ -163,7 +163,7 @@ const collectionsProducts = {
     gaming: {
         title: "مجموعه Gaming",
         items: [
-            { id: 501, title: "طرح Cyberpunk 2077", price: "۴۵۰,۰۰۰ تومان", img: "assets/images/collection21.png" },
+            { id: 501, title: "طرح Resident Evill 4", price: "۴۵۰,۰۰۰ تومان", img: "assets/images/collection21.png" },
             { id: 502, title: "طرح God of War", price: "۴۸۰,۰۰۰ تومان", img: "assets/images/collection22.png" },
             { id: 503, title: "طرح The Witcher 3", price: "۴۶۰,۰۰۰ تومان", img: "assets/images/collection23.png" },
             { id: 504, title: "طرح Elden Ring", price: "۴۹۰,۰۰۰ تومان", img: "assets/images/collection24.png" },
