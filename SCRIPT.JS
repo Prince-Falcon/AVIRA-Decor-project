@@ -890,40 +890,44 @@ async function loadUserSupportTickets() {
 
     try {
         const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+
         if (authError || !user) {
-            listContainer.innerHTML = "<p style='color:#aaa; text-align:center;'>لطفاً ابتدا وارد حساب کاربری خود شوید.</p>";
+            listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">لطفاً ابتدا وارد حساب کاربری شوید.</p>`;
             return;
         }
 
-        const { data: messages, error } = await supabaseClient
+        const { data: tickets, error } = await supabaseClient
             .from('support_messages')
             .select('*')
             .eq('user_id', user.id)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
-
-        if (!messages || messages.length === 0) {
-            listContainer.innerHTML = "<p style='color:#aaa; text-align:center;'>پیامی ثبت نشده است.</p>";
+        if (error) {
+            listContainer.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت پیام‌ها!</p>`;
             return;
         }
 
-        listContainer.innerHTML = messages.map(msg => `
-            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 6px;">
-                    <span>📅 ${formatDatePersian(msg.created_at)}</span>
-                    <span style="color: ${msg.status === 'replied' ? '#4ade80' : '#f59e0b'};">${msg.status === 'replied' ? 'پاسخ داده شده' : 'در انتظار پاسخ'}</span>
-                </div>
-                <p style="color: #fff; font-size: 0.9rem; margin-bottom: 6px;"><strong>پیام شما:</strong> ${msg.message}</p>
-                ${msg.admin_reply ? `<p style="color: #d4af37; font-size: 0.88rem; background: rgba(212,175,55,0.08); padding: 8px; border-radius: 6px; border-right: 3px solid #d4af37;"><strong>پاسخ پشتیبانی:</strong> ${msg.admin_reply}</p>` : ''}
+        if (!tickets || tickets.length === 0) {
+            listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">هیچ پیام پشتیبانی ثبت نشده است.</p>`;
+            return;
+        }
+
+        listContainer.innerHTML = tickets.map(ticket => `
+            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 10px; padding: 15px; margin-bottom: 12px;">
+                <p style="color: #fff; margin-bottom: 5px;"><strong>پیام شما:</strong> ${ticket.message}</p>
+                <span style="font-size: 0.8rem; color: #aaa;">📅 ${formatDatePersian(ticket.created_at)}</span>
+                ${ticket.admin_reply ? `
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); color: #4ade80;">
+                        <strong>پاسخ پشتیبانی:</strong> ${ticket.admin_reply}
+                    </div>
+                ` : `<p style="font-size: 0.8rem; color: #d4af37; margin-top: 5px;">⏳ در انتظار پاسخ پشتیبانی...</p>`}
             </div>
         `).join('');
-
     } catch (err) {
-        console.error("خطا در بارگذاری تیکت‌های پشتیبانی:", err);
-        listContainer.innerHTML = "<p style='color:#f87171; text-align:center;'>خطا در دریافت تیکت‌ها!</p>";
+        console.error("Error loading support tickets:", err);
     }
 }
+
 
 // ==========================================
 // ۱۰. پنل مدیریت (Admin Panel)
