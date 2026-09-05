@@ -58,8 +58,8 @@ function parsePriceToNumber(priceStr) {
     return parseInt(cleanNum, 10) || 0;
 }
 
-function formatToPersianPrice(num) {
-    return Math.round(num).toLocaleString('fa-IR') + " تومان";
+function formatPrice(num) {
+    return Math.round(num).toLocaleString('en-US') + " Toman";
 }
 
 function getSelectedMaterial() {
@@ -130,6 +130,30 @@ document.addEventListener("mousemove", (e) => {
     document.documentElement.style.setProperty("--y", e.clientY + "px");
 });
 
+// افکت هدر چسبان هنگام اسکرول
+window.addEventListener("scroll", () => {
+    const header = document.querySelector(".header");
+    if (!header) return;
+    header.classList.toggle("scrolled", window.scrollY > 40);
+});
+
+// ==========================================
+// سیستم Toast (جایگزین ملایم‌تر برای alert در تعاملات غیر بحرانی)
+// ==========================================
+function showToast(message, type = "success") {
+    let container = document.getElementById("toast-container");
+    if (!container) {
+        container = document.createElement("div");
+        container.id = "toast-container";
+        document.body.appendChild(container);
+    }
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
 // ==========================================
 // ۴. داده‌های کالکشن‌ها و مودال محصول
 // ==========================================
@@ -137,51 +161,71 @@ const collectionsProducts = {
     astronomic: {
         title: "مجموعه Astronomic",
         items: [
-            { id: 101, title: "طرح آندرومدا", price: "410,000 تومان", img: "assets/images/collection1.png" },
-            { id: 102, title: "طرح سامانه خورشیدی", price: "380,000 تومان", img: "assets/images/collection6.png" },
-            { id: 103, title: "طرح مریخ", price: "330,000 تومان", img: "assets/images/collection7.png" },
-            { id: 104, title: "طرح خورشید", price: "400,000 تومان", img: "assets/images/collection8.png" },
-            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "430,000 تومان", img: "assets/images/collection9.png" }
+            { id: 101, title: "طرح آندرومدا", price: "490,000 Toman", img: "assets/images/collection1.png" },
+            { id: 102, title: "طرح سامانه خورشیدی", price: "455,000 Toman", img: "assets/images/collection6.png" },
+            { id: 103, title: "طرح مریخ", price: "395,000 Toman", img: "assets/images/collection7.png" },
+            { id: 104, title: "طرح خورشید", price: "480,000 Toman", img: "assets/images/collection8.png" },
+            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "515,000 Toman", img: "assets/images/collection9.png" },
+            { id: 106, title: "طرح کهکشان راه شیری", price: "470,000 Toman", img: "assets/images/collection26.png" },
+            { id: 107, title: "طرح سیاه‌چاله", price: "500,000 Toman", img: "assets/images/collection27.png" },
+            { id: 108, title: "طرح سحابی عقاب", price: "460,000 Toman", img: "assets/images/collection28.png" },
+            { id: 109, title: "طرح ماه و زمین", price: "440,000 Toman", img: "assets/images/collection29.png" }
         ]
     },
     scientific: {
         title: "مجموعه Scientific",
         items: [
-            { id: 201, title: "طرح آلبرت انیشتین", price: "470,000 تومان", img: "assets/images/collection4.png" },
-            { id: 202, title: "طرح نیکولا تسلا", price: "450,000 تومان", img: "assets/images/collection5.png" },
-            { id: 203, title: "طرح مریم میرزا خانی", price: "410,000 تومان", img: "assets/images/collection10.png" },
-            { id: 204, title: "طرح ورنر هایزنبرگ", price: "435,000 تومان", img: "assets/images/collection11.png" },
-            { id: 205, title: "طرح ماری کوری", price: "400,000 تومان", img: "assets/images/collection12.png" }
+            { id: 201, title: "طرح آلبرت انیشتین", price: "560,000 Toman", img: "assets/images/collection4.png" },
+            { id: 202, title: "طرح نیکولا تسلا", price: "540,000 Toman", img: "assets/images/collection5.png" },
+            { id: 203, title: "طرح مریم میرزا خانی", price: "490,000 Toman", img: "assets/images/collection10.png" },
+            { id: 204, title: "طرح ورنر هایزنبرگ", price: "520,000 Toman", img: "assets/images/collection11.png" },
+            { id: 205, title: "طرح ماری کوری", price: "480,000 Toman", img: "assets/images/collection12.png" },
+            { id: 206, title: "طرح استیون هاوکینگ", price: "530,000 Toman", img: "assets/images/collection30.png" },
+            { id: 207, title: "طرح چارلز داروین", price: "500,000 Toman", img: "assets/images/collection31.png" },
+            { id: 208, title: "طرح ایزاک نیوتن", price: "510,000 Toman", img: "assets/images/collection32.png" },
+            { id: 209, title: "طرح دی‌ان‌ای / ژنتیک", price: "470,000 Toman", img: "assets/images/collection33.png" }
         ]
     },
     historical: {
         title: "مجموعه Historical",
         items: [
-            { id: 301, title: "طرح امیر کبیر", price: "390,000 تومان", img: "assets/images/collection13.png" },
-            { id: 302, title: "طرح نادرشاه", price: "440,000 تومان", img: "assets/images/collection2.png" },
-            { id: 303, title: "طرح کوروش کبیر", price: "480,000 تومان", img: "assets/images/collection14.png" },
-            { id: 304, title: "طرح ناپلئون", price: "410,000 تومان", img: "assets/images/collection15.png" },
-            { id: 305, title: "طرح کریم خان زند", price: "390,000 تومان", img: "assets/images/collection16.png" }
+            { id: 301, title: "طرح امیر کبیر", price: "465,000 Toman", img: "assets/images/collection13.png" },
+            { id: 302, title: "طرح نادرشاه", price: "525,000 Toman", img: "assets/images/collection2.png" },
+            { id: 303, title: "طرح کوروش کبیر", price: "570,000 Toman", img: "assets/images/collection14.png" },
+            { id: 304, title: "طرح ناپلئون", price: "490,000 Toman", img: "assets/images/collection15.png" },
+            { id: 305, title: "طرح کریم خان زند", price: "465,000 Toman", img: "assets/images/collection16.png" },
+            { id: 306, title: "طرح داریوش بزرگ", price: "540,000 Toman", img: "assets/images/collection34.png" },
+            { id: 307, title: "طرح چنگیزخان", price: "500,000 Toman", img: "assets/images/collection35.png" },
+            { id: 308, title: "طرح اسکندر مقدونی", price: "510,000 Toman", img: "assets/images/collection36.png" },
+            { id: 309, title: "طرح جنگاور سامورایی", price: "495,000 Toman", img: "assets/images/collection37.png" }
         ]
     },
     car: {
         title: "مجموعه Car",
         items: [
-            { id: 401, title: "Mercedes-Benz CLS 63", price: "460,000 تومان", img: "assets/images/collection3.png" },
-            { id: 402, title: "BMW M8", price: "490,000 تومان", img: "assets/images/collection17.png" },
-            { id: 403, title: "Nissan GTR", price: "460,000 تومان", img: "assets/images/collection18.png" },
-            { id: 404, title: "Lamborghini Aventador", price: "490,000 تومان", img: "assets/images/collection19.png" },
-            { id: 405, title: "Bugatti Chiron", price: "560,000 تومان", img: "assets/images/collection20.png" }
+            { id: 401, title: "Mercedes-Benz CLS 63", price: "550,000 Toman", img: "assets/images/collection3.png" },
+            { id: 402, title: "BMW M8", price: "585,000 Toman", img: "assets/images/collection17.png" },
+            { id: 403, title: "Nissan GTR", price: "550,000 Toman", img: "assets/images/collection18.png" },
+            { id: 404, title: "Lamborghini Aventador", price: "585,000 Toman", img: "assets/images/collection19.png" },
+            { id: 405, title: "Bugatti Chiron", price: "670,000 Toman", img: "assets/images/collection20.png" },
+            { id: 406, title: "Ferrari SF90", price: "610,000 Toman", img: "assets/images/collection38.png" },
+            { id: 407, title: "Porsche 911 GT3", price: "590,000 Toman", img: "assets/images/collection39.png" },
+            { id: 408, title: "McLaren P1", price: "600,000 Toman", img: "assets/images/collection40.png" },
+            { id: 409, title: "Aston Martin Vulcan", price: "615,000 Toman", img: "assets/images/collection41.png" }
         ]
     },
     gaming: {
         title: "مجموعه Gaming",
         items: [
-            { id: 501, title: "طرح Resident Evill 4", price: "490,000 تومان", img: "assets/images/collection21.png" },
-            { id: 502, title: "طرح God of War", price: "480,000 تومان", img: "assets/images/collection22.png" },
-            { id: 503, title: "طرح The Last of Us", price: "460,000 تومان", img: "assets/images/collection23.png" },
-            { id: 504, title: "طرح Elden Ring", price: "500,000 تومان", img: "assets/images/collection24.png" },
-            { id: 505, title: "طرح GTA VI", price: "540,000 تومان", img: "assets/images/collection25.png" }
+            { id: 501, title: "طرح Resident Evil 4", price: "580,000 Toman", img: "assets/images/collection21.png" },
+            { id: 502, title: "طرح God of War", price: "570,000 Toman", img: "assets/images/collection22.png" },
+            { id: 503, title: "طرح The Last of Us", price: "545,000 Toman", img: "assets/images/collection23.png" },
+            { id: 504, title: "طرح Elden Ring", price: "590,000 Toman", img: "assets/images/collection24.png" },
+            { id: 505, title: "طرح GTA VI", price: "640,000 Toman", img: "assets/images/collection25.png" },
+            { id: 506, title: "طرح Cyberpunk 2077", price: "600,000 Toman", img: "assets/images/collection42.png" },
+            { id: 507, title: "طرح Red Dead Redemption 2", price: "610,000 Toman", img: "assets/images/collection43.png" },
+            { id: 508, title: "طرح Spider-Man", price: "570,000 Toman", img: "assets/images/collection44.png" },
+            { id: 509, title: "طرح Zelda: Breath of the Wild", price: "560,000 Toman", img: "assets/images/collection45.png" }
         ]
     }
 };
@@ -245,6 +289,13 @@ function openProductModal(productId, catKey) {
 
     updatePriceView();
     if (modal) modal.style.display = "flex";
+
+    const modalContent = document.querySelector(".modal-content");
+    if (modalContent) {
+        modalContent.classList.remove("animate-in");
+        void modalContent.offsetWidth; // ری‌فلو اجباری برای پخش دوباره انیمیشن
+        modalContent.classList.add("animate-in");
+    }
 }
 
 function closeProductModal() {
@@ -270,7 +321,7 @@ function updatePriceView() {
 
     const calculatedNum = basePriceValue * sizeMult * materialMult;
 
-    currentCalculatedPrice = formatToPersianPrice(calculatedNum);
+    currentCalculatedPrice = formatPrice(calculatedNum);
     priceElem.textContent = currentCalculatedPrice;
 }
 
@@ -297,9 +348,9 @@ function showPayment() {
     reader.onload = function (e) {
         const base64Image = e.target.result;
         const selectedMat = getSelectedMaterial();
-        const customBasePrice = 400000;
+        const customBasePrice = 480000;
         const materialMult = materialMultipliers[selectedMat] || 1.0;
-        const finalCustomPrice = formatToPersianPrice(customBasePrice * materialMult);
+        const finalCustomPrice = formatPrice(customBasePrice * materialMult);
 
         let cart = getCart();
 
@@ -314,7 +365,7 @@ function showPayment() {
         });
 
         localStorage.setItem("avira_cart", JSON.stringify(cart));
-        alert("سفارش اختصاصی شما به سبد خرید اضافه شد!");
+        showToast("سفارش اختصاصی شما به سبد خرید اضافه شد!", "success");
         window.location.href = "cart.html";
     };
 
@@ -345,7 +396,7 @@ function addToCart() {
     });
 
     localStorage.setItem("avira_cart", JSON.stringify(cart));
-    alert(`طرح "${currentSelectedProduct.title}" با جنس (${translateMaterial(chosenMaterial)}) به سبد خرید اضافه شد!`);
+    showToast(`طرح "${currentSelectedProduct.title}" با جنس (${translateMaterial(chosenMaterial)}) به سبد خرید اضافه شد!`, "success");
     closeProductModal();
 }
 
@@ -389,9 +440,9 @@ async function renderCartPage() {
 
     const deposit30Percent = Math.round(grandTotal * 0.30);
 
-    if (totalPriceElem) totalPriceElem.textContent = formatToPersianPrice(grandTotal);
-    if (depositPriceElem) depositPriceElem.textContent = formatToPersianPrice(deposit30Percent);
-    if (warningDepositElem) warningDepositElem.textContent = formatToPersianPrice(deposit30Percent);
+    if (totalPriceElem) totalPriceElem.textContent = formatPrice(grandTotal);
+    if (depositPriceElem) depositPriceElem.textContent = formatPrice(deposit30Percent);
+    if (warningDepositElem) warningDepositElem.textContent = formatPrice(deposit30Percent);
 
     if (checkoutBox && codeElem) {
         checkoutBox.style.display = "block";

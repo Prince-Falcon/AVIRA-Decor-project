@@ -821,3 +821,171 @@ body.custom-order-page, body.collection-page, body.settings-page {
 .form-group input:focus {
   border-color: #cda24d; /* رنگ فوکوس طلایی هماهنگ با دکمه ذخیره */
 }
+
+/* ==========================================
+   موشن و افکت‌های UI/UX جدید (Motion Upgrade)
+   ========================================== */
+
+/* هدر: کوچک‌تر و تیره‌تر شدن هنگام اسکرول */
+.header.scrolled {
+    top: 8px;
+    padding: 10px 30px;
+    background: rgba(8, 8, 8, 0.92);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.55);
+}
+.header {
+    transition: top 0.3s ease, padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* آندرلاین متحرک برای لینک‌های منو */
+nav a {
+    position: relative;
+}
+nav a::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: -4px;
+    width: 0;
+    height: 2px;
+    background: #d4af37;
+    transition: width 0.3s ease;
+}
+nav a:hover::after,
+nav a.active::after {
+    width: 100%;
+}
+
+/* ورود پلکانی کارت‌های محصول */
+@keyframes cardFadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.product-card {
+    opacity: 0;
+    animation: cardFadeInUp 0.55s ease forwards;
+}
+.product-card:nth-child(1)  { animation-delay: 0.03s; }
+.product-card:nth-child(2)  { animation-delay: 0.08s; }
+.product-card:nth-child(3)  { animation-delay: 0.13s; }
+.product-card:nth-child(4)  { animation-delay: 0.18s; }
+.product-card:nth-child(5)  { animation-delay: 0.23s; }
+.product-card:nth-child(6)  { animation-delay: 0.28s; }
+.product-card:nth-child(7)  { animation-delay: 0.33s; }
+.product-card:nth-child(8)  { animation-delay: 0.38s; }
+.product-card:nth-child(9)  { animation-delay: 0.43s; }
+.product-card:nth-child(n+10) { animation-delay: 0.48s; }
+
+/* زوم ملایم تصویر هنگام هاور کارت محصول */
+.product-card {
+    overflow: hidden;
+}
+.product-card img {
+    transition: transform 0.45s ease;
+}
+.product-card:hover img {
+    transform: scale(1.06);
+}
+
+/* افکت درخشش لبه هنگام هاور کارت */
+.product-card:hover {
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15), 0 0 0 1px rgba(212, 175, 55, 0.35) inset;
+}
+
+/* انیمیشن ورود پاپ‌آپ محصول */
+@keyframes modalContentPop {
+    from { opacity: 0; transform: scale(0.92) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-content.animate-in {
+    animation: modalContentPop 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* حالت فعال دکمه‌ها: کمی فشرده شدن + درخشش هنگام هاور */
+.btn-submit,
+.btn,
+.order-btn,
+.add-to-cart-btn {
+    transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+.btn-submit:hover,
+.btn:hover,
+.order-btn:hover,
+.add-to-cart-btn:hover {
+    box-shadow: 0 6px 18px rgba(212, 175, 55, 0.3);
+}
+.btn-submit:active,
+.btn:active,
+.order-btn:active,
+.add-to-cart-btn:active {
+    transform: scale(0.97);
+}
+
+/* دکمه شناور پشتیبانی: ضربان ملایم برای جلب توجه */
+@keyframes floatPulse {
+    0%, 100% { box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4); }
+    50%      { box-shadow: 0 4px 25px rgba(212, 175, 55, 0.75); }
+}
+.floating-support-btn {
+    animation: floatPulse 2.6s ease-in-out infinite;
+}
+
+/* اسکلتون شیمر برای حالت‌های در حال بارگذاری */
+@keyframes shimmer {
+    0%   { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+}
+.skeleton-line {
+    height: 14px;
+    border-radius: 6px;
+    margin: 8px 0;
+    background: linear-gradient(90deg, #1c1c1c 25%, #2a2a2a 37%, #1c1c1c 63%);
+    background-size: 800px 100%;
+    animation: shimmer 1.4s linear infinite;
+}
+
+/* سیستم Toast (جایگزین سبک‌تر و شیک‌تر برای alert) */
+#toast-container {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+.toast {
+    background: #1a1a1a;
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    color: #fff;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    min-width: 220px;
+    max-width: 320px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: toastIn 0.35s ease, toastOut 0.35s ease 2.65s forwards;
+}
+.toast.success { border-color: rgba(74, 222, 128, 0.6); }
+.toast.error   { border-color: rgba(248, 113, 113, 0.6); }
+@keyframes toastIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes toastOut {
+    from { opacity: 1; }
+    to   { opacity: 0; transform: translateY(-8px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-card,
+    .modal-content.animate-in,
+    .floating-support-btn,
+    .toast {
+        animation: none !important;
+    }
+}
