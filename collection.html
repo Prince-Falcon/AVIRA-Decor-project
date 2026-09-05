@@ -23,6 +23,12 @@
         <a href="custom-order.html">سفارش اختصاصی</a>
     </nav>
 
+    <div class="header-actions">
+            <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
+            <a href="cart.html" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
+                🛒 <span class="cart-badge" id="cart-badge">0</span>
+            </a>
+    </div>
     <div id="auth-header-container">
         <div id="logged-out-view">
             <a href="login.html" class="auth-btn">ورود / ثبت‌نام</a>
@@ -74,9 +80,9 @@
                     <div class="size-options">
                         <button type="button" class="size-btn active" onclick="selectSize(this)">۲۰×۲۰ سانتی‌متر</button>
                         <button type="button" class="size-btn" onclick="selectSize(this)">۲۰×۳۰ سانتی‌متر</button>
-                        <button type="button" class="size-btn" onclick="selectSize(this)">۳۰×۳۰ سانتی‌متر</button>
                         <button type="button" class="size-btn" onclick="selectSize(this)">۳۰×۴۰ سانتی‌متر</button>
-                        <button type="button" class="size-btn" onclick="selectSize(this)">۴۰×۴۰ سانتی‌متر</button>
+                        <button type="button" class="size-btn" onclick="selectSize(this)">۳۰×۴۵ سانتی‌متر</button>
+                        <button type="button" class="size-btn" onclick="selectSize(this)">۴۰×۶۰ سانتی‌متر</button>
                     </div>
                 </div>
 
@@ -117,7 +123,7 @@
                 </div>
 
                 <!-- ۴. دکمه ثبت سفارش -->
-                <button class="btn-submit add-to-cart-btn" onclick="addToCart()">افزودن به سبد خرید</button>
+                <button class="btn-submit add-to-cart-btn" onclick="addToCart(event)">افزودن به سبد خرید</button>
             </div>
         </div>
     </div>

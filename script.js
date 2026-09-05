@@ -15,9 +15,9 @@ if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
 const sizeMultipliers = {
     '۲۰×۲۰ سانتی‌متر': 1.0,
     '۲۰×۳۰ سانتی‌متر': 1.25,
-    '۳۰×۳۰ سانتی‌متر': 1.45,
     '۳۰×۴۰ سانتی‌متر': 1.7,
-    '۴۰×۴۰ سانتی‌متر': 2.0
+    '۳۰×۴۵ سانتی‌متر': 1.85,
+    '۴۰×۶۰ سانتی‌متر': 2.4
 };
 
 const materialMultipliers = {
@@ -123,6 +123,8 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCartPage();
     initAuthListener();
     initAdminPageAuthCheck();
+    applyStoredTheme();
+    updateCartBadge();
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -136,6 +138,75 @@ window.addEventListener("scroll", () => {
     if (!header) return;
     header.classList.toggle("scrolled", window.scrollY > 40);
 });
+
+// ==========================================
+// حالت روشن/تاریک (Theme Toggle)
+// ==========================================
+function applyStoredTheme() {
+    const saved = localStorage.getItem("avira_theme") || "dark";
+    document.body.classList.toggle("light-theme", saved === "light");
+    const btn = document.getElementById("theme-toggle-btn");
+    if (btn) btn.textContent = saved === "light" ? "☀️" : "🌙";
+}
+
+function toggleTheme() {
+    const isLight = document.body.classList.toggle("light-theme");
+    localStorage.setItem("avira_theme", isLight ? "light" : "dark");
+    const btn = document.getElementById("theme-toggle-btn");
+    if (btn) btn.textContent = isLight ? "☀️" : "🌙";
+}
+
+// ==========================================
+// نشان تعداد سبد خرید در هدر + انیمیشن پرواز به سبد
+// ==========================================
+function updateCartBadge() {
+    const badge = document.getElementById("cart-badge");
+    if (!badge) return;
+    const count = getCart().length;
+    badge.textContent = count;
+    badge.style.display = count > 0 ? "flex" : "none";
+    badge.classList.remove("bump");
+    void badge.offsetWidth;
+    badge.classList.add("bump");
+}
+
+function flyToCart(sourceElement) {
+    const cartIcon = document.getElementById("nav-cart-btn");
+    if (!sourceElement || !cartIcon) return;
+
+    const startRect = sourceElement.getBoundingClientRect();
+    const endRect = cartIcon.getBoundingClientRect();
+
+    const dot = document.createElement("div");
+    dot.className = "flying-cart-dot";
+    dot.style.left = (startRect.left + startRect.width / 2) + "px";
+    dot.style.top = (startRect.top + startRect.height / 2) + "px";
+    document.body.appendChild(dot);
+
+    requestAnimationFrame(() => {
+        dot.style.left = (endRect.left + endRect.width / 2) + "px";
+        dot.style.top = (endRect.top + endRect.height / 2) + "px";
+        dot.style.opacity = "0.2";
+        dot.style.transform = "scale(0.3)";
+    });
+
+    setTimeout(() => {
+        dot.remove();
+        updateCartBadge();
+    }, 650);
+}
+
+// ==========================================
+// اسکلتون لودینگ (جایگزین متن «در حال دریافت...»)
+// ==========================================
+function skeletonCards(count = 3) {
+    let html = '<div class="skeleton-wrap">';
+    for (let i = 0; i < count; i++) {
+        html += '<div class="skeleton-card"></div>';
+    }
+    html += '</div>';
+    return html;
+}
 
 // ==========================================
 // سیستم Toast (جایگزین ملایم‌تر برای alert در تعاملات غیر بحرانی)
@@ -379,7 +450,7 @@ function getCart() {
     return JSON.parse(localStorage.getItem("avira_cart") || "[]");
 }
 
-function addToCart() {
+function addToCart(event) {
     if (!currentSelectedProduct) return;
 
     const chosenMaterial = getSelectedMaterial();
@@ -397,6 +468,13 @@ function addToCart() {
 
     localStorage.setItem("avira_cart", JSON.stringify(cart));
     showToast(`طرح "${currentSelectedProduct.title}" با جنس (${translateMaterial(chosenMaterial)}) به سبد خرید اضافه شد!`, "success");
+
+    if (event && event.currentTarget) {
+        flyToCart(event.currentTarget);
+    } else {
+        updateCartBadge();
+    }
+
     closeProductModal();
 }
 
@@ -416,11 +494,12 @@ async function renderCartPage() {
     if (cart.length === 0) {
         container.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">سبد خرید شما خالی است.</p>`;
         if (checkoutBox) checkoutBox.style.display = "none";
+        updateCartBadge();
         return;
     }
 
     container.innerHTML = cart.map((item, index) => `
-        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="cart-item-row" id="cart-row-${index}" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; animation-delay: ${index * 0.06}s;">
             <div>
                 <h4 style="color: #fff; margin-bottom: 5px;">${item.title}</h4>
                 <p style="font-size: 0.85rem; color: #aaa;">
@@ -432,6 +511,8 @@ async function renderCartPage() {
             <button onclick="removeFromCart(${index})" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف</button>
         </div>
     `).join('');
+
+    updateCartBadge();
 
     let grandTotal = 0;
     cart.forEach(item => {
@@ -468,10 +549,21 @@ async function renderCartPage() {
 }
 
 function removeFromCart(index) {
-    let cart = getCart();
-    cart.splice(index, 1);
-    localStorage.setItem("avira_cart", JSON.stringify(cart));
-    renderCartPage();
+    const row = document.getElementById(`cart-row-${index}`);
+    if (row) {
+        row.classList.add("removing");
+        setTimeout(() => {
+            let cart = getCart();
+            cart.splice(index, 1);
+            localStorage.setItem("avira_cart", JSON.stringify(cart));
+            renderCartPage();
+        }, 320);
+    } else {
+        let cart = getCart();
+        cart.splice(index, 1);
+        localStorage.setItem("avira_cart", JSON.stringify(cart));
+        renderCartPage();
+    }
 }
 
 async function submitFinalOrder() {
@@ -741,6 +833,8 @@ async function loadUserOrders() {
     const listContainer = document.getElementById("user-orders-list");
     if (!listContainer || !supabaseClient) return;
 
+    listContainer.innerHTML = skeletonCards(3);
+
     const { data: { user } } = await supabaseClient.auth.getUser();
 
     if (!user) {
@@ -857,6 +951,8 @@ async function loadLiveChatMessages() {
     const chatBox = document.getElementById("live-chat-messages");
     if (!chatBox || !supabaseClient) return;
 
+    chatBox.innerHTML = skeletonCards(2);
+
     const { data: { user } } = await supabaseClient.auth.getUser();
 
     if (!user) {
@@ -962,6 +1058,8 @@ async function listenToChatRealtime() {
 async function loadUserSupportTickets() {
     const listContainer = document.getElementById("user-support-list") || document.getElementById("user-support-tickets-list");
     if (!listContainer || !supabaseClient) return;
+
+    listContainer.innerHTML = skeletonCards(2);
 
     try {
         const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
@@ -1133,7 +1231,7 @@ async function loadAdminDashboard() {
     const ordersList = document.getElementById("orders-list");
     if (!ordersList || !supabaseClient) return;
 
-    ordersList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت سفارشات از دیتابیس...</p>`;
+    ordersList.innerHTML = skeletonCards(4);
 
     try {
         const { data: orders, error } = await supabaseClient
@@ -1259,7 +1357,7 @@ async function loadAdminUsers() {
     const usersList = document.getElementById("admin-users-list");
     if (!usersList || !supabaseClient) return;
 
-    usersList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت اطلاعات کاربران...</p>`;
+    usersList.innerHTML = skeletonCards(4);
 
     try {
         const { data: profiles, error } = await supabaseClient
@@ -1293,7 +1391,7 @@ async function loadAdminSupportTickets() {
     const supportList = document.getElementById("admin-support-list");
     if (!supportList || !supabaseClient) return;
 
-    supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">در حال دریافت پیام‌های پشتیبانی...</p>`;
+    supportList.innerHTML = skeletonCards(3);
 
     try {
         const { data: messages, error } = await supabaseClient

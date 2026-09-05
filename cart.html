@@ -21,6 +21,12 @@
             <a href="custom-order.html">سفارش اختصاصی</a>
         </nav>
 
+        <div class="header-actions">
+            <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
+            <a href="cart.html" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
+                🛒 <span class="cart-badge" id="cart-badge">0</span>
+            </a>
+        </div>
         <div id="auth-header-container">
             <div id="logged-out-view">
                 <a href="login.html" class="auth-btn">ورود / ثبت‌نام</a>
@@ -56,8 +62,8 @@
             <h3 style="color: #d4af37; margin-bottom: 15px;">اطلاعات پرداخت و ثبت نهایی</h3>
             
             <p style="margin-bottom: 8px;">کد سفارش شما: <strong id="checkout-order-code" style="color: #60a5fa;">---</strong></p>
-            <p style="margin-bottom: 8px;">مجموع سبد خرید: <strong id="checkout-total-price" style="color: #60a5fa;">۰ تومان</strong></p>
-            <p style="margin-bottom: 8px;">مبلغ بیعانه جهت ثبت سفارش (۳۰٪): <strong id="checkout-deposit-price" style="color: #4ade80;">۰ تومان</strong></p>
+            <p style="margin-bottom: 8px;">مجموع سبد خرید: <strong id="checkout-total-price" style="color: #60a5fa;">0 Toman</strong></p>
+            <p style="margin-bottom: 8px;">مبلغ بیعانه جهت ثبت سفارش (۳۰٪): <strong id="checkout-deposit-price" style="color: #4ade80;">0 Toman</strong></p>
             
             <!-- دریافت اجباری شماره تلفن، کد پستی و آدرس پستی گیرنده -->
             <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.3); padding: 15px; border-radius: 8px; margin: 15px 0;">
