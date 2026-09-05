@@ -25,13 +25,13 @@
 
         <form id="admin-login-form" onsubmit="event.preventDefault(); checkAdminLogin();">
             <div class="form-group">
-                <label for="admin-user">نام کاربری:</label>
-                <input type="text" id="admin-user" required placeholder="amir" autocomplete="username">
+                <label for="admin-user">ایمیل مدیر:</label>
+                <input type="email" id="admin-user" required placeholder="admin@example.com" autocomplete="username">
             </div>
 
             <div class="form-group">
                 <label for="admin-pass">رمز عبور:</label>
-                <input type="password" id="admin-pass" required placeholder="Amir1390" autocomplete="current-password">
+                <input type="password" id="admin-pass" required placeholder="••••••••" autocomplete="current-password">
             </div>
 
             <button type="submit" class="btn-submit" style="position: relative; z-index: 30; cursor: pointer;">ورود به پنل</button>

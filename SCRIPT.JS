@@ -67,6 +67,19 @@ function getSelectedMaterial() {
     return selected ? selected.value : 'normal';
 }
 
+// جلوگیری از حملات XSS ذخیره‌شده: هر متنی که کاربر وارد کرده (نام، آدرس،
+// پیام پشتیبانی و ...) پیش از درج در innerHTML باید Escape شود تا کدهای
+// HTML/JS مخرب اجرا نشوند.
+function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // ==========================================
 // ۳. راه‌اندازی و رویدادهای عمومی DOM
 // ==========================================
@@ -109,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initProductsGrid();
     renderCartPage();
     initAuthListener();
+    initAdminPageAuthCheck();
 });
 
 document.addEventListener("mousemove", (e) => {
@@ -123,51 +137,51 @@ const collectionsProducts = {
     astronomic: {
         title: "مجموعه Astronomic",
         items: [
-            { id: 101, title: "طرح آندرومدا", price: "۳۱۰,۰۰۰ تومان", img: "assets/images/collection1.png" },
-            { id: 102, title: "طرح سامانه خورشیدی", price: "۳۳۰,۰۰۰ تومان", img: "assets/images/collection6.png" },
-            { id: 103, title: "طرح مریخ", price: "۲۸۰,۰۰۰ تومان", img: "assets/images/collection7.png" },
-            { id: 104, title: "طرح خورشید", price: "۳۳۰,۰۰۰ تومان", img: "assets/images/collection8.png" },
-            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "۳۹۰,۰۰۰ تومان", img: "assets/images/collection9.png" }
+            { id: 101, title: "طرح آندرومدا", price: "410,000 تومان", img: "assets/images/collection1.png" },
+            { id: 102, title: "طرح سامانه خورشیدی", price: "380,000 تومان", img: "assets/images/collection6.png" },
+            { id: 103, title: "طرح مریخ", price: "330,000 تومان", img: "assets/images/collection7.png" },
+            { id: 104, title: "طرح خورشید", price: "400,000 تومان", img: "assets/images/collection8.png" },
+            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "430,000 تومان", img: "assets/images/collection9.png" }
         ]
     },
     scientific: {
         title: "مجموعه Scientific",
         items: [
-            { id: 201, title: "طرح آلبرت انیشتین", price: "۴۷۰,۰۰۰ تومان", img: "assets/images/collection4.png" },
-            { id: 202, title: "طرح نیکولا تسلا", price: "۴۲۰,۰۰۰ تومان", img: "assets/images/collection5.png" },
-            { id: 203, title: "طرح مریم میرزا خانی", price: "۳۹۰,۰۰۰ تومان", img: "assets/images/collection10.png" },
-            { id: 204, title: "طرح ورنر هایزنبرگ", price: "۴۲۰,۰۰۰ تومان", img: "assets/images/collection11.png" },
-            { id: 205, title: "طرح ماری کوری", price: "۳۸۰,۰۰۰ تومان", img: "assets/images/collection12.png" }
+            { id: 201, title: "طرح آلبرت انیشتین", price: "470,000 تومان", img: "assets/images/collection4.png" },
+            { id: 202, title: "طرح نیکولا تسلا", price: "450,000 تومان", img: "assets/images/collection5.png" },
+            { id: 203, title: "طرح مریم میرزا خانی", price: "410,000 تومان", img: "assets/images/collection10.png" },
+            { id: 204, title: "طرح ورنر هایزنبرگ", price: "435,000 تومان", img: "assets/images/collection11.png" },
+            { id: 205, title: "طرح ماری کوری", price: "400,000 تومان", img: "assets/images/collection12.png" }
         ]
     },
     historical: {
         title: "مجموعه Historical",
         items: [
-            { id: 301, title: "طرح امیر کبیر", price: "۳۵۰,۰۰۰ تومان", img: "assets/images/collection13.png" },
-            { id: 302, title: "طرح نادرشاه", price: "۴۰۰,۰۰۰ تومان", img: "assets/images/collection2.png" },
-            { id: 303, title: "طرح کوروش کبیر", price: "۴۴۰,۰۰۰ تومان", img: "assets/images/collection14.png" },
-            { id: 304, title: "طرح ناپلئون", price: "۳۹۰,۰۰۰ تومان", img: "assets/images/collection15.png" },
-            { id: 305, title: "طرح کریم خان زند", price: "۳۷۰,۰۰۰ تومان", img: "assets/images/collection16.png" }
+            { id: 301, title: "طرح امیر کبیر", price: "390,000 تومان", img: "assets/images/collection13.png" },
+            { id: 302, title: "طرح نادرشاه", price: "440,000 تومان", img: "assets/images/collection2.png" },
+            { id: 303, title: "طرح کوروش کبیر", price: "480,000 تومان", img: "assets/images/collection14.png" },
+            { id: 304, title: "طرح ناپلئون", price: "410,000 تومان", img: "assets/images/collection15.png" },
+            { id: 305, title: "طرح کریم خان زند", price: "390,000 تومان", img: "assets/images/collection16.png" }
         ]
     },
     car: {
         title: "مجموعه Car",
         items: [
-            { id: 401, title: "Mercedes-Benz CLS 63", price: "۴۶۰,۰۰۰ تومان", img: "assets/images/collection3.png" },
-            { id: 402, title: "BMW M8", price: "۴۹۰,۰۰۰ تومان", img: "assets/images/collection17.png" },
-            { id: 403, title: "Nissan GTR", price: "۴۶۰,۰۰۰ تومان", img: "assets/images/collection18.png" },
-            { id: 404, title: "Lamborghini Aventador", price: "۴۸۰,۰۰۰ تومان", img: "assets/images/collection19.png" },
-            { id: 405, title: "Bugatti Chiron", price: "۵۶۰,۰۰۰ تومان", img: "assets/images/collection20.png" }
+            { id: 401, title: "Mercedes-Benz CLS 63", price: "460,000 تومان", img: "assets/images/collection3.png" },
+            { id: 402, title: "BMW M8", price: "490,000 تومان", img: "assets/images/collection17.png" },
+            { id: 403, title: "Nissan GTR", price: "460,000 تومان", img: "assets/images/collection18.png" },
+            { id: 404, title: "Lamborghini Aventador", price: "490,000 تومان", img: "assets/images/collection19.png" },
+            { id: 405, title: "Bugatti Chiron", price: "560,000 تومان", img: "assets/images/collection20.png" }
         ]
     },
     gaming: {
         title: "مجموعه Gaming",
         items: [
-            { id: 501, title: "طرح Resident Evill 4", price: "۴۵۰,۰۰۰ تومان", img: "assets/images/collection21.png" },
-            { id: 502, title: "طرح God of War", price: "۴۸۰,۰۰۰ تومان", img: "assets/images/collection22.png" },
-            { id: 503, title: "طرح The Last of Us", price: "۴۶۰,۰۰۰ تومان", img: "assets/images/collection23.png" },
-            { id: 504, title: "طرح Elden Ring", price: "۴۹۰,۰۰۰ تومان", img: "assets/images/collection24.png" },
-            { id: 505, title: "طرح GTA VI", price: "۴۴۰,۰۰۰ تومان", img: "assets/images/collection25.png" }
+            { id: 501, title: "طرح Resident Evill 4", price: "490,000 تومان", img: "assets/images/collection21.png" },
+            { id: 502, title: "طرح God of War", price: "480,000 تومان", img: "assets/images/collection22.png" },
+            { id: 503, title: "طرح The Last of Us", price: "460,000 تومان", img: "assets/images/collection23.png" },
+            { id: 504, title: "طرح Elden Ring", price: "500,000 تومان", img: "assets/images/collection24.png" },
+            { id: 505, title: "طرح GTA VI", price: "540,000 تومان", img: "assets/images/collection25.png" }
         ]
     }
 };
@@ -519,11 +533,14 @@ function initAuthListener() {
 
 async function registerUser(email, password, fullName = '', phone = '', postcode = '') {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-    
+
     if (!phone) {
         alert("ورود شماره تلفن همراه اجباری است.");
         return;
     }
+
+    const submitBtn = document.getElementById("btn-register");
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "در حال ثبت‌نام..."; }
 
     const { data, error } = await supabaseClient.auth.signUp({
         email: email,
@@ -533,21 +550,28 @@ async function registerUser(email, password, fullName = '', phone = '', postcode
 
     if (error) {
         alert("خطا در ثبت‌نام: " + error.message);
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ثبت‌نام"; }
         return;
     }
 
+    // فقط در صورتی که کاربر واقعاً ساخته شده باشد، پروفایل اولیه را ذخیره می‌کنیم.
+    // توجه: به دلیل تنظیمات امنیتی Supabase (RLS)، نوشتن در جدول profiles تنها
+    // زمانی مجاز است که کاربر نشست فعال (session) داشته باشد.
     if (data && data.user) {
-        await supabaseClient.from('profiles').upsert({
-            id: data.user.id,
-            full_name: fullName,
-            phone: phone,
-            postcode: postcode,
-            updated_at: new Date().toISOString()
-        });
+        if (data.session) {
+            await supabaseClient.from('profiles').upsert({
+                id: data.user.id,
+                full_name: fullName,
+                phone: phone,
+                postcode: postcode,
+                updated_at: new Date().toISOString()
+            });
+        }
     }
 
-    alert("ثبت‌نام با موفقیت انجام شد!");
-    window.location.href = "index.html";
+    // پیام الزامی: اطلاع‌رسانی نیاز به تایید ایمیل
+    alert("ثبت‌نام با موفقیت انجام شد! ایمیل خود را تایید کنید.");
+    window.location.href = "login.html";
 }
 
 async function loginUser(email, password) {
@@ -700,7 +724,7 @@ async function loadUserOrders() {
             if (order.items && Array.isArray(order.items) && order.items.length > 0) {
                 itemsHtml = order.items.map(item => `
                     <div style="background: rgba(255,255,255,0.03); border-right: 3px solid #d4af37; padding: 8px 12px; margin: 6px 0; border-radius: 6px; font-size: 0.88rem;">
-                        <div><strong style="color: #fff;">${item.title}</strong></div>
+                        <div><strong style="color: #fff;">${escapeHtml(item.title)}</strong></div>
                         <div style="color: #aaa; font-size: 0.8rem; margin-top: 3px;">
                             سایز: <span style="color: #e0e0e0;">${item.size || 'اختصاصی'}</span> | 
                             جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
@@ -709,7 +733,7 @@ async function loadUserOrders() {
                     </div>
                 `).join('');
             } else {
-                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${order.description || 'توضیحات در دسترس نیست'}</p>`;
+                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${escapeHtml(order.description) || 'توضیحات در دسترس نیست'}</p>`;
             }
 
             return `
@@ -813,7 +837,7 @@ async function loadLiveChatMessages() {
     chatBox.innerHTML = messages.map(msg => `
         <div style="display: flex; flex-direction: column; align-items: flex-end;">
             <div style="background: #d4af37; color: #121212; padding: 8px 12px; border-radius: 12px 12px 0 12px; max-width: 80%; font-size: 0.9rem;">
-                ${msg.message}
+                ${escapeHtml(msg.message)}
             </div>
             <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">${formatDatePersian(msg.created_at)}</span>
         </div>
@@ -821,7 +845,7 @@ async function loadLiveChatMessages() {
             <div style="display: flex; flex-direction: column; align-items: flex-start;">
                 <div style="background: #2a2a2a; border: 1px solid rgba(212,175,55,0.3); color: #fff; padding: 8px 12px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 0.9rem;">
                     <small style="color: #d4af37; display: block; font-size: 0.75rem; margin-bottom: 2px;">پشتیبانی آویرا:</small>
-                    ${msg.admin_reply}
+                    ${escapeHtml(msg.admin_reply)}
                 </div>
             </div>
         ` : ''}
@@ -914,11 +938,11 @@ async function loadUserSupportTickets() {
 
         listContainer.innerHTML = tickets.map(ticket => `
             <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 10px; padding: 15px; margin-bottom: 12px;">
-                <p style="color: #fff; margin-bottom: 5px;"><strong>پیام شما:</strong> ${ticket.message}</p>
+                <p style="color: #fff; margin-bottom: 5px;"><strong>پیام شما:</strong> ${escapeHtml(ticket.message)}</p>
                 <span style="font-size: 0.8rem; color: #aaa;">📅 ${formatDatePersian(ticket.created_at)}</span>
                 ${ticket.admin_reply ? `
                     <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); color: #4ade80;">
-                        <strong>پاسخ پشتیبانی:</strong> ${ticket.admin_reply}
+                        <strong>پاسخ پشتیبانی:</strong> ${escapeHtml(ticket.admin_reply)}
                     </div>
                 ` : `<p style="font-size: 0.8rem; color: #d4af37; margin-top: 5px;">⏳ در انتظار پاسخ پشتیبانی...</p>`}
             </div>
@@ -932,27 +956,79 @@ async function loadUserSupportTickets() {
 // ==========================================
 // ۱۰. پنل مدیریت (Admin Panel)
 // ==========================================
-function checkAdminLogin() {
+// ==========================================
+// ورود مدیر با Supabase Auth (به‌جای رمز ثابت در کد)
+// ==========================================
+// نکته امنیتی مهم: این بررسی سمت کاربر (UI) است. حفاظت واقعی باید با
+// RLS Policy در سمت Supabase انجام شود که فقط کاربرانی با is_admin = true
+// اجازه خواندن/نوشتن روی جداول custom_orders و profiles و support_messages
+// را داشته باشند. بدون آن، هر کاربر لاگین‌شده (حتی غیرادمین) که مستقیماً
+// درخواست API بزند می‌تواند به داده‌ها دسترسی پیدا کند.
+async function checkAdminLogin() {
+    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+
     const userElem = document.getElementById("admin-user");
     const passElem = document.getElementById("admin-pass");
-
-    const username = userElem ? userElem.value.trim() : "";
+    const email = userElem ? userElem.value.trim() : "";
     const password = passElem ? passElem.value.trim() : "";
 
-    if (username === "amir" && password === "Amir1390") {
-        const loginBox = document.getElementById("login-box");
-        const adminDashboard = document.getElementById("admin-dashboard");
+    const submitBtn = document.querySelector('#admin-login-form .btn-submit');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "در حال بررسی..."; }
 
-        if (loginBox) loginBox.style.display = "none";
-        if (adminDashboard) adminDashboard.style.display = "block";
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
-        loadAdminDashboard();
-    } else {
-        alert("نام کاربری یا رمز عبور اشتباه است!");
+    if (error || !data.user) {
+        alert("ایمیل یا رمز عبور اشتباه است!");
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ورود به پنل"; }
+        return;
+    }
+
+    const { data: profile, error: profileError } = await supabaseClient
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', data.user.id)
+        .single();
+
+    if (profileError || !profile || profile.is_admin !== true) {
+        alert("این حساب دسترسی پنل مدیریت را ندارد.");
+        await supabaseClient.auth.signOut();
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ورود به پنل"; }
+        return;
+    }
+
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "ورود به پنل"; }
+    showAdminDashboard();
+}
+
+function showAdminDashboard() {
+    const loginBox = document.getElementById("login-box");
+    const adminDashboard = document.getElementById("admin-dashboard");
+    if (loginBox) loginBox.style.display = "none";
+    if (adminDashboard) adminDashboard.style.display = "block";
+    loadAdminDashboard();
+}
+
+// اگر مدیر قبلاً وارد شده باشد (نشست فعال Supabase)، مستقیم به داشبورد برود
+async function initAdminPageAuthCheck() {
+    if (!supabaseClient || !document.getElementById("admin-login-form")) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', user.id)
+        .single();
+
+    if (profile && profile.is_admin === true) {
+        showAdminDashboard();
     }
 }
 
-function logoutAdmin() {
+async function logoutAdmin() {
+    if (supabaseClient) await supabaseClient.auth.signOut();
+
     const loginBox = document.getElementById("login-box");
     const adminDashboard = document.getElementById("admin-dashboard");
 
@@ -1034,7 +1110,7 @@ async function loadAdminDashboard() {
             if (order.items && Array.isArray(order.items) && order.items.length > 0) {
                 itemsHtml = order.items.map(item => `
                     <div style="background: rgba(255,255,255,0.03); border-right: 3px solid #d4af37; padding: 8px 12px; margin: 6px 0; border-radius: 6px; font-size: 0.88rem;">
-                        <div><strong style="color: #fff;">${item.title}</strong></div>
+                        <div><strong style="color: #fff;">${escapeHtml(item.title)}</strong></div>
                         <div style="color: #aaa; font-size: 0.8rem; margin-top: 3px;">
                             سایز: <span style="color: #e0e0e0;">${item.size || 'اختصاصی'}</span> | 
                             جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
@@ -1043,7 +1119,7 @@ async function loadAdminDashboard() {
                     </div>
                 `).join('');
             } else {
-                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${order.description || 'توضیحات در دسترس نیست'}</p>`;
+                itemsHtml = `<p style="color: #ccc; font-size: 0.9rem;">${escapeHtml(order.description) || 'توضیحات در دسترس نیست'}</p>`;
             }
 
             const phone = userProfile.phone || 'ثبت نشده';
@@ -1062,10 +1138,10 @@ async function loadAdminDashboard() {
                     </div>
 
                     <div style="margin-bottom: 12px; font-size: 0.9rem; line-height: 1.6;">
-                        <p style="color: #60a5fa; margin-bottom: 4px;">👤 <strong>خریدار:</strong> ${fullName}</p>
-                        <p style="color: #4ade80; margin-bottom: 4px;">📞 <strong>شماره تماس:</strong> <span style="direction: ltr; display: inline-block;">${phone}</span></p>
-                        <p style="color: #f59e0b; margin-bottom: 4px;">📮 <strong>کد پستی:</strong> <span style="direction: ltr; display: inline-block;">${postcode}</span></p>
-                        <p style="color: #e0e0e0; margin-bottom: 4px;">📍 <strong>آدرس پستی:</strong> ${address}</p>
+                        <p style="color: #60a5fa; margin-bottom: 4px;">👤 <strong>خریدار:</strong> ${escapeHtml(fullName)}</p>
+                        <p style="color: #4ade80; margin-bottom: 4px;">📞 <strong>شماره تماس:</strong> <span style="direction: ltr; display: inline-block;">${escapeHtml(phone)}</span></p>
+                        <p style="color: #f59e0b; margin-bottom: 4px;">📮 <strong>کد پستی:</strong> <span style="direction: ltr; display: inline-block;">${escapeHtml(postcode)}</span></p>
+                        <p style="color: #e0e0e0; margin-bottom: 4px;">📍 <strong>آدرس پستی:</strong> ${escapeHtml(address)}</p>
                         <p style="color: #aaa; margin-bottom: 4px;">🏷️ <strong>متریال / سایز:</strong> ${order.material || 'استاندارد'} / ${order.size || 'اختصاصی'}</p>
                     </div>
 
@@ -1149,10 +1225,10 @@ async function loadAdminUsers() {
 
         usersList.innerHTML = profiles.map(user => `
             <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.2); border-radius: 10px; padding: 15px; margin-bottom: 12px;">
-                <h4 style="color: #d4af37; margin-bottom: 8px;">${user.full_name || 'کاربر بدون نام'}</h4>
-                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📞 شماره تلفن: <span style="direction: ltr; display: inline-block;">${user.phone || 'ثبت نشده'}</span></p>
-                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📮 کد پستی: <span style="direction: ltr; display: inline-block;">${user.postcode || 'ثبت نشده'}</span></p>
-                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📍 آدرس: ${user.address || 'ثبت نشده'}</p>
+                <h4 style="color: #d4af37; margin-bottom: 8px;">${escapeHtml(user.full_name) || 'کاربر بدون نام'}</h4>
+                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📞 شماره تلفن: <span style="direction: ltr; display: inline-block;">${escapeHtml(user.phone) || 'ثبت نشده'}</span></p>
+                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📮 کد پستی: <span style="direction: ltr; display: inline-block;">${escapeHtml(user.postcode) || 'ثبت نشده'}</span></p>
+                <p style="color: #ccc; font-size: 0.88rem; margin-bottom: 4px;">📍 آدرس: ${escapeHtml(user.address) || 'ثبت نشده'}</p>
                 <p style="color: #666; font-size: 0.78rem;">آخرین بروزرسانی: ${formatDatePersian(user.updated_at)}</p>
             </div>
         `).join('');
@@ -1184,15 +1260,15 @@ async function loadAdminSupportTickets() {
         supportList.innerHTML = messages.map(msg => `
             <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.25); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
                 <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 8px;">
-                    <span>👤 ${msg.user_email || 'کاربر'}</span>
+                    <span>👤 ${escapeHtml(msg.user_email) || 'کاربر'}</span>
                     <span>📅 ${formatDatePersian(msg.created_at)}</span>
                 </div>
                 <p style="color: #fff; font-size: 0.95rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
-                    ${msg.message}
+                    ${escapeHtml(msg.message)}
                 </p>
                 ${msg.admin_reply ? `
                     <p style="color: #4ade80; font-size: 0.88rem; background: rgba(74, 222, 128, 0.1); padding: 8px; border-radius: 6px; margin-bottom: 10px;">
-                        <strong>پاسخ شما:</strong> ${msg.admin_reply}
+                        <strong>پاسخ شما:</strong> ${escapeHtml(msg.admin_reply)}
                     </p>
                 ` : ''}
                 <div style="display: flex; gap: 8px; margin-top: 10px;">
