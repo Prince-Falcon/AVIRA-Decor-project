@@ -12,26 +12,26 @@
 
 <!-- هدر سایت -->
 <header class="header">
-    <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+    <a href="/" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
         <img src="assets/images/logo.png" alt="AVIRA" style="width: 35px; height: 35px; object-fit: contain;">
         <span style="color: #fff; font-weight: bold; letter-spacing: 1px;">AVIRA</span>
     </a>
 
     <nav>
-        <a href="index.html">خانه</a>
-        <a href="index.html#collection">مجموعه‌ها</a>
-        <a href="custom-order.html">سفارش اختصاصی</a>
+        <a href="/">خانه</a>
+        <a href="/#collection">مجموعه‌ها</a>
+        <a href="/custom-order">سفارش اختصاصی</a>
     </nav>
 
     <div class="header-actions">
             <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
-            <a href="cart.html" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
+            <a href="/cart" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
                 🛒 <span class="cart-badge" id="cart-badge">0</span>
             </a>
     </div>
     <div id="auth-header-container">
         <div id="logged-out-view">
-            <a href="login.html" class="auth-btn">ورود / ثبت‌نام</a>
+            <a href="/login" class="auth-btn">ورود / ثبت‌نام</a>
         </div>
 
         <div id="logged-in-view" style="display: none;">
@@ -40,9 +40,9 @@
                     👤 <span id="user-display-email">حساب من</span> ▾
                 </button>
                 <div class="dropdown-menu" id="user-dropdown-menu">
-                    <a href="orders.html">📦 سفارشات من</a>
-                    <a href="cart.html">🛒 سبد خرید من</a>
-                    <a href="settings.html">⚙️ تنظیمات حساب</a>
+                    <a href="/orders">📦 سفارشات من</a>
+                    <a href="/cart">🛒 سبد خرید من</a>
+                    <a href="/settings">⚙️ تنظیمات حساب</a>
                     <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 5px 0;">
                     <a href="#" onclick="logoutUser()" style="color: #f87171;">🚪 خروج از حساب</a>
                 </div>
@@ -78,7 +78,7 @@
                 <div class="size-selection">
                     <label class="section-label">انتخاب سایز:</label>
                     <div class="size-options">
-                        <button type="button" class="size-btn active" onclick="selectSize(this)">۱۸×۲۰ سانتی‌متر</button>
+                        <button type="button" class="size-btn active" onclick="selectSize(this)">۲۰×۲۰ سانتی‌متر</button>
                         <button type="button" class="size-btn" onclick="selectSize(this)">۲۰×۳۰ سانتی‌متر</button>
                         <button type="button" class="size-btn" onclick="selectSize(this)">۳۰×۴۰ سانتی‌متر</button>
                         <button type="button" class="size-btn" onclick="selectSize(this)">۳۰×۴۵ سانتی‌متر</button>

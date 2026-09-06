@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVIRA | گالری تابلوهای لوکس</title>
-    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link rel="icon" type="image/png" href="assets/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -61,7 +61,7 @@
 
     <!-- Header -->
     <header class="header">
-        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+        <a href="/" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
             <img src="assets/images/logo.png" alt="AVIRA" style="width: 35px; height: 35px; object-fit: contain;">
             <span style="color: #fff; font-weight: bold; letter-spacing: 1px;">AVIRA</span>
         </a>
@@ -75,13 +75,13 @@
 
         <div class="header-actions">
             <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
-            <a href="cart.html" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
+            <a href="/cart" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
                 🛒 <span class="cart-badge" id="cart-badge">0</span>
             </a>
         </div>
         <div id="auth-header-container">
             <div id="logged-out-view">
-                <a href="login.html" class="auth-btn">ورود / ثبت‌نام</a>
+                <a href="/login" class="auth-btn">ورود / ثبت‌نام</a>
             </div>
 
             <div id="logged-in-view" style="display: none;">
@@ -90,10 +90,10 @@
                         👤 <span id="user-display-email">حساب من</span> ▾
                     </button>
                     <div class="dropdown-menu" id="user-dropdown-menu">
-                        <a href="orders.html">📦 سفارشات من</a>
-                        <a href="cart.html">🛒 سبد خرید من</a>
-                        <a href="support-tickets.html">💬 پیام‌های پشتیبانی</a>
-                        <a href="settings.html">⚙️ تنظیمات حساب</a>
+                        <a href="/orders">📦 سفارشات من</a>
+                        <a href="/cart">🛒 سبد خرید من</a>
+                        <a href="/support-tickets">💬 پیام‌های پشتیبانی</a>
+                        <a href="/settings">⚙️ تنظیمات حساب</a>
                         <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 5px 0;">
                         <a href="#" onclick="logoutUser()" style="color: #f87171;">🚪 خروج از حساب</a>
                     </div>
@@ -136,35 +136,35 @@
         </div>
 
         <div class="cards">
-            <a href="collection.html?category=astronomic" class="card">
+            <a href="/collections?category=astronomic" class="card">
                 <div class="card-image image-one"></div>
                 <h3>astronomic</h3>
                 <p>نقاشی خداوند | به پهنای هستی | ابدیت</p>
             </a>
 
-            <a href="collection.html?category=scientific" class="card">
+            <a href="/collections?category=scientific" class="card">
                 <div class="card-image image-two"></div>
                 <h3>scientific</h3>
                 <p>ذهنی زیبا | کاشف | خاص</p>
             </a>
 
-            <a href="collection.html?category=historical" class="card">
+            <a href="/collections?category=historical" class="card">
                 <div class="card-image image-four"></div>
                 <h3>historical</h3>
                 <p>از خود گذشته | با تدبیر | شجاع</p>
             </a>
 
-            <a href="collection.html?category=car" class="card">
+            <a href="/collections?category=car" class="card">
                 <div class="card-image image-three"></div>
                 <h3>Car</h3>
                 <p>قدرتمند | پولادین | زیبا</p>
             </a>
 
             <!-- اضافه شدن کارت کالکشن گیمینگ -->
-            <a href="collection.html?category=gaming" class="card">
+            <a href="/collections?category=gaming" class="card">
                 <div class="card-image image-gaming" style="background-image: url('assets/images/collection21.png'); background-size: cover; background-position: center;"></div>
                 <h3>Gaming</h3>
-                <p>دنیای بازی‌ها | برای فرار از واقعیت | هیجان‌انگیز</p>
+                <p>دنیای بازی‌ها | حماسی | هیجان‌انگیز</p>
             </a>
         </div>
     </section>
@@ -173,7 +173,7 @@
     <section class="custom">
         <h2>طراحی اختصاصی</h2>
         <p>تابلویی که فقط برای فضای شما ساخته می‌شود.</p>
-        <a href="custom-order.html" class="order-btn">شروع سفارش</a>
+        <a href="/custom-order" class="order-btn">شروع سفارش</a>
     </section>
 
     <!-- Contact -->
