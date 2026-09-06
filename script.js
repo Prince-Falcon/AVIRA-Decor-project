@@ -297,8 +297,8 @@ const collectionsProducts = {
             { id: 504, title: "طرح Elden Ring", price: "590,000 Toman", img: "assets/images/collection24.png" },
             { id: 505, title: "طرح GTA VI", price: "640,000 Toman", img: "assets/images/collection25.png" },
             { id: 506, title: "طرح ", price: "600,000 Toman", img: "assets/images/collection42.png" },
-            { id: 507, title: "طرح Red Dead Redemption 2", price: "610,000 Toman", img: "assets/images/collection43.png" },
-            { id: 508, title: "طرح Ghost of tsushima", price: "570,000 Toman", img: "assets/images/collection44.png" },
+            { id: 507, title: "طرح Red Dead Redemption 2", price: "610,000 Toman", img: "assets/images/collection44.png" },
+            { id: 508, title: "طرح Ghost of tsushima", price: "570,000 Toman", img: "assets/images/collection43.png" },
             { id: 509, title: "طرح Assassin's creed : Brotherhood", price: "560,000 Toman", img: "assets/images/collection45.png" }
         ]
     }
