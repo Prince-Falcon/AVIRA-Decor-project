@@ -251,7 +251,7 @@ const collectionsProducts = {
             { id: 203, title: "طرح مریم میرزا خانی", price: "490,000 Toman", img: "assets/images/collection10.png" },
             { id: 204, title: "طرح ورنر هایزنبرگ", price: "520,000 Toman", img: "assets/images/collection11.png" },
             { id: 205, title: "طرح ماری کوری", price: "480,000 Toman", img: "assets/images/collection12.png" },
-            { id: 206, title: "طرح استیون هاوکینگ", price: "530,000 Toman", img: "assets/images/collection30.png" },
+            { id: 206, title: "طرح ایلان ماسک", price: "530,000 Toman", img: "assets/images/collection30.png" },
             { id: 207, title: "طرح بو علی سینا", price: "500,000 Toman", img: "assets/images/collection31.png" },
             { id: 208, title: "طرح ایزاک نیوتن", price: "510,000 Toman", img: "assets/images/collection32.png" },
             { id: 209, title: "طرح ابو ریحان بیرونی", price: "470,000 Toman", img: "assets/images/collection33.png" }
@@ -296,9 +296,9 @@ const collectionsProducts = {
             { id: 503, title: "طرح The Last of Us", price: "545,000 Toman", img: "assets/images/collection23.png" },
             { id: 504, title: "طرح Elden Ring", price: "590,000 Toman", img: "assets/images/collection24.png" },
             { id: 505, title: "طرح GTA VI", price: "640,000 Toman", img: "assets/images/collection25.png" },
-            { id: 506, title: "طرح Cyberpunk 2077", price: "600,000 Toman", img: "assets/images/collection42.png" },
+            { id: 506, title: "طرح ", price: "600,000 Toman", img: "assets/images/collection42.png" },
             { id: 507, title: "طرح Red Dead Redemption 2", price: "610,000 Toman", img: "assets/images/collection43.png" },
-            { id: 508, title: "طرح Spider-Man", price: "570,000 Toman", img: "assets/images/collection44.png" },
+            { id: 508, title: "طرح Ghost of tsushima", price: "570,000 Toman", img: "assets/images/collection44.png" },
             { id: 509, title: "طرح Assassin's creed : Brotherhood", price: "560,000 Toman", img: "assets/images/collection45.png" }
         ]
     }
