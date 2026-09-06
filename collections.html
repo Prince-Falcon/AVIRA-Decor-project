@@ -25,11 +25,12 @@
 
     <div class="header-actions">
             <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
+        </div>
+        <div class="account-cart-group">
             <a href="/cart" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
                 🛒 <span class="cart-badge" id="cart-badge">0</span>
             </a>
-    </div>
-    <div id="auth-header-container">
+            <div id="auth-header-container">
         <div id="logged-out-view">
             <a href="/login" class="auth-btn">ورود / ثبت‌نام</a>
         </div>
@@ -41,7 +42,6 @@
                 </button>
                 <div class="dropdown-menu" id="user-dropdown-menu">
                     <a href="/orders">📦 سفارشات من</a>
-                    <a href="/cart">🛒 سبد خرید من</a>
                     <a href="/settings">⚙️ تنظیمات حساب</a>
                     <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 5px 0;">
                     <a href="#" onclick="logoutUser()" style="color: #f87171;">🚪 خروج از حساب</a>
@@ -49,6 +49,7 @@
             </div>
         </div>
     </div>
+        </div>
 
     <div class="menu">☰</div>
 </header>
@@ -68,7 +69,8 @@
         
         <div class="modal-body">
             <div class="modal-image">
-                <img id="modal-product-img" src="" alt="طرح">
+                <img id="modal-product-img" src="" alt="طرح" draggable="false" oncontextmenu="return false;" onclick="openImageZoom(this.src)" title="برای بزرگ‌نمایی کلیک کنید">
+                <div class="zoom-hint">🔍 برای بزرگ‌نمایی کلیک کنید</div>
             </div>
             
             <div class="modal-details">
@@ -127,6 +129,17 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- لایتباکس بزرگ‌نمایی تصویر -->
+<div id="image-zoom-overlay" class="image-zoom-overlay" onclick="if(event.target === this) closeImageZoom();">
+    <button type="button" class="zoom-close-btn" onclick="closeImageZoom()">&times;</button>
+    <div class="zoom-controls">
+        <button type="button" onclick="event.stopPropagation(); adjustZoom(0.25)">➕</button>
+        <button type="button" onclick="event.stopPropagation(); adjustZoom(-0.25)">➖</button>
+        <button type="button" onclick="event.stopPropagation(); resetZoom()">↺</button>
+    </div>
+    <img id="zoom-image" src="" alt="نمای بزرگ" draggable="false" oncontextmenu="return false;">
 </div>
 
 <script src="script.js"></script>

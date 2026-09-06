@@ -62,6 +62,78 @@ function formatPrice(num) {
     return Math.round(num).toLocaleString('en-US') + " Toman";
 }
 
+// ==========================================
+// بزرگ‌نمایی تصویر محصول (جایگزین دانلود/باز کردن در تب جدید)
+// ==========================================
+let zoomLevel = 1;
+let zoomPanX = 0;
+let zoomPanY = 0;
+let isPanning = false;
+let panStartX = 0;
+let panStartY = 0;
+
+function openImageZoom(src) {
+    const overlay = document.getElementById("image-zoom-overlay");
+    const img = document.getElementById("zoom-image");
+    if (!overlay || !img) return;
+
+    img.src = src;
+    resetZoom();
+    overlay.classList.add("open");
+    document.body.style.overflow = "hidden";
+}
+
+function closeImageZoom() {
+    const overlay = document.getElementById("image-zoom-overlay");
+    if (overlay) overlay.classList.remove("open");
+    document.body.style.overflow = "";
+}
+
+function applyZoomTransform() {
+    const img = document.getElementById("zoom-image");
+    if (img) img.style.transform = `translate(${zoomPanX}px, ${zoomPanY}px) scale(${zoomLevel})`;
+}
+
+function adjustZoom(delta) {
+    zoomLevel = Math.min(4, Math.max(1, zoomLevel + delta));
+    if (zoomLevel === 1) { zoomPanX = 0; zoomPanY = 0; }
+    applyZoomTransform();
+}
+
+function resetZoom() {
+    zoomLevel = 1;
+    zoomPanX = 0;
+    zoomPanY = 0;
+    applyZoomTransform();
+}
+
+document.addEventListener("wheel", (e) => {
+    const overlay = document.getElementById("image-zoom-overlay");
+    if (!overlay || !overlay.classList.contains("open")) return;
+    e.preventDefault();
+    adjustZoom(e.deltaY < 0 ? 0.2 : -0.2);
+}, { passive: false });
+
+document.addEventListener("mousedown", (e) => {
+    if (e.target && e.target.id === "zoom-image" && zoomLevel > 1) {
+        isPanning = true;
+        panStartX = e.clientX - zoomPanX;
+        panStartY = e.clientY - zoomPanY;
+    }
+});
+document.addEventListener("mousemove", (e) => {
+    if (isPanning) {
+        zoomPanX = e.clientX - panStartX;
+        zoomPanY = e.clientY - panStartY;
+        applyZoomTransform();
+    }
+});
+document.addEventListener("mouseup", () => { isPanning = false; });
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeImageZoom();
+});
+
 function getSelectedMaterial() {
     const selected = document.querySelector('input[name="material"]:checked');
     return selected ? selected.value : 'normal';
@@ -396,7 +468,6 @@ function initProductsGrid() {
         });
     });
 }
-
 
 function openProductModal(productId, catKey) {
     const modal = document.getElementById("product-modal");

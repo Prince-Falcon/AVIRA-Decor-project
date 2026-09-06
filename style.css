@@ -991,12 +991,100 @@ nav a.active::after {
 }
 
 /* ==========================================
+   تکمیل حالت روشن: پس‌زمینه بخش‌های صفحه اصلی
+   (این بخش‌ها رنگ تیره‌ی خودشون رو مستقل از body دارن)
+   ========================================== */
+body.light-theme .about { background: #ffffff; }
+body.light-theme .collection { background: #f6f4ee; }
+body.light-theme .custom { background: #efece3; }
+body.light-theme footer { background: #efece3; }
+body.light-theme .card {
+    background: #ffffff;
+    border-color: rgba(180, 140, 40, 0.25);
+}
+body.light-theme .section-title h2 { color: #1c1c1c !important; }
+body.light-theme .about p,
+body.light-theme .custom p,
+body.light-theme .contact-box { color: #444 !important; }
+body.light-theme .card p { color: #666 !important; }
+body.light-theme footer p { color: #777 !important; }
+body.light-theme .subtitle { color: #6b6b6b !important; }
+
+/* ==========================================
+   تکمیل حالت روشن: پاپ‌آپ محصول و انتخاب سایز/جنس
+   (این عناصر هم رنگ ثابت کلاسی دارن، نه ارثی از body)
+   ========================================== */
+body.light-theme .section-label,
+body.light-theme .material-title {
+    color: #1c1c1c !important;
+}
+body.light-theme .material-desc,
+body.light-theme .price-display span:first-child {
+    color: #666 !important;
+}
+body.light-theme .size-btn {
+    background: #eee !important;
+    color: #1c1c1c !important;
+    border-color: #ccc !important;
+}
+body.light-theme .size-btn.active {
+    background: #d4af37 !important;
+    color: #111 !important;
+}
+body.light-theme .material-card .card-content {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+}
+body.light-theme .user-dropdown-btn {
+    background: rgba(0, 0, 0, 0.04);
+    color: #1c1c1c !important;
+    border-color: rgba(180, 140, 40, 0.35);
+}
+body.light-theme .dropdown-menu {
+    background: #ffffff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+body.light-theme .dropdown-menu a {
+    color: #1c1c1c !important;
+}
+
+/* ==========================================
+   تکمیل حالت روشن: رنگ‌های ثابتی که مستقیم روی تگ‌ها
+   نوشته شدن (style="color:#fff" و مشابه آن) و با کلاس
+   بالا نمی‌رن — چون استایل inline اولویت بالاتری دارد.
+   ========================================== */
+body.light-theme [style*="color: #fff"],
+body.light-theme [style*="color:#fff"],
+body.light-theme [style*="color: #ffffff"],
+body.light-theme [style*="color:#ffffff"],
+body.light-theme [style*="color: #e0e0e0"],
+body.light-theme [style*="color:#e0e0e0"],
+body.light-theme [style*="color: #aaa"],
+body.light-theme [style*="color:#aaa"],
+body.light-theme [style*="color: #a0a0a0"],
+body.light-theme [style*="color:#a0a0a0"],
+body.light-theme [style*="color: #ccc"],
+body.light-theme [style*="color:#ccc"] {
+    color: #1c1c1c !important;
+}
+body.light-theme [style*="color: #fca5a5"],
+body.light-theme [style*="color:#fca5a5"] {
+    color: #b91c1c !important;
+}
+
+/* ==========================================
    دکمه تم و آیکون سبد خرید در هدر
    ========================================== */
 .header-actions {
     display: flex;
     align-items: center;
     gap: 12px;
+}
+
+.account-cart-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
 }
 
 .theme-toggle-btn {
@@ -1135,9 +1223,46 @@ body.light-theme .skeleton-card {
     background-size: 800px 100%;
 }
 
-/* یادداشت: بخشی از سایت با استایل inline (style="color:#fff") نوشته شده و
-   با کلاس CSS تغییر نمی‌کند؛ برای پوسته روشن ۱۰۰٪ کامل، آن استایل‌های
-   inline باید به کلاس تبدیل شوند. */
+/* یادداشت: چون بسیاری از متن‌ها با استایل inline نوشته شده‌اند
+   (مثل style="color:#fff")، این استایل‌ها با کلاس CSS معمولی عوض
+   نمی‌شوند. به‌جای بازنویسی تک‌تک فایل‌های HTML، همان مقادیر رایج
+   inline را با CSS Attribute Selector شکار و در پوسته روشن رنگشان
+   را برعکس می‌کنیم. */
+body.light-theme [style*="color: #fff"],
+body.light-theme [style*="color:#fff"],
+body.light-theme [style*="color: #ffffff"],
+body.light-theme [style*="color:#ffffff"],
+body.light-theme [style*="color: #e0e0e0"],
+body.light-theme [style*="color:#e0e0e0"] {
+    color: #1c1c1c !important;
+}
+
+body.light-theme [style*="color: #ccc"],
+body.light-theme [style*="color:#ccc"],
+body.light-theme [style*="color: #aaa"],
+body.light-theme [style*="color:#aaa"],
+body.light-theme [style*="color: #a0a0a0"],
+body.light-theme [style*="color:#a0a0a0"],
+body.light-theme [style*="color: #666"],
+body.light-theme [style*="color:#666"] {
+    color: #555555 !important;
+}
+
+/* پس‌زمینه‌های خیلی تیره‌ی inline (ورودی‌ها، باکس‌های اطلاعاتی) که در
+   پوسته روشن باید روشن‌تر شوند */
+body.light-theme [style*="background: #242424"],
+body.light-theme [style*="background:#242424"],
+body.light-theme [style*="background-color: #242424"] {
+    background: #f0eee8 !important;
+}
+body.light-theme [style*="background: #181818"],
+body.light-theme [style*="background:#181818"] {
+    background: #eceae3 !important;
+}
+body.light-theme [style*="border: 1px solid #444"],
+body.light-theme [style*="border:1px solid #444"] {
+    border-color: #cfcabd !important;
+}
 
 /* ==========================================
    اسکلتون واقعی برای حالت‌های لودینگ
@@ -1169,4 +1294,91 @@ body.light-theme .skeleton-card {
 @keyframes cartItemOut {
     from { opacity: 1; transform: translateX(0); max-height: 200px; }
     to   { opacity: 0; transform: translateX(30px); max-height: 0; margin: 0; padding: 0; overflow: hidden; }
+}
+
+/* ==========================================
+   محافظت از تصاویر (جلوگیری از کلیک راست/درگ)
+   ========================================== */
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-touch-callout: none; /* جلوگیری از منوی «ذخیره تصویر» در آیفون */
+}
+
+/* ==========================================
+   بزرگ‌نمایی تصویر داخل پاپ‌آپ محصول
+   ========================================== */
+.modal-image {
+    position: relative;
+}
+.zoom-hint {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    pointer-events: none;
+    opacity: 0.9;
+}
+.modal-image img {
+    cursor: zoom-in;
+}
+
+.image-zoom-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    z-index: 200000;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+.image-zoom-overlay.open {
+    display: flex;
+}
+.image-zoom-overlay img#zoom-image {
+    max-width: 90vw;
+    max-height: 90vh;
+    transition: transform 0.08s ease-out;
+    cursor: grab;
+    user-select: none;
+}
+.zoom-close-btn {
+    position: absolute;
+    top: 20px;
+    left: 25px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 5;
+}
+.zoom-controls {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 5;
+}
+.zoom-controls button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    color: #fff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.zoom-controls button:hover {
+    background: rgba(212, 175, 55, 0.25);
 }
