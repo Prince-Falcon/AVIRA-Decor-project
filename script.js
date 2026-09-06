@@ -311,9 +311,8 @@ let basePriceValue = 0;
 let currentCalculatedPrice = "";
 
 function initProductsGrid() {
-    const grid = document.getElementById("productsGrid");
-    const titleElement = document.getElementById("collectionTitle");
-
+    const grid = document.getElementById("products-grid");
+    const titleElement = document.getElementById("collection-title");
     if (!grid) {
         console.error("❌ productsGrid پیدا نشد");
         return;
