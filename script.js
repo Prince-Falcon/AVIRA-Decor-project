@@ -311,26 +311,93 @@ let basePriceValue = 0;
 let currentCalculatedPrice = "";
 
 function initProductsGrid() {
-    const grid = document.getElementById("products-grid");
-    const titleElement = document.getElementById("collection-title");
+    const grid = document.getElementById("productsGrid");
+    const titleElement = document.getElementById("collectionTitle");
 
-    if (grid && titleElement) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const catKey = urlParams.get("category") || "astronomic";
-        const categoryData = collectionsProducts[catKey];
-
-        if (categoryData) {
-            titleElement.textContent = categoryData.title;
-            grid.innerHTML = categoryData.items.map(item => `
-                <div class="product-card" onclick="openProductModal(${item.id}, '${catKey}')">
-                    <img src="${item.img}" alt="${item.title}">
-                    <h3>${item.title}</h3>
-                    <span class="price">${item.price}</span>
-                </div>
-            `).join('');
-        }
+    if (!grid) {
+        console.error("❌ productsGrid پیدا نشد");
+        return;
     }
+
+    const params = new URLSearchParams(window.location.search);
+    const catKey = params.get("category");
+
+    console.log("📦 Category:", catKey);
+
+    if (!catKey || !collectionsProducts[catKey]) {
+        console.error("❌ Collection پیدا نشد:", catKey);
+
+        grid.innerHTML = `
+            <div class="no-products">
+                <p>محصولی برای نمایش پیدا نشد.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    const categoryData = collectionsProducts[catKey];
+
+    if (titleElement) {
+        titleElement.textContent = categoryData.title || catKey;
+    }
+
+    if (!categoryData.items || !Array.isArray(categoryData.items)) {
+        console.error("❌ items این collection مشکل دارد:", catKey);
+
+        grid.innerHTML = `
+            <div class="no-products">
+                <p>محصولی برای نمایش وجود ندارد.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    console.log(
+        `✅ ${categoryData.items.length} محصول برای ${catKey} پیدا شد`
+    );
+
+    grid.innerHTML = categoryData.items.map(item => {
+        return `
+            <div 
+                class="product-card"
+                data-product-id="${item.id}"
+                data-category="${catKey}"
+                tabindex="0"
+            >
+                <img 
+                    src="${item.img}"
+                    alt="${item.title}"
+                    loading="lazy"
+                >
+
+                <h3>${item.title}</h3>
+
+                <span class="price">${item.price}</span>
+            </div>
+        `;
+    }).join("");
+
+    const cards = grid.querySelectorAll(".product-card");
+
+    cards.forEach(card => {
+        const productId = Number(card.dataset.productId);
+        const category = card.dataset.category;
+
+        card.addEventListener("click", () => {
+            openProductModal(productId, category);
+        });
+
+        card.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openProductModal(productId, category);
+            }
+        });
+    });
 }
+
 
 function openProductModal(productId, catKey) {
     const modal = document.getElementById("product-modal");
