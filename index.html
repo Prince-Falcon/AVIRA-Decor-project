@@ -68,6 +68,24 @@
             transform: scale(1.05);
         }
     </style>
+    <!-- نوار جستجو -->
+     <div class="relative w-full md:w-96 my-4">
+     <div class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-400">
+        <i class="fa-solid fa-magnifying-glass"></i>
+     </div>
+     <input 
+        type="text" 
+        id="searchInput" 
+        placeholder="جستجوی نام محصول یا طرح..." 
+        class="w-full pl-10 pr-10 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+     >
+     <button id="clearSearchBtn" class="hidden absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark"></i>
+     </button>
+    </div>
+
+
+
     <meta name="google-site-verification" content="ukZ1wYBiri_6JB6uikdxzZdpq52Pr2tjugUW91EkKeM" />
     
 </head>
