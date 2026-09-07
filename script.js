@@ -406,7 +406,7 @@ const collectionsProducts = {
             { id: 702, title: "طرح Better Call Saul", price: "600,000 Toman", img: "assets/images/collection53.png" },
             { id: 703, title: "طرح Peaky blinders", price: "590,000 Toman", img: "assets/images/collection54.png" },
             { id: 704, title: "طرح The mentalist", price: "590,000 Toman", img: "assets/images/collection55.png" },
-            { id: 705, title: "طرح ", price: "600,000 Toman", img: "assets/images/collection56.png" }
+            { id: 705, title: "طرح BreakingBad", price: "600,000 Toman", img: "assets/images/collection56.png" }
         ]
     }
 };
