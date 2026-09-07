@@ -403,7 +403,7 @@ const collectionsProducts = {
     title: "مجموعه Movie",
     items: [
         { id: 702, title: "طرح Better Call Saul", price: "600,000 Toman", img: "assets/images/collection53.png" },
-        { id: 703, title: "طرح Peaky blinders", price: "590,000 Toman", img: "assets/images/collection54.png" },
+        { id: 703, title: "طرح House of The Dragon", price: "590,000 Toman", img: "assets/images/collection54.png" },
         { id: 704, title: "طرح The mentalist", price: "590,000 Toman", img: "assets/images/collection55.png" }
     ]
     }
