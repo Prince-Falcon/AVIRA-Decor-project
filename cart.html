@@ -69,20 +69,28 @@
             <!-- دریافت اجباری شماره تلفن، کد پستی و آدرس پستی گیرنده -->
             <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(212,175,55,0.3); padding: 15px; border-radius: 8px; margin: 15px 0;">
                 <h4 style="color: #d4af37; margin-bottom: 12px; font-size: 1rem;">📍 اطلاعات گیرنده (الزامی جهت ثبت سفارش)</h4>
-                
-                <div style="margin-bottom: 12px;">
-                    <label for="checkout-phone" style="display: block; font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">شماره تماس گیرنده:</label>
-                    <input type="tel" id="checkout-phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" style="width: 100%; padding: 10px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; direction: ltr; text-align: right;" required>
+
+                <!-- اگر کاربر قبلاً این اطلاعات را ثبت کرده باشد، به‌جای فرم، خلاصه نمایش داده می‌شود -->
+                <div id="recipient-summary" style="display: none; margin-bottom: 10px;">
+                    <p style="font-size: 0.9rem; color: #ccc; line-height: 1.8;" id="recipient-summary-text"></p>
+                    <button type="button" onclick="toggleRecipientEdit()" style="background: transparent; border: 1px solid #d4af37; color: #d4af37; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">✏️ ویرایش اطلاعات گیرنده</button>
                 </div>
 
-                <div style="margin-bottom: 12px;">
-                    <label for="checkout-postcode" style="display: block; font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">کد پستی ۱۰ رقمی:</label>
-                    <input type="text" id="checkout-postcode" placeholder="مثال: ۱۲۳۴۵۶۷۸۹۰" maxlength="10" style="width: 100%; padding: 10px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; direction: ltr; text-align: right;" required>
-                </div>
+                <div id="recipient-fields">
+                    <div style="margin-bottom: 12px;">
+                        <label for="checkout-phone" style="display: block; font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">شماره تماس گیرنده:</label>
+                        <input type="tel" id="checkout-phone" placeholder="۰۹۱۲۳۴۵۶۷۸۹" style="width: 100%; padding: 10px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; direction: ltr; text-align: right;" required>
+                    </div>
 
-                <div>
-                    <label for="checkout-address" style="display: block; font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">آدرس دقیق پستی جهت ارسال سفارش:</label>
-                    <textarea id="checkout-address" placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد..." style="width: 100%; padding: 10px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; height: 80px; resize: vertical;" required></textarea>
+                    <div style="margin-bottom: 12px;">
+                        <label for="checkout-postcode" style="display: block; font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">کد پستی ۱۰ رقمی:</label>
+                        <input type="text" id="checkout-postcode" placeholder="مثال: ۱۲۳۴۵۶۷۸۹۰" maxlength="10" style="width: 100%; padding: 10px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; direction: ltr; text-align: right;" required>
+                    </div>
+
+                    <div>
+                        <label for="checkout-address" style="display: block; font-size: 0.85rem; color: #ccc; margin-bottom: 5px;">آدرس دقیق پستی جهت ارسال سفارش:</label>
+                        <textarea id="checkout-address" placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد..." style="width: 100%; padding: 10px; background: #242424; border: 1px solid #444; color: #fff; border-radius: 6px; height: 80px; resize: vertical;" required></textarea>
+                    </div>
                 </div>
             </div>
 
@@ -105,6 +113,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             renderCartPage();
+            prefillRecipientInfo();
         });
     </script>
 </body>

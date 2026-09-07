@@ -1073,6 +1073,57 @@ body.light-theme [style*="color:#fca5a5"] {
 }
 
 /* ==========================================
+   تکمیل حالت روشن: پس‌زمینه‌های تیره‌ای که مستقیم
+   inline نوشته شدن و به‌صورت «جزیره سیاه» روی پوسته
+   روشن باقی می‌موندن (باکس‌های فرم، مودال چت، کارت متریال و...)
+   ========================================== */
+body.light-theme [style*="background: #1e1e1e"],
+body.light-theme [style*="background:#1e1e1e"],
+body.light-theme [style*="background: #242424"],
+body.light-theme [style*="background:#242424"],
+body.light-theme [style*="background: #2a2a2a"],
+body.light-theme [style*="background:#2a2a2a"],
+body.light-theme [style*="background: #1a1a1a"],
+body.light-theme [style*="background:#1a1a1a"],
+body.light-theme [style*="background: #141414"],
+body.light-theme [style*="background:#141414"],
+body.light-theme [style*="background: #181818"],
+body.light-theme [style*="background:#181818"],
+body.light-theme [style*="background: #252525"],
+body.light-theme [style*="background:#252525"],
+body.light-theme [style*="background: #202020"],
+body.light-theme [style*="background:#202020"] {
+    background: #f0eee8 !important;
+    border-color: #ddd !important;
+}
+body.light-theme [style*="background: rgba(255,255,255,0.05)"],
+body.light-theme [style*="background: rgba(255, 255, 255, 0.05)"],
+body.light-theme [style*="background: rgba(255,255,255,0.03)"],
+body.light-theme [style*="background: rgba(255, 255, 255, 0.03)"],
+body.light-theme [style*="background: rgba(255,255,255,0.02)"],
+body.light-theme [style*="background: rgba(255, 255, 255, 0.02)"] {
+    background: rgba(0, 0, 0, 0.035) !important;
+}
+/* باکس‌های چت پشتیبانی که با id در استایل جدا تعریف شده‌اند */
+body.light-theme #user-support-list,
+body.light-theme #live-chat-messages {
+    background: #f0eee8 !important;
+}
+body.light-theme .support-modal-box {
+    background: #ffffff !important;
+}
+
+/* اطمینان از نمایش رنگ طلایی دکمه‌ها در تمام صفحات، از جمله سفارش اختصاصی */
+body.light-theme .btn-submit {
+    background: linear-gradient(135deg, #d4af37, #aa8c2c) !important;
+    color: #121212 !important;
+}
+body.light-theme .order-btn,
+body.light-theme .btn {
+    color: #121212 !important;
+}
+
+/* ==========================================
    دکمه تم و آیکون سبد خرید در هدر
    ========================================== */
 .header-actions {

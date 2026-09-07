@@ -300,6 +300,21 @@ function showToast(message, type = "success") {
 // ==========================================
 // ۴. داده‌های کالکشن‌ها و مودال محصول
 // ==========================================
+//
+// راهنمای تغییر قیمت‌ها (بدون نیاز به دانش برنامه‌نویسی):
+// هر محصول یک خط مثل این داره:
+//   { id: 101, title: "طرح آندرومدا", price: "490,000 Toman", img: "..." }
+// فقط عدد داخل "price" رو عوض کن (فرمت هرچی باشه فرقی نمی‌کنه، فقط
+// خود عدد و کلمه Toman مهمه — نقطه، کاما یا فاصله رو ماشین حذف می‌کنه).
+// این عدد قیمت پایه با جنس Normal و سایز ۲۰×۲۰ هست؛ قیمت نهایی که به
+// مشتری نشون داده می‌شه با ضرب در sizeMultipliers و materialMultipliers
+// (بالاتر در همین فایل) محاسبه می‌شه، پس لازم نیست برای هر سایز/جنس
+// جدا قیمت بنویسی.
+// برای اضافه کردن محصول جدید به یک مجموعه: یک خط جدید با همین ساختار
+// و یک id منحصربه‌فرد (که با بقیه تکراری نباشه) داخل آرایه items اضافه کن.
+// برای اضافه کردن مجموعه کاملاً جدید: یک کلید جدید مثل anime/movie
+// پایین اضافه کن و همون ساختار title + items رو رعایت کن.
+//
 const collectionsProducts = {
     astronomic: {
         title: "مجموعه Astronomic",
@@ -372,6 +387,26 @@ const collectionsProducts = {
             { id: 507, title: "طرح Red Dead Redemption 2", price: "610,000 Toman", img: "assets/images/collection44.png" },
             { id: 508, title: "طرح Ghost of tsushima", price: "570,000 Toman", img: "assets/images/collection43.png" },
             { id: 509, title: "طرح Assassin's creed : Brotherhood", price: "560,000 Toman", img: "assets/images/collection45.png" }
+        ]
+    },
+    anime: {
+        title: "مجموعه Anime",
+        items: [
+            { id: 601, title: "طرح Naruto", price: "560,000 Toman", img: "assets/images/collection47.png" },
+            { id: 602, title: "طرح Attack on Titan", price: "580,000 Toman", img: "assets/images/collection48.png" },
+            { id: 603, title: "طرح One Piece", price: "570,000 Toman", img: "assets/images/collection49.png" },
+            { id: 604, title: "طرح Demon Slayer", price: "590,000 Toman", img: "assets/images/collection50.png" },
+            { id: 605, title: "طرح Jujutsu Kaisen", price: "580,000 Toman", img: "assets/images/collection51.png" }
+        ]
+    },
+    movie: {
+        title: "مجموعه Movie",
+        items: [
+            { id: 701, title: "طرح Joker", price: "570,000 Toman", img: "assets/images/collection52.png" },
+            { id: 702, title: "طرح The Godfather", price: "600,000 Toman", img: "assets/images/collection53.png" },
+            { id: 703, title: "طرح Interstellar", price: "590,000 Toman", img: "assets/images/collection54.png" },
+            { id: 704, title: "طرح Inception", price: "590,000 Toman", img: "assets/images/collection55.png" },
+            { id: 705, title: "طرح The Dark Knight", price: "600,000 Toman", img: "assets/images/collection56.png" }
         ]
     }
 };
@@ -707,6 +742,44 @@ function removeFromCart(index) {
     }
 }
 
+// ==========================================
+// پر کردن خودکار اطلاعات گیرنده از پروفایل کاربر
+// اگر قبلاً ثبت شده، دیگر از کاربر دوباره پرسیده نمی‌شود
+// ==========================================
+async function prefillRecipientInfo() {
+    if (!supabaseClient) return;
+    const phoneElem = document.getElementById("checkout-phone");
+    const postcodeElem = document.getElementById("checkout-postcode");
+    const addressElem = document.getElementById("checkout-address");
+    const summaryBox = document.getElementById("recipient-summary");
+    const summaryText = document.getElementById("recipient-summary-text");
+    const fieldsBox = document.getElementById("recipient-fields");
+    if (!phoneElem || !postcodeElem || !addressElem) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const { data: profile } = await supabaseClient.from('profiles').select('phone, postcode, address').eq('id', user.id).single();
+    if (!profile) return;
+
+    if (profile.phone) phoneElem.value = profile.phone;
+    if (profile.postcode) postcodeElem.value = profile.postcode;
+    if (profile.address) addressElem.value = profile.address;
+
+    if (profile.phone && profile.postcode && profile.address && summaryBox && fieldsBox && summaryText) {
+        summaryText.innerHTML = `📞 ${escapeHtml(profile.phone)} &nbsp;|&nbsp; 📮 ${escapeHtml(profile.postcode)}<br>📍 ${escapeHtml(profile.address)}`;
+        summaryBox.style.display = "block";
+        fieldsBox.style.display = "none";
+    }
+}
+
+function toggleRecipientEdit() {
+    const summaryBox = document.getElementById("recipient-summary");
+    const fieldsBox = document.getElementById("recipient-fields");
+    if (summaryBox) summaryBox.style.display = "none";
+    if (fieldsBox) fieldsBox.style.display = "block";
+}
+
 async function submitFinalOrder() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
 
@@ -970,6 +1043,30 @@ async function updatePassword() {
 // ==========================================
 let userOrdersSubscription = null;
 
+// ==========================================
+// لغو سفارش توسط خود کاربر (فقط تا مرحله «تایید شده و در حال ساخت»)
+// ==========================================
+async function cancelOrder(orderId) {
+    if (!supabaseClient) return;
+    if (!confirm("آیا از لغو این سفارش مطمئن هستید؟ این عمل قابل بازگشت نیست.")) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const { error } = await supabaseClient
+        .from('custom_orders')
+        .update({ status: 'لغو شده' })
+        .eq('id', orderId)
+        .eq('user_id', user.id);
+
+    if (error) {
+        alert("خطا در لغو سفارش: " + error.message);
+    } else {
+        showToast("سفارش با موفقیت لغو شد.", "success");
+        loadUserOrders();
+    }
+}
+
 async function loadUserOrders() {
     const listContainer = document.getElementById("user-orders-list");
     if (!listContainer || !supabaseClient) return;
@@ -1045,6 +1142,7 @@ async function loadUserOrders() {
 
                     <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
                         <span class="order-status" style="display: inline-block; padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3);">وضعیت: ${order.status || 'در انتظار بررسی'}</span>
+                        ${['در انتظار بررسی', 'تایید شده و در حال ساخت'].includes(order.status || 'در انتظار بررسی') ? `<button onclick="cancelOrder('${order.id}')" style="background: transparent; border: 1px solid #f87171; color: #f87171; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">لغو سفارش</button>` : ''}
                     </div>
                 </div>
             `;
