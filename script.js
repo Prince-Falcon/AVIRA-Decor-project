@@ -1693,3 +1693,73 @@ async function replyToSupportMessage(msgId) {
         loadAdminSupportTickets();
     }
 }
+// دریافت المان‌های سرچ
+const searchInput = document.getElementById('searchInput');
+const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+// تابع جستجو در تمام مجموعه‌ها
+function handleSearch(query) {
+    const cleanQuery = query.trim().toLowerCase();
+
+    // اگر کادر سرچ خالی بود، همه محصولات را نشان بده
+    if (!cleanQuery) {
+        if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
+        renderAllCollections(); // یا نام تابعی که در پروژه خودتان محصولات را رندر می‌کند
+        return;
+    }
+
+    if (clearSearchBtn) clearSearchBtn.classList.remove('hidden');
+
+    // پیدا کردن محصولات مرتبط
+    const matchedProducts = [];
+    Object.values(collectionsProducts).forEach(collection => {
+        if (collection.items) {
+            collection.items.forEach(product => {
+                if (product.title && product.title.toLowerCase().includes(cleanQuery)) {
+                    matchedProducts.push(product);
+                }
+            });
+        }
+    });
+
+    // نمایش محصولات پیدا شده
+    renderSearchResults(matchedProducts);
+}
+
+// تابع رندر کردن نتایج جستجو
+function renderSearchResults(products) {
+    const container = document.getElementById('productsContainer'); // آیدی کانتینر محصولات شما
+    if (!container) return;
+
+    if (products.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-12 text-slate-400">
+                <i class="fa-solid fa-ghost text-4xl mb-3 block"></i>
+                <p>محصولی با این مشخصات پیدا نشد!</p>
+            </div>
+        `;
+        return;
+    }
+
+    // ساخت کارت برای محصولات پیدا شده
+    container.innerHTML = `
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            ${products.map(product => createProductCardHTML(product)).join('')}
+        </div>
+    `;
+}
+
+// گوش به زنگ بودن برای تایپ کاربر
+if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+        handleSearch(e.target.value);
+    });
+}
+
+// دکمه پاک کردن سرچ
+if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        handleSearch('');
+    });
+}
