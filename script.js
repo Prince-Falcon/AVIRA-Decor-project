@@ -436,8 +436,10 @@ function initProductsGrid() {
                 <p>محصولی برای نمایش پیدا نشد.</p>
             </div>
         `;
-
+        // داخل تابع initProductsGrid پس از تشخیص categoryData:
+     document.title = `${categoryData.title} | خرید آنلاین تابلو لوکس آویرا`;
         return;
+        
     }
 
     const categoryData = collectionsProducts[catKey];

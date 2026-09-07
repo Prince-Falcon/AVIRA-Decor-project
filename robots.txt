@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /cart.html
+Disallow: /orders.html
+Disallow: /settings.html
+
+Sitemap:https://aviradecoratives.vercel.app/sitemap.xml
