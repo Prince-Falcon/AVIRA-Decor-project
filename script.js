@@ -1763,3 +1763,93 @@ if (clearSearchBtn) {
         handleSearch('');
     });
 }
+// ==========================================
+// ۳. راه‌اندازی و رویدادهای عمومی DOM + قابلیت سرچ
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    if (document.getElementById("user-orders-list")) loadUserOrders();
+    if (document.getElementById("user-support-list")) loadUserSupportTickets();
+    if (document.getElementById("profile-settings-form")) loadUserSettings();
+
+    const sections = document.querySelectorAll("section");
+    if (sections.length > 0) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = "1";
+                    entry.target.style.transform = "translateY(0)";
+                }
+            });
+        }, { threshold: 0.15 });
+
+        sections.forEach(section => {
+            section.style.opacity = "0";
+            section.style.transform = "translateY(40px)";
+            section.style.transition = "0.8s ease";
+            observer.observe(section);
+        });
+    }
+
+    const menu = document.querySelector(".menu");
+    const nav = document.querySelector("nav");
+    if (menu && nav) {
+        menu.addEventListener("click", () => {
+            const isFlex = nav.style.display === "flex";
+            nav.style.display = isFlex ? "none" : "flex";
+            if (!isFlex) nav.style.flexDirection = "column";
+        });
+    }
+
+    document.querySelectorAll('img').forEach(img => img.addEventListener('contextmenu', (e) => e.preventDefault()));
+
+    initProductsGrid();
+    renderCartPage();
+    initAuthListener();
+    initSearchLogic(); // فعالسازی جستجو
+    applyStoredTheme();
+    updateCartBadge();
+});
+
+document.addEventListener("mousemove", (e) => {
+    document.documentElement.style.setProperty("--x", e.clientX + "px");
+    document.documentElement.style.setProperty("--y", e.clientY + "px");
+});
+
+window.addEventListener("scroll", () => {
+    const header = document.querySelector(".header");
+    if (!header) return;
+    header.classList.toggle("scrolled", window.scrollY > 40);
+});
+
+// تابع لاجیک سرچ بار
+function initSearchLogic() {
+    const searchInput = document.getElementById("searchInput");
+    const searchContainer = document.getElementById("search-container");
+    
+    if (!searchInput || !searchContainer) return;
+
+    searchInput.addEventListener("focus", () => {
+        searchContainer.classList.add("active");
+    });
+    
+    searchInput.addEventListener("blur", () => {
+        if(searchInput.value.trim() === "") {
+            searchContainer.classList.remove("active");
+        }
+    });
+
+    searchInput.addEventListener("input", (e) => {
+        const term = e.target.value.toLowerCase().trim();
+        const cards = document.querySelectorAll(".product-card");
+        
+        cards.forEach(card => {
+            const title = card.querySelector("h3").textContent.toLowerCase();
+            if (title.includes(term)) {
+                card.style.display = "flex"; // یا block بسته به CSS شما
+                card.style.animation = "fadeIn 0.4s ease";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    });
+}

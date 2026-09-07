@@ -2,17 +2,18 @@
 <html lang="fa" dir="rtl">
 <head>
     <!-- متاتگ‌های پایه سئو -->
- <meta name="description" content="گالری تابلوهای لوکس و دکوراتیو آویرا؛ عرضه انواع تابلوهای مدرن در طرح‌های نجومی، علمی، تاریخی، خودرو و گیمینگ با کیفیت عالی و سفارش اختصاصی.">
- <meta name="keywords" content="تابلو دکوراتیو, خرید تابلو لوکس, تابلو مدرن, سفارش اختصاصی تابلو, تابلو ماشین, تابلو گیمینگ">
- <meta name="robots" content="index, follow">
- <link rel="canonical" href="https://aviradecoratives.vercel.app/">
+    <meta name="description" content="گالری تابلوهای لوکس و دکوراتیو آویرا؛ عرضه انواع تابلوهای مدرن در طرح‌های نجومی، علمی، تاریخی، خودرو و گیمینگ با کیفیت عالی و سفارش اختصاصی.">
+    <meta name="keywords" content="تابلو دکوراتیو, خرید تابلو لوکس, تابلو مدرن, سفارش اختصاصی تابلو, تابلو ماشین, تابلو گیمینگ">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://aviradecoratives.vercel.app/">
+    <meta name="google-site-verification" content="ukZ1wYBiri_6JB6uikdxzZdpq52Pr2tjugUW91EkKeM" />
 
- <!-- متاتگ‌های Open Graph (برای نمایش جذاب هنگام اشتراک‌گذاری در تلگرام، واتساپ و شبکه های اجتماعی) -->
- <meta property="og:type" content="website">
- <meta property="og:title" content="AVIRA | گالری تابلوهای لوکس و دکوراتیو">
- <meta property="og:description" content="هنر، امضای فضای شماست. سفارش و خرید انواعی از تابلوهای لوکس و مدرن دکوراتیو.">
- <meta property="og:image" content="https://aviradecoratives.vercel.app/assets/images/logo.png">
- <meta property="og:url" content="https://aviradecoratives.vercel.app/">
+    <!-- متاتگ‌های Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AVIRA | گالری تابلوهای لوکس و دکوراتیو">
+    <meta property="og:description" content="هنر، امضای فضای شماست. سفارش و خرید انواعی از تابلوهای لوکس و مدرن دکوراتیو.">
+    <meta property="og:image" content="https://aviradecoratives.vercel.app/assets/images/logo.png">
+    <meta property="og:url" content="https://aviradecoratives.vercel.app/">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AVIRA | گالری تابلوهای لوکس</title>
@@ -67,27 +68,79 @@
         .floating-support-btn:hover {
             transform: scale(1.05);
         }
+
+        /* استایل و انیمیشن‌های سرچ بار لوکس */
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 30px;
+            height: 40px;
+            width: 40px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            overflow: hidden;
+            cursor: text;
+        }
+        .search-container:hover, .search-container.active {
+            width: 240px;
+            background: rgba(20, 20, 20, 0.8);
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+        .search-btn {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            font-size: 1.1rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .search-container:hover .search-btn,
+        .search-container.active .search-btn {
+            color: #d4af37;
+            transform: scale(1.1);
+        }
+        .search-input {
+            width: 0;
+            opacity: 0;
+            border: none;
+            background: transparent;
+            color: #fff;
+            padding: 0;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            outline: none;
+        }
+        .search-container:hover .search-input,
+        .search-container.active .search-input {
+            width: 100%;
+            opacity: 1;
+            padding: 0 15px 0 0;
+        }
+        /* پشتیبانی از حالت روشن */
+        .light-theme .search-container {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .light-theme .search-container:hover,
+        .light-theme .search-container.active {
+            background: rgba(255, 255, 255, 0.95);
+        }
+        .light-theme .search-input {
+            color: #333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
-    <!-- نوار جستجو -->
-     <div class="relative w-full md:w-96 my-4">
-     <div class="absolute inset-y-0 right-0 flex items-center pr-3.5 pointer-events-none text-slate-400">
-        <i class="fa-solid fa-magnifying-glass"></i>
-     </div>
-     <input 
-        type="text" 
-        id="searchInput" 
-        placeholder="جستجوی نام محصول یا طرح..." 
-        class="w-full pl-10 pr-10 py-2 bg-slate-800 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-     >
-     <button id="clearSearchBtn" class="hidden absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 hover:text-white">
-        <i class="fa-solid fa-xmark"></i>
-     </button>
-    </div>
-
-
-
-    <meta name="google-site-verification" content="ukZ1wYBiri_6JB6uikdxzZdpq52Pr2tjugUW91EkKeM" />
-    
 </head>
 <body>
 
@@ -105,32 +158,39 @@
             <a href="#contact">ارتباط</a>
         </nav>
 
-        <div class="header-actions">
+        <div class="header-actions" style="display: flex; align-items: center; gap: 15px;">
             <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
-        </div>
-        <div class="account-cart-group">
-            <a href="/cart" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
-                🛒 <span class="cart-badge" id="cart-badge">0</span>
-            </a>
-            <div id="auth-header-container">
-            <div id="logged-out-view">
-                <a href="/login" class="auth-btn">ورود / ثبت‌نام</a>
+            
+            <!-- نوار جستجو با انیمیشن -->
+            <div class="search-container" id="search-container">
+                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                <input type="text" id="searchInput" placeholder="جستجوی نام طرح..." class="search-input">
             </div>
 
-            <div id="logged-in-view" style="display: none;">
-                <div class="user-dropdown">
-                    <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
-                        👤 <span id="user-display-email">حساب من</span> ▾
-                    </button>
-                    <div class="dropdown-menu" id="user-dropdown-menu">
-                        <a href="/orders">📦 سفارشات من</a>
-                        <a href="/support-tickets">💬 پیام‌های پشتیبانی</a>
-                        <a href="/settings">⚙️ تنظیمات حساب</a>
-                        <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 5px 0;">
-                        <a href="#" onclick="logoutUser()" style="color: #f87171;">🚪 خروج از حساب</a>
+            <div class="account-cart-group" style="display: flex; align-items: center; gap: 10px;">
+                <a href="/cart" class="cart-icon-btn" id="nav-cart-btn" title="سبد خرید">
+                    🛒 <span class="cart-badge" id="cart-badge">0</span>
+                </a>
+                <div id="auth-header-container">
+                    <div id="logged-out-view">
+                        <a href="/login" class="auth-btn">ورود / ثبت‌نام</a>
+                    </div>
+
+                    <div id="logged-in-view" style="display: none;">
+                        <div class="user-dropdown">
+                            <button class="user-dropdown-btn" onclick="toggleUserDropdown()">
+                                👤 <span id="user-display-email">حساب من</span> ▾
+                            </button>
+                            <div class="dropdown-menu" id="user-dropdown-menu">
+                                <a href="/orders">📦 سفارشات من</a>
+                                <a href="/support-tickets">💬 پیام‌های پشتیبانی</a>
+                                <a href="/settings">⚙️ تنظیمات حساب</a>
+                                <hr style="border: 0.5px solid rgba(255,255,255,0.1); margin: 5px 0;">
+                                <a href="#" onclick="logoutUser()" style="color: #f87171;">🚪 خروج از حساب</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
 
@@ -193,21 +253,18 @@
                 <p>قدرتمند | پولادین | زیبا</p>
             </a>
 
-            <!-- اضافه شدن کارت کالکشن گیمینگ -->
             <a href="/collections?category=gaming" class="card">
                 <div class="card-image image-gaming" style="background-image: url('assets/images/collection21.png'); background-size: cover; background-position: center;"></div>
                 <h3>Gaming</h3>
                 <p>دنیای بازی‌ها | حماسی | هیجان‌انگیز</p>
             </a>
 
-            <!-- اضافه شدن کارت کالکشن انیمه -->
             <a href="/collections?category=anime" class="card">
                 <div class="card-image image-anime" style="background-image: url('assets/images/collection47.png'); background-size: cover; background-position: center;"></div>
                 <h3>Anime</h3>
                 <p>دنیای انیمه | پرانرژی | خاطره‌انگیز</p>
             </a>
 
-            <!-- اضافه شدن کارت کالکشن سینما -->
             <a href="/collections?category=movie" class="card">
                 <div class="card-image image-movie" style="background-image: url('assets/images/collection52.png'); background-size: cover; background-position: center;"></div>
                 <h3>Movie</h3>
@@ -259,7 +316,6 @@
     <!-- پنجره چت آنلاین زنده -->
     <div id="support-modal">
         <div class="support-modal-box">
-            <!-- هدر چت -->
             <div style="background: rgba(255,255,255,0.05); padding: 15px 20px; border-bottom: 1px solid rgba(212,175,55,0.2); display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <div style="width: 10px; height: 10px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e;"></div>
@@ -267,13 +323,9 @@
                 </div>
                 <button onclick="closeSupportModal()" style="background: none; border: none; color: #aaa; font-size: 1.2rem; cursor: pointer;">✕</button>
             </div>
-
-            <!-- بدنه گفتگو -->
             <div id="live-chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #141414;">
                 <p style="color: #666; text-align: center; font-size: 0.85rem;">در حال بارگذاری گفتگو...</p>
             </div>
-
-            <!-- ورودی پیام -->
             <div style="padding: 12px; background: #1a1a1a; border-top: 1px solid rgba(255,255,255,0.08); display: flex; gap: 8px;">
                 <input type="text" id="sup-msg" placeholder="پیام خود را بنویسید..." style="flex: 1; margin: 0; padding: 10px 14px; background: #242424; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 0.9rem;" onkeypress="if(event.key === 'Enter') submitSupportMessage()">
                 <button type="button" onclick="submitSupportMessage()" style="background: linear-gradient(135deg, #d4af37, #aa8c2c); color: #121212; border: none; padding: 0 18px; border-radius: 8px; cursor: pointer; font-weight: bold;">ارسال</button>
