@@ -392,7 +392,7 @@ const collectionsProducts = {
     anime: {
         title: "مجموعه Anime",
         items: [
-            { id: 601, title: "طرح Naruto", price: "560,000 Toman", img: "assets/images/collection47.png" },
+            { id: 601, title: "طرح Solo Leveling", price: "560,000 Toman", img: "assets/images/collection47.png" },
             { id: 602, title: "طرح Attack on Titan", price: "580,000 Toman", img: "assets/images/collection48.png" },
             { id: 603, title: "طرح One Piece", price: "570,000 Toman", img: "assets/images/collection49.png" },
             { id: 604, title: "طرح Demon Slayer", price: "590,000 Toman", img: "assets/images/collection50.png" },
@@ -402,11 +402,11 @@ const collectionsProducts = {
     movie: {
         title: "مجموعه Movie",
         items: [
-            { id: 701, title: "طرح Joker", price: "570,000 Toman", img: "assets/images/collection52.png" },
-            { id: 702, title: "طرح The Godfather", price: "600,000 Toman", img: "assets/images/collection53.png" },
-            { id: 703, title: "طرح Interstellar", price: "590,000 Toman", img: "assets/images/collection54.png" },
-            { id: 704, title: "طرح Inception", price: "590,000 Toman", img: "assets/images/collection55.png" },
-            { id: 705, title: "طرح The Dark Knight", price: "600,000 Toman", img: "assets/images/collection56.png" }
+            { id: 701, title: "طرح Avengers:Endgame", price: "570,000 Toman", img: "assets/images/collection52.png" },
+            { id: 702, title: "طرح Better Call Saul", price: "600,000 Toman", img: "assets/images/collection53.png" },
+            { id: 703, title: "طرح Peaky blinders", price: "590,000 Toman", img: "assets/images/collection54.png" },
+            { id: 704, title: "طرح The mentalist", price: "590,000 Toman", img: "assets/images/collection55.png" },
+            { id: 705, title: "طرح ", price: "600,000 Toman", img: "assets/images/collection56.png" }
         ]
     }
 };
