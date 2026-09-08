@@ -436,10 +436,8 @@ function initProductsGrid() {
                 <p>محصولی برای نمایش پیدا نشد.</p>
             </div>
         `;
-        // داخل تابع initProductsGrid پس از تشخیص categoryData:
-     document.title = `${categoryData.title} | خرید آنلاین تابلو لوکس آویرا`;
+        document.title = "مشاهده مجموعه | خرید آنلاین تابلو لوکس آویرا";
         return;
-        
     }
 
     const categoryData = collectionsProducts[catKey];
@@ -447,6 +445,7 @@ function initProductsGrid() {
     if (titleElement) {
         titleElement.textContent = categoryData.title || catKey;
     }
+    document.title = `${categoryData.title || catKey} | خرید آنلاین تابلو لوکس آویرا`;
 
     if (!categoryData.items || !Array.isArray(categoryData.items)) {
         console.error("❌ items این collection مشکل دارد:", catKey);
@@ -502,6 +501,12 @@ function initProductsGrid() {
             }
         });
     });
+
+    // اگر از نتیجه‌ی جستجو با پارامتر product وارد شده باشیم، مودال همون محصول خودکار باز می‌شود
+    const productParam = params.get("product");
+    if (productParam) {
+        openProductModal(Number(productParam), catKey);
+    }
 }
 
 function openProductModal(productId, catKey) {
@@ -1751,35 +1756,81 @@ window.addEventListener("scroll", () => {
     header.classList.toggle("scrolled", window.scrollY > 40);
 });
 
-// تابع لاجیک سرچ بار
+// تابع لاجیک سرچ بار — جستجوی زنده در تمام محصولات همه‌ی کالکشن‌ها
 function initSearchLogic() {
     const searchInput = document.getElementById("searchInput");
     const searchContainer = document.getElementById("search-container");
-    
-    if (!searchInput || !searchContainer) return;
+    const resultsBox = document.getElementById("search-results");
+
+    if (!searchInput || !searchContainer || !resultsBox) return;
+
+    // ساخت یک ایندکس مسطح از تمام محصولات همه‌ی کالکشن‌ها (فقط یک‌بار)
+    const searchIndex = [];
+    Object.keys(collectionsProducts).forEach(catKey => {
+        const cat = collectionsProducts[catKey];
+        (cat.items || []).forEach(item => {
+            searchIndex.push({
+                id: item.id,
+                title: item.title,
+                img: item.img,
+                price: item.price,
+                category: catKey
+            });
+        });
+    });
+
+    function closeResults() {
+        resultsBox.style.display = "none";
+        resultsBox.innerHTML = "";
+    }
+
+    function renderResults(term) {
+        const matches = searchIndex.filter(p => p.title.toLowerCase().includes(term)).slice(0, 8);
+
+        if (matches.length === 0) {
+            resultsBox.innerHTML = `<div class="search-no-result">نتیجه‌ای پیدا نشد.</div>`;
+        } else {
+            resultsBox.innerHTML = matches.map(p => `
+                <a class="search-result-item" href="/collections?category=${encodeURIComponent(p.category)}&product=${p.id}">
+                    <img src="${p.img}" alt="${escapeHtml(p.title)}" loading="lazy">
+                    <div class="search-result-info">
+                        <span class="search-result-title">${escapeHtml(p.title)}</span>
+                        <span class="search-result-price">${escapeHtml(p.price)}</span>
+                    </div>
+                </a>
+            `).join("");
+        }
+        resultsBox.style.display = "block";
+    }
 
     searchInput.addEventListener("focus", () => {
         searchContainer.classList.add("active");
+        if (searchInput.value.trim() !== "") renderResults(searchInput.value.toLowerCase().trim());
     });
-    
+
     searchInput.addEventListener("blur", () => {
-        if(searchInput.value.trim() === "") {
-            searchContainer.classList.remove("active");
-        }
+        // تاخیر کوچک تا کلیک روی نتیجه قبل از بسته‌شدن ثبت بشه
+        setTimeout(() => {
+            if (searchInput.value.trim() === "") {
+                searchContainer.classList.remove("active");
+            }
+            closeResults();
+        }, 150);
     });
 
     searchInput.addEventListener("input", (e) => {
         const term = e.target.value.toLowerCase().trim();
-        const cards = document.querySelectorAll(".product-card");
-        
-        cards.forEach(card => {
-            const title = card.querySelector("h3").textContent.toLowerCase();
-            if (title.includes(term)) {
-                card.style.display = "flex"; // یا block بسته به CSS شما
-                card.style.animation = "fadeIn 0.4s ease";
-            } else {
-                card.style.display = "none";
-            }
-        });
+        if (term === "") {
+            closeResults();
+            return;
+        }
+        renderResults(term);
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            closeResults();
+            searchInput.blur();
+        }
     });
 }

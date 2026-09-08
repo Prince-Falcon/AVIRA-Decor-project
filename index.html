@@ -70,6 +70,9 @@
         }
 
         /* استایل و انیمیشن‌های سرچ بار لوکس */
+        .search-wrapper {
+            position: relative;
+        }
         .search-container {
             display: flex;
             align-items: center;
@@ -136,6 +139,74 @@
         .light-theme .search-input {
             color: #333;
         }
+        /* پنجره‌ی نتایج جستجو */
+        .search-results {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 280px;
+            max-height: 360px;
+            overflow-y: auto;
+            background: #1a1a1a;
+            border: 1px solid rgba(212, 175, 55, 0.35);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 9999;
+            padding: 6px;
+        }
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #fff;
+            transition: background 0.2s ease;
+        }
+        .search-result-item:hover {
+            background: rgba(212, 175, 55, 0.12);
+        }
+        .search-result-item img {
+            width: 42px;
+            height: 42px;
+            object-fit: cover;
+            border-radius: 6px;
+            flex-shrink: 0;
+        }
+        .search-result-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+        .search-result-title {
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .search-result-price {
+            font-size: 0.75rem;
+            color: #d4af37;
+        }
+        .search-no-result {
+            padding: 14px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #999;
+        }
+        body.light-theme .search-results {
+            background: #ffffff;
+            border-color: #ddd;
+        }
+        body.light-theme .search-result-item {
+            color: #1c1c1c;
+        }
+        body.light-theme .search-no-result {
+            color: #777;
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -162,9 +233,12 @@
             <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
             
             <!-- نوار جستجو با انیمیشن -->
-            <div class="search-container" id="search-container">
-                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <input type="text" id="searchInput" placeholder="جستجوی نام طرح..." class="search-input">
+            <div class="search-wrapper" id="search-wrapper">
+                <div class="search-container" id="search-container">
+                    <button class="search-btn" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <input type="text" id="searchInput" placeholder="جستجوی نام طرح..." class="search-input" autocomplete="off">
+                </div>
+                <div class="search-results" id="search-results"></div>
             </div>
 
             <div class="account-cart-group" style="display: flex; align-items: center; gap: 10px;">
