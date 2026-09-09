@@ -320,13 +320,13 @@ const collectionsProducts = {
         title: "مجموعه Astronomic",
         items: [
             { id: 101, title: "طرح آندرومدا", price: "590,000 Toman", img: "assets/images/collection1.png" },
-            { id: 102, title: "طرح سامانه خورشیدی", price: "548,000 Toman", img: "assets/images/collection6.png" },
-            { id: 103, title: "طرح مریخ", price: "476,000 Toman", img: "assets/images/collection7.png" },
-            { id: 104, title: "طرح خورشید", price: "578,000 Toman", img: "assets/images/collection8.png" },
-            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "620,000 Toman", img: "assets/images/collection9.png" },
-            { id: 106, title: "طرح کهکشان راه شیری", price: "566,000 Toman", img: "assets/images/collection26.png" },
-            { id: 107, title: "طرح سیاه‌چاله", price: "602,000 Toman", img: "assets/images/collection27.png" },
-            { id: 108, title: "طرح زحل", price: "554,000 Toman", img: "assets/images/collection28.png" },
+            { id: 102, title: "طرح سامانه خورشیدی", price: "550,000 Toman", img: "assets/images/collection6.png" },
+            { id: 103, title: "طرح مریخ", price: "475,000 Toman", img: "assets/images/collection7.png" },
+            { id: 104, title: "طرح خورشید", price: "580,000 Toman", img: "assets/images/collection8.png" },
+            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "620,000 Toman", img: "assets/images/collection9.png", discount: 12 },
+            { id: 106, title: "طرح کهکشان راه شیری", price: "565,000 Toman", img: "assets/images/collection26.png" },
+            { id: 107, title: "طرح سیاه‌چاله", price: "605,000 Toman", img: "assets/images/collection27.png" },
+            { id: 108, title: "طرح زحل", price: "555,000 Toman", img: "assets/images/collection28.png" },
             { id: 109, title: "طرح جیمز وب", price: "530,000 Toman", img: "assets/images/collection29.png" }
         ]
     },
@@ -336,53 +336,56 @@ const collectionsProducts = {
             { id: 201, title: "طرح آلبرت انیشتین", price: "675,000 Toman", img: "assets/images/collection4.png" },
             { id: 202, title: "طرح نیکولا تسلا", price: "650,000 Toman", img: "assets/images/collection5.png" },
             { id: 203, title: "طرح مریم میرزا خانی", price: "590,000 Toman", img: "assets/images/collection10.png" },
-            { id: 204, title: "طرح ورنر هایزنبرگ", price: "626,000 Toman", img: "assets/images/collection11.png" },
-            { id: 205, title: "طرح ماری کوری", price: "578,000 Toman", img: "assets/images/collection12.png" },
-            { id: 206, title: "طرح ایلان ماسک", price: "638,000 Toman", img: "assets/images/collection30.png" },
-            { id: 207, title: "طرح بو علی سینا", price: "602,000 Toman", img: "assets/images/collection31.png" },
-            { id: 208, title: "طرح ایزاک نیوتن", price: "614,000 Toman", img: "assets/images/collection32.png" },
-            { id: 209, title: "طرح ابو ریحان بیرونی", price: "566,000 Toman", img: "assets/images/collection33.png" }
+            { id: 204, title: "طرح ورنر هایزنبرگ", price: "625,000 Toman", img: "assets/images/collection11.png" },
+            { id: 205, title: "طرح ماری کوری", price: "580,000 Toman", img: "assets/images/collection12.png" },
+            { id: 206, title: "طرح ایلان ماسک", price: "640,000 Toman", img: "assets/images/collection30.png" },
+            { id: 207, title: "طرح بو علی سینا", price: "605,000 Toman", img: "assets/images/collection31.png" },
+            { id: 208, title: "طرح ایزاک نیوتن", price: "615,000 Toman", img: "assets/images/collection32.png" },
+            { id: 209, title: "طرح ابو ریحان بیرونی", price: "565,000 Toman", img: "assets/images/collection33.png" }
         ]
     },
     historical: {
         title: "مجموعه Historical",
         items: [
             { id: 301, title: "طرح امیر کبیر", price: "560,000 Toman", img: "assets/images/collection13.png" },
-            { id: 302, title: "طرح نادرشاه", price: "633,000 Toman", img: "assets/images/collection2.png" },
-            { id: 303, title: "طرح کوروش کبیر", price: "687,000 Toman", img: "assets/images/collection14.png" },
+            { id: 302, title: "طرح نادرشاه", price: "635,000 Toman", img: "assets/images/collection2.png" },
+            { id: 303, title: "طرح کوروش کبیر", price: "685,000 Toman", img: "assets/images/collection14.png" },
             { id: 304, title: "طرح ناپلئون", price: "590,000 Toman", img: "assets/images/collection15.png" },
             { id: 305, title: "طرح کریم خان زند", price: "560,000 Toman", img: "assets/images/collection16.png" },
             { id: 306, title: "طرح خشایارشاه", price: "650,000 Toman", img: "assets/images/collection34.png" },
-            { id: 307, title: "طرح بابک خرمدین", price: "602,000 Toman", img: "assets/images/collection35.png" },
-            { id: 308, title: "طرح آدولف هیتلر", price: "614,000 Toman", img: "assets/images/collection36.png" },
-            { id: 309, title: "طرح سردار سورنا", price: "596,000 Toman", img: "assets/images/collection37.png" }
+            { id: 307, title: "طرح بابک خرمدین", price: "605,000 Toman", img: "assets/images/collection35.png" },
+            { id: 308, title: "طرح آدولف هیتلر", price: "615,000 Toman", img: "assets/images/collection36.png" },
+            { id: 309, title: "طرح سردار سورنا", price: "595,000 Toman", img: "assets/images/collection37.png" }
         ]
     },
     car: {
         title: "مجموعه Car",
         items: [
-            { id: 401, title: "Mercedes-Benz CLS 63", price: "663,000 Toman", img: "assets/images/collection3.png" },
+            { id: 401, title: "Mercedes-Benz CLS 63", price: "665,000 Toman", img: "assets/images/collection3.png" },
             { id: 402, title: "BMW M8", price: "705,000 Toman", img: "assets/images/collection17.png" },
-            { id: 403, title: "Nissan GTR", price: "663,000 Toman", img: "assets/images/collection18.png" },
+            { id: 403, title: "Nissan GTR", price: "665,000 Toman", img: "assets/images/collection18.png" },
             { id: 404, title: "Lamborghini Aventador", price: "705,000 Toman", img: "assets/images/collection19.png" },
-            { id: 405, title: "Bugatti Chiron", price: "807,000 Toman", img: "assets/images/collection20.png" },
+            { id: 405, title: "Bugatti Chiron", price: "810,000 Toman", img: "assets/images/collection20.png", discount: 15 },
             { id: 406, title: "Toyota Supra MK5", price: "735,000 Toman", img: "assets/images/collection38.png" },
-            { id: 407, title: "Porsche Panamera 4S", price: "711,000 Toman", img: "assets/images/collection39.png" },
-            { id: 408, title: "Ferrari F40", price: "723,000 Toman", img: "assets/images/collection40.png" },
-            { id: 409, title: "Dodge challenger", price: "741,000 Toman", img: "assets/images/collection41.png" },
-            { id: 410, title: "BMW M5 E60", price: "747,000 Toman", img: "assets/images/collection46.png" }
+            { id: 407, title: "Porsche Panamera 4S", price: "710,000 Toman", img: "assets/images/collection39.png" },
+            { id: 408, title: "Ferrari F40", price: "725,000 Toman", img: "assets/images/collection40.png" },
+            { id: 409, title: "Dodge challenger", price: "740,000 Toman", img: "assets/images/collection41.png" },
+            { id: 410, title: "BMW M5 E60", price: "745,000 Toman", img: "assets/images/collection46.png" }
+            
+
         ]
     },
     gaming: {
         title: "مجموعه Gaming",
         items: [
-            { id: 501, title: "طرح Resident Evil 4", price: "699,000 Toman", img: "assets/images/collection21.png" },
-            { id: 502, title: "طرح God of War", price: "687,000 Toman", img: "assets/images/collection22.png" },
-            { id: 503, title: "طرح The Last of Us", price: "657,000 Toman", img: "assets/images/collection23.png" },
-            { id: 504, title: "طرح Elden Ring", price: "711,000 Toman", img: "assets/images/collection24.png" },
-            { id: 505, title: "طرح GTA VI", price: "771,000 Toman", img: "assets/images/collection25.png" },
+            { id: 501, title: "طرح Resident Evil 4", price: "700,000 Toman", img: "assets/images/collection21.png" },
+            { id: 502, title: "طرح God of War", price: "685,000 Toman", img: "assets/images/collection22.png" },
+            { id: 503, title: "طرح The Last of Us", price: "655,000 Toman", img: "assets/images/collection23.png" },
+            { id: 504, title: "طرح Elden Ring", price: "710,000 Toman", img: "assets/images/collection24.png" },
+            { id: 505, title: "طرح GTA VI", price: "770,000 Toman", img: "assets/images/collection25.png", discount: 15 },
+            { id: 506, title: "طرح ", price: "725,000 Toman", img: "assets/images/collection42.png" },
             { id: 507, title: "طرح Red Dead Redemption 2", price: "735,000 Toman", img: "assets/images/collection44.png" },
-            { id: 508, title: "طرح Ghost of tsushima", price: "687,000 Toman", img: "assets/images/collection43.png" },
+            { id: 508, title: "طرح Ghost of tsushima", price: "685,000 Toman", img: "assets/images/collection43.png" },
             { id: 509, title: "طرح Assassin's creed : Brotherhood", price: "675,000 Toman", img: "assets/images/collection45.png" }
         ]
     },
@@ -390,35 +393,81 @@ const collectionsProducts = {
         title: "مجموعه Anime",
         items: [
             { id: 601, title: "طرح Solo Leveling", price: "675,000 Toman", img: "assets/images/collection47.png" },
-            { id: 602, title: "طرح Attack on Titan", price: "699,000 Toman", img: "assets/images/collection48.png" },
-            { id: 603, title: "طرح One Piece", price: "687,000 Toman", img: "assets/images/collection49.png" },
-            { id: 604, title: "طرح Demon Slayer", price: "711,000 Toman", img: "assets/images/collection50.png" },
-            { id: 605, title: "طرح Jujutsu Kaisen", price: "699,000 Toman", img: "assets/images/collection51.png" }
+            { id: 602, title: "طرح Attack on Titan", price: "700,000 Toman", img: "assets/images/collection48.png" },
+            { id: 603, title: "طرح One Piece", price: "685,000 Toman", img: "assets/images/collection49.png" },
+            { id: 604, title: "طرح Demon Slayer", price: "710,000 Toman", img: "assets/images/collection50.png" },
+            { id: 605, title: "طرح Jujutsu Kaisen", price: "700,000 Toman", img: "assets/images/collection51.png" }
         ]
     },
-    movie: {
-        title: "مجموعه Movie",
-        items: [
-            { id: 701, title: "طرح Breaking Bad", price: "723,000 Toman", img: "assets/images/collection52.png" },
-            { id: 702, title: "طرح Better Call Saul", price: "723,000 Toman", img: "assets/images/collection53.png" },
-            { id: 703, title: "طرح House of The Dragon", price: "711,000 Toman", img: "assets/images/collection54.png" },
-            { id: 704, title: "طرح The Mentalist", price: "711,000 Toman", img: "assets/images/collection55.png" }
-        ]
+   movie: {
+    title: "مجموعه Movie",
+    items: [
+        { id: 702, title: "طرح Better Call Saul", price: "725,000 Toman", img: "assets/images/collection53.png" },
+        { id: 703, title: "طرح House of The Dragon", price: "710,000 Toman", img: "assets/images/collection54.png" },
+        { id: 704, title: "طرح The mentalist", price: "710,000 Toman", img: "assets/images/collection55.png" },
+        { id: 705, title: "طرح Breaking Bad", price: "725,000 Toman", img: "assets/images/collection57.png", discount: 18 }
+    ]
     },
     football: {
         title: "مجموعه Football",
         items: [
-            { id: 801, title: "طرح کریستیانو رونالدو", price: "735,000 Toman", img: "assets/images/collection56.png" },
-            { id: 802, title: "طرح لیونل مسی", price: "735,000 Toman", img: "assets/images/collection57.png" },
-            { id: 803, title: "طرح دیگو مارادونا", price: "699,000 Toman", img: "assets/images/collection58.png" }
+            { id: 801, title: "طرح مسی", price: "700,000 Toman", img: "assets/images/collection58.png", discount: 15 },
+            { id: 802, title: "طرح رونالدو", price: "700,000 Toman", img: "assets/images/collection59.png" },
+            { id: 803, title: "طرح جام جهانی", price: "685,000 Toman", img: "assets/images/collection60.png" },
+            { id: 804, title: "طرح رئال مادرید", price: "670,000 Toman", img: "assets/images/collection61.png" },
+            { id: 805, title: "طرح بارسلونا", price: "670,000 Toman", img: "assets/images/collection62.png" }
         ]
     }
 };
 
+
 let currentSelectedProduct = null;
 let selectedSize = '۲۰×۲۰ سانتی‌متر';
 let basePriceValue = 0;
+let originalPriceValue = 0;
 let currentCalculatedPrice = "";
+
+// ==========================================
+// پیشنهادهای ویژه (صفحه اصلی) — بر اساس محصولاتی که discount دارن
+// ==========================================
+function initOffersSection() {
+    const grid = document.getElementById("offers-grid");
+    const section = document.getElementById("offers");
+    if (!grid) return;
+
+    const offerItems = [];
+    Object.keys(collectionsProducts).forEach(catKey => {
+        const cat = collectionsProducts[catKey];
+        (cat.items || []).forEach(item => {
+            if (item.discount) {
+                offerItems.push({ ...item, category: catKey });
+            }
+        });
+    });
+
+    if (offerItems.length === 0) {
+        if (section) section.style.display = "none";
+        return;
+    }
+
+    grid.innerHTML = offerItems.map(item => {
+        const originalNum = parsePriceToNumber(item.price);
+        const discountedNum = Math.round(originalNum * (1 - item.discount / 100) / 1000) * 1000;
+        return `
+            <a class="offer-card" href="/collections?category=${encodeURIComponent(item.category)}&product=${item.id}">
+                <div class="offer-badge">${item.discount}٪ تخفیف</div>
+                <div class="offer-image" style="background-image: url('${item.img}');"></div>
+                <div class="offer-info">
+                    <h3>${escapeHtml(item.title)}</h3>
+                    <div class="offer-prices">
+                        <span class="offer-original">${formatPrice(originalNum)}</span>
+                        <span class="offer-final">${formatPrice(discountedNum)}</span>
+                    </div>
+                </div>
+            </a>
+        `;
+    }).join("");
+}
 
 function initProductsGrid() {
     const grid = document.getElementById("products-grid");
@@ -523,13 +572,20 @@ function openProductModal(productId, catKey) {
     if (!product) return;
 
     currentSelectedProduct = product;
-    basePriceValue = parsePriceToNumber(product.price);
+    currentSelectedProduct.category = catKey;
+    originalPriceValue = parsePriceToNumber(product.price);
+    basePriceValue = product.discount ? originalPriceValue * (1 - product.discount / 100) : originalPriceValue;
 
     const imgElem = document.getElementById("modal-product-img");
     const titleElem = document.getElementById("modal-product-title");
+    const discountBadge = document.getElementById("modal-discount-badge");
+    const originalPriceElem = document.getElementById("modal-product-original-price");
 
     if (imgElem) imgElem.src = product.img;
     if (titleElem) titleElem.textContent = product.title;
+    if (discountBadge) discountBadge.style.display = product.discount ? "inline-block" : "none";
+    if (discountBadge) discountBadge.textContent = product.discount ? `${product.discount}٪ تخفیف` : "";
+    if (originalPriceElem) originalPriceElem.style.display = product.discount ? "inline" : "none";
 
     const sizeBtns = document.querySelectorAll(".size-btn");
     sizeBtns.forEach((btn, index) => {
@@ -547,6 +603,8 @@ function openProductModal(productId, catKey) {
     updatePriceView();
     if (modal) modal.style.display = "flex";
 
+    loadProductReviews(product.id);
+
     const modalContent = document.querySelector(".modal-content");
     if (modalContent) {
         modalContent.classList.remove("animate-in");
@@ -560,6 +618,123 @@ function closeProductModal() {
     if (modal) modal.style.display = "none";
 }
 
+// ==========================================
+// دیدگاه‌های کاربران برای هر محصول
+// ==========================================
+let selectedReviewRating = 0;
+
+function initReviewStars() {
+    const starsBox = document.getElementById("review-stars");
+    if (!starsBox || starsBox.dataset.bound) return;
+    starsBox.dataset.bound = "1";
+    const stars = starsBox.querySelectorAll("span");
+    stars.forEach(star => {
+        star.addEventListener("click", () => {
+            selectedReviewRating = Number(star.dataset.star);
+            paintReviewStars();
+        });
+    });
+}
+
+function paintReviewStars() {
+    const starsBox = document.getElementById("review-stars");
+    if (!starsBox) return;
+    starsBox.querySelectorAll("span").forEach(star => {
+        star.classList.toggle("selected", Number(star.dataset.star) <= selectedReviewRating);
+    });
+}
+
+function resetReviewForm() {
+    selectedReviewRating = 0;
+    paintReviewStars();
+    const textArea = document.getElementById("review-text");
+    if (textArea) textArea.value = "";
+}
+
+async function loadProductReviews(productId) {
+    const listBox = document.getElementById("reviews-list");
+    if (!listBox || !supabaseClient) return;
+
+    resetReviewForm();
+    initReviewStars();
+    listBox.innerHTML = `<p class="reviews-loading">در حال دریافت دیدگاه‌ها...</p>`;
+
+    const { data: reviews, error } = await supabaseClient
+        .from('product_reviews')
+        .select('*')
+        .eq('product_id', productId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        listBox.innerHTML = `<p class="reviews-loading">خطا در دریافت دیدگاه‌ها.</p>`;
+        return;
+    }
+
+    if (!reviews || reviews.length === 0) {
+        listBox.innerHTML = `<p class="reviews-empty">هنوز دیدگاهی برای این طرح ثبت نشده. اولین نفر باشید!</p>`;
+        return;
+    }
+
+    const avg = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
+    const summaryHtml = `<div class="reviews-summary">⭐ ${avg} از ۵ &nbsp;(${reviews.length} دیدگاه)</div>`;
+
+    const itemsHtml = reviews.map(r => `
+        <div class="review-item">
+            <div class="review-item-header">
+                <span class="review-item-name">${escapeHtml(r.user_name || "کاربر آویرا")}</span>
+                <span class="review-item-stars">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span>
+            </div>
+            <p class="review-item-text">${escapeHtml(r.comment)}</p>
+        </div>
+    `).join("");
+
+    listBox.innerHTML = summaryHtml + itemsHtml;
+}
+
+async function submitReview() {
+    if (!supabaseClient || !currentSelectedProduct) return;
+
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+        alert("برای ثبت دیدگاه ابتدا وارد حساب کاربری خود شوید.");
+        window.location.href = "/login";
+        return;
+    }
+
+    const textArea = document.getElementById("review-text");
+    const comment = textArea ? textArea.value.trim() : "";
+
+    if (selectedReviewRating < 1 || selectedReviewRating > 5) {
+        alert("لطفاً امتیاز خود را با کلیک روی ستاره‌ها مشخص کنید.");
+        return;
+    }
+    if (!comment) {
+        alert("لطفاً متن دیدگاه خود را بنویسید.");
+        return;
+    }
+
+    let userName = user.email;
+    const { data: profile } = await supabaseClient.from('profiles').select('full_name').eq('id', user.id).single();
+    if (profile && profile.full_name) userName = profile.full_name;
+
+    const { error } = await supabaseClient.from('product_reviews').insert([{
+        product_id: currentSelectedProduct.id,
+        category: currentSelectedProduct.category || "",
+        user_id: user.id,
+        user_name: userName,
+        rating: selectedReviewRating,
+        comment: comment
+    }]);
+
+    if (error) {
+        alert("خطا در ثبت دیدگاه: " + error.message);
+        return;
+    }
+
+    showToast("دیدگاه شما با موفقیت ثبت شد.", "success");
+    loadProductReviews(currentSelectedProduct.id);
+}
+
 function selectSize(btn) {
     if (!btn) return;
     document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
@@ -570,6 +745,7 @@ function selectSize(btn) {
 
 function updatePriceView() {
     const priceElem = document.getElementById("modal-product-price");
+    const originalPriceElem = document.getElementById("modal-product-original-price");
     if (!priceElem || !basePriceValue) return;
 
     const currentMaterial = getSelectedMaterial();
@@ -580,6 +756,11 @@ function updatePriceView() {
 
     currentCalculatedPrice = formatPrice(calculatedNum);
     priceElem.textContent = currentCalculatedPrice;
+
+    if (originalPriceElem && currentSelectedProduct && currentSelectedProduct.discount) {
+        const originalCalc = originalPriceValue * sizeMult * materialMult;
+        originalPriceElem.textContent = formatPrice(originalCalc);
+    }
 }
 
 // ==========================================
@@ -1743,6 +1924,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('img').forEach(img => img.addEventListener('contextmenu', (e) => e.preventDefault()));
 
     initProductsGrid();
+    initOffersSection();
     renderCartPage();
     initAuthListener();
     initSearchLogic(); // فعالسازی جستجو
@@ -1838,94 +2020,4 @@ function initSearchLogic() {
             searchInput.blur();
         }
     });
-}
-// ==========================================
-// ۱. سیستم جستجوی پیشرفته و لوکس
-// ==========================================
-document.addEventListener("DOMContentLoaded", () => {
-    initProductsGrid();
-    renderCartPage();
-    applyStoredTheme();
-    updateCartBadge();
-    initSearchSystem(); // راه‌اندازی بخش جستجو
-});
-
-function initSearchSystem() {
-    const searchInput = document.getElementById("searchInput");
-    const searchResults = document.getElementById("search-results");
-    const searchContainer = document.getElementById("search-container");
-
-    if (!searchInput || !searchResults) return;
-
-    // بستن باکس نتایج هنگام کلیک خارج از آن
-    document.addEventListener("click", (e) => {
-        if (!e.target.closest("#search-wrapper")) {
-            searchResults.style.display = "none";
-            if (searchContainer && searchInput.value.trim() === "") {
-                searchContainer.classList.remove("active");
-            }
-        }
-    });
-
-    searchInput.addEventListener("focus", () => {
-        if (searchContainer) searchContainer.classList.add("active");
-    });
-
-    searchInput.addEventListener("input", (e) => {
-        const query = e.target.value.trim().toLowerCase();
-        if (query.length < 1) {
-            searchResults.style.display = "none";
-            searchResults.innerHTML = "";
-            return;
-        }
-
-        const matches = [];
-        Object.keys(collectionsProducts).forEach(catKey => {
-            const cat = collectionsProducts[catKey];
-            cat.items.forEach(item => {
-                if (item.title.toLowerCase().includes(query)) {
-                    matches.push({ ...item, category: catKey });
-                }
-            });
-        });
-
-        if (matches.length === 0) {
-            searchResults.innerHTML = `<div style="padding: 12px; text-align: center; color: #888; font-size: 0.85rem;">طرحی یافت نشد.</div>`;
-        } else {
-            searchResults.innerHTML = matches.map(item => `
-                <a href="/collections?category=${item.category}&product=${item.id}" class="search-result-item">
-                    <img src="${item.img}" alt="${escapeHtml(item.title)}">
-                    <div class="search-result-info">
-                        <span class="search-result-title">${escapeHtml(item.title)}</span>
-                        <span class="search-result-price">${item.price}</span>
-                    </div>
-                </a>
-            `).join('');
-        }
-
-        searchResults.style.display = "block";
-    });
-}
-
-// ==========================================
-// ۲. تابع به‌روزرسانی‌شده‌ی نمایش دیدگاه‌ها
-// ==========================================
-function loadProductComments(productId) {
-    const commentsList = document.getElementById("comments-list");
-    if (!commentsList) return;
-
-    const allComments = getCommentsData();
-    const productComments = allComments[productId] || [
-        { name: "کاربر آویرا", text: "کیفیت چاپ بسیار بالا بود و بسته‌بندی عالی داشت.", date: "۱۴۰۲/۱۲/۱۰" }
-    ];
-
-    commentsList.innerHTML = productComments.map(c => `
-        <div style="background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 6px; border-right: 2px solid #d4af37;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 4px;">
-                <span style="color: #d4af37; font-weight: bold;">${escapeHtml(c.name)}</span>
-                <span>${escapeHtml(c.date)}</span>
-            </div>
-            <p style="font-size: 0.85rem; color: #ddd; margin: 0;">${escapeHtml(c.text)}</p>
-        </div>
-    `).join('');
 }
