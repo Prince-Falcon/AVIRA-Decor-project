@@ -1834,3 +1834,93 @@ function initSearchLogic() {
         }
     });
 }
+// ==========================================
+// ۱. سیستم جستجوی پیشرفته و لوکس
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    initProductsGrid();
+    renderCartPage();
+    applyStoredTheme();
+    updateCartBadge();
+    initSearchSystem(); // راه‌اندازی بخش جستجو
+});
+
+function initSearchSystem() {
+    const searchInput = document.getElementById("searchInput");
+    const searchResults = document.getElementById("search-results");
+    const searchContainer = document.getElementById("search-container");
+
+    if (!searchInput || !searchResults) return;
+
+    // بستن باکس نتایج هنگام کلیک خارج از آن
+    document.addEventListener("click", (e) => {
+        if (!e.target.closest("#search-wrapper")) {
+            searchResults.style.display = "none";
+            if (searchContainer && searchInput.value.trim() === "") {
+                searchContainer.classList.remove("active");
+            }
+        }
+    });
+
+    searchInput.addEventListener("focus", () => {
+        if (searchContainer) searchContainer.classList.add("active");
+    });
+
+    searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        if (query.length < 1) {
+            searchResults.style.display = "none";
+            searchResults.innerHTML = "";
+            return;
+        }
+
+        const matches = [];
+        Object.keys(collectionsProducts).forEach(catKey => {
+            const cat = collectionsProducts[catKey];
+            cat.items.forEach(item => {
+                if (item.title.toLowerCase().includes(query)) {
+                    matches.push({ ...item, category: catKey });
+                }
+            });
+        });
+
+        if (matches.length === 0) {
+            searchResults.innerHTML = `<div style="padding: 12px; text-align: center; color: #888; font-size: 0.85rem;">طرحی یافت نشد.</div>`;
+        } else {
+            searchResults.innerHTML = matches.map(item => `
+                <a href="/collections?category=${item.category}&product=${item.id}" class="search-result-item">
+                    <img src="${item.img}" alt="${escapeHtml(item.title)}">
+                    <div class="search-result-info">
+                        <span class="search-result-title">${escapeHtml(item.title)}</span>
+                        <span class="search-result-price">${item.price}</span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        searchResults.style.display = "block";
+    });
+}
+
+// ==========================================
+// ۲. تابع به‌روزرسانی‌شده‌ی نمایش دیدگاه‌ها
+// ==========================================
+function loadProductComments(productId) {
+    const commentsList = document.getElementById("comments-list");
+    if (!commentsList) return;
+
+    const allComments = getCommentsData();
+    const productComments = allComments[productId] || [
+        { name: "کاربر آویرا", text: "کیفیت چاپ بسیار بالا بود و بسته‌بندی عالی داشت.", date: "۱۴۰۲/۱۲/۱۰" }
+    ];
+
+    commentsList.innerHTML = productComments.map(c => `
+        <div style="background: rgba(255,255,255,0.03); padding: 8px 12px; border-radius: 6px; border-right: 2px solid #d4af37;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #888; margin-bottom: 4px;">
+                <span style="color: #d4af37; font-weight: bold;">${escapeHtml(c.name)}</span>
+                <span>${escapeHtml(c.date)}</span>
+            </div>
+            <p style="font-size: 0.85rem; color: #ddd; margin: 0;">${escapeHtml(c.text)}</p>
+        </div>
+    `).join('');
+}

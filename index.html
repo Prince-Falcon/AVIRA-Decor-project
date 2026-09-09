@@ -69,6 +69,75 @@
             transform: scale(1.05);
         }
 
+        /* استایل پیشنهادات ویژه */
+        .special-offers {
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .offer-card {
+            background: #1e1e1e;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .offer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.2);
+        }
+        .offer-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ef4444;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 2;
+        }
+        .offer-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+        .offer-details {
+            padding: 18px;
+            text-align: right;
+        }
+        .offer-details h3 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .price-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .old-price {
+            color: #888;
+            text-decoration: line-through;
+            font-size: 0.85rem;
+        }
+        .new-price {
+            color: #4ade80;
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+
         /* استایل و انیمیشن‌های سرچ بار لوکس */
         .search-wrapper {
             position: relative;
@@ -128,18 +197,6 @@
             opacity: 1;
             padding: 0 15px 0 0;
         }
-        /* پشتیبانی از حالت روشن */
-        .light-theme .search-container {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        .light-theme .search-container:hover,
-        .light-theme .search-container.active {
-            background: rgba(255, 255, 255, 0.95);
-        }
-        .light-theme .search-input {
-            color: #333;
-        }
-        /* پنجره‌ی نتایج جستجو */
         .search-results {
             display: none;
             position: absolute;
@@ -191,26 +248,6 @@
             font-size: 0.75rem;
             color: #d4af37;
         }
-        .search-no-result {
-            padding: 14px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #999;
-        }
-        body.light-theme .search-results {
-            background: #ffffff;
-            border-color: #ddd;
-        }
-        body.light-theme .search-result-item {
-            color: #1c1c1c;
-        }
-        body.light-theme .search-no-result {
-            color: #777;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body>
@@ -224,6 +261,7 @@
 
         <nav>
             <a href="#home">خانه</a>
+            <a href="#offers">آفرها</a>
             <a href="#collection">مجموعه‌ها</a>
             <a href="#about">درباره ما</a>
             <a href="#contact">ارتباط</a>
@@ -232,7 +270,7 @@
         <div class="header-actions" style="display: flex; align-items: center; gap: 15px;">
             <button type="button" class="theme-toggle-btn" id="theme-toggle-btn" onclick="toggleTheme()" title="تغییر پوسته" aria-label="تغییر پوسته">🌙</button>
             
-            <!-- نوار جستجو با انیمیشن -->
+            <!-- نوار جستجو -->
             <div class="search-wrapper" id="search-wrapper">
                 <div class="search-container" id="search-container">
                     <button class="search-btn" type="button"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -282,6 +320,54 @@
         </div>
     </section>
 
+    <!-- پیشنهادات ویژه (آفرها) -->
+    <section class="special-offers" id="offers">
+        <div class="section-title">
+            <span>🔥</span>
+            <h2>پیشنهادهای ویژه و آفرها</h2>
+        </div>
+        <div class="offers-grid">
+            <div class="offer-card">
+                <span class="offer-badge">۱۵٪ تخفیف</span>
+                <img src="assets/images/collection53.png" alt="Better Call Saul" class="offer-img">
+                <div class="offer-details">
+                    <h3>طرح Better Call Saul</h3>
+                    <div class="price-container">
+                        <span class="old-price">723,000 Toman</span>
+                        <span class="new-price">614,000 Toman</span>
+                    </div>
+                    <a href="/collections?category=movie&product=702" class="btn-submit" style="display: inline-block; text-align: center; text-decoration: none; margin-top: 12px; padding: 8px 15px; font-size: 0.85rem;">مشاهده و خرید</a>
+                </div>
+            </div>
+
+            <div class="offer-card">
+                <span class="offer-badge">۲۰٪ تخفیف</span>
+                <img src="assets/images/collection20.png" alt="Bugatti Chiron" class="offer-img">
+                <div class="offer-details">
+                    <h3>طرح Bugatti Chiron</h3>
+                    <div class="price-container">
+                        <span class="old-price">807,000 Toman</span>
+                        <span class="new-price">645,000 Toman</span>
+                    </div>
+                    <a href="/collections?category=car&product=405" class="btn-submit" style="display: inline-block; text-align: center; text-decoration: none; margin-top: 12px; padding: 8px 15px; font-size: 0.85rem;">مشاهده و خرید</a>
+                </div>
+            </div>
+
+            <div class="offer-card">
+                <span class="offer-badge">۱۰٪ تخفیف</span>
+                <img src="assets/images/collection4.png" alt="Albert Einstein" class="offer-img">
+                <div class="offer-details">
+                    <h3>طرح آلبرت انیشتین</h3>
+                    <div class="price-container">
+                        <span class="old-price">675,000 Toman</span>
+                        <span class="new-price">607,000 Toman</span>
+                    </div>
+                    <a href="/collections?category=scientific&product=201" class="btn-submit" style="display: inline-block; text-align: center; text-decoration: none; margin-top: 12px; padding: 8px 15px; font-size: 0.85rem;">مشاهده و خرید</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- About -->
     <section class="about" id="about">
         <div class="section-title">
@@ -303,19 +389,19 @@
         </div>
 
         <div class="cards">
-            <a href="/collections?category=Astronomic" class="card">
+            <a href="/collections?category=astronomic" class="card">
                 <div class="card-image image-one"></div>
                 <h3>astronomic</h3>
                 <p>نقاشی خداوند | به پهنای هستی | ابدیت</p>
             </a>
 
-            <a href="/collections?category=Scientific" class="card">
+            <a href="/collections?category=scientific" class="card">
                 <div class="card-image image-two"></div>
                 <h3>scientific</h3>
                 <p>ذهنی زیبا | کاشف | خاص</p>
             </a>
 
-            <a href="/collections?category=Historical" class="card">
+            <a href="/collections?category=historical" class="card">
                 <div class="card-image image-four"></div>
                 <h3>historical</h3>
                 <p>از خود گذشته | با تدبیر | شجاع</p>
@@ -327,22 +413,28 @@
                 <p>قدرتمند | پولادین | زیبا</p>
             </a>
 
-            <a href="/collections?category=Gaming" class="card">
+            <a href="/collections?category=gaming" class="card">
                 <div class="card-image image-gaming" style="background-image: url('assets/images/collection21.png'); background-size: cover; background-position: center;"></div>
                 <h3>Gaming</h3>
                 <p>دنیای بازی‌ها | حماسی | هیجان‌انگیز</p>
             </a>
 
-            <a href="/collections?category=Anime" class="card">
+            <a href="/collections?category=anime" class="card">
                 <div class="card-image image-anime" style="background-image: url('assets/images/collection47.png'); background-size: cover; background-position: center;"></div>
                 <h3>Anime</h3>
                 <p>دنیای انیمه | پرانرژی | خاطره‌انگیز</p>
             </a>
 
-            <a href="/collections?category=Movie" class="card">
-                <div class="card-image image-movie" style="background-image: url('assets/images/collection52.png'); background-size: cover; background-position: center;"></div>
+            <a href="/collections?category=movie" class="card">
+                <div class="card-image image-movie" style="background-image: url('assets/images/collection53.png'); background-size: cover; background-position: center;"></div>
                 <h3>Movie</h3>
-                <p>دنیای سینما | نمادین | ماندگار</p>
+                <p>دنیای سینما | نمادین | Better Call Saul</p>
+            </a>
+
+            <a href="/collections?category=football" class="card">
+                <div class="card-image image-football" style="background-image: url('assets/images/collection56.png'); background-size: cover; background-position: center;"></div>
+                <h3>Football</h3>
+                <p>ستارگان فوتبال | اسطوره‌ها | هیجان مستطیل سبز</p>
             </a>
         </div>
     </section>
