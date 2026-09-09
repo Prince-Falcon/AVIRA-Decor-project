@@ -319,95 +319,102 @@ const collectionsProducts = {
     astronomic: {
         title: "مجموعه Astronomic",
         items: [
-            { id: 101, title: "طرح آندرومدا", price: "490,000 Toman", img: "assets/images/collection1.png" },
-            { id: 102, title: "طرح سامانه خورشیدی", price: "455,000 Toman", img: "assets/images/collection6.png" },
-            { id: 103, title: "طرح مریخ", price: "395,000 Toman", img: "assets/images/collection7.png" },
-            { id: 104, title: "طرح خورشید", price: "480,000 Toman", img: "assets/images/collection8.png" },
-            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "515,000 Toman", img: "assets/images/collection9.png" },
-            { id: 106, title: "طرح کهکشان راه شیری", price: "470,000 Toman", img: "assets/images/collection26.png" },
-            { id: 107, title: "طرح سیاه‌چاله", price: "500,000 Toman", img: "assets/images/collection27.png" },
-            { id: 108, title: "طرح زحل", price: "460,000 Toman", img: "assets/images/collection28.png" },
-            { id: 109, title: "طرح جیمز وب", price: "440,000 Toman", img: "assets/images/collection29.png" }
+            { id: 101, title: "طرح آندرومدا", price: "590,000 Toman", img: "assets/images/collection1.png" },
+            { id: 102, title: "طرح سامانه خورشیدی", price: "548,000 Toman", img: "assets/images/collection6.png" },
+            { id: 103, title: "طرح مریخ", price: "476,000 Toman", img: "assets/images/collection7.png" },
+            { id: 104, title: "طرح خورشید", price: "578,000 Toman", img: "assets/images/collection8.png" },
+            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "620,000 Toman", img: "assets/images/collection9.png" },
+            { id: 106, title: "طرح کهکشان راه شیری", price: "566,000 Toman", img: "assets/images/collection26.png" },
+            { id: 107, title: "طرح سیاه‌چاله", price: "602,000 Toman", img: "assets/images/collection27.png" },
+            { id: 108, title: "طرح زحل", price: "554,000 Toman", img: "assets/images/collection28.png" },
+            { id: 109, title: "طرح جیمز وب", price: "530,000 Toman", img: "assets/images/collection29.png" }
         ]
     },
     scientific: {
         title: "مجموعه Scientific",
         items: [
-            { id: 201, title: "طرح آلبرت انیشتین", price: "560,000 Toman", img: "assets/images/collection4.png" },
-            { id: 202, title: "طرح نیکولا تسلا", price: "540,000 Toman", img: "assets/images/collection5.png" },
-            { id: 203, title: "طرح مریم میرزا خانی", price: "490,000 Toman", img: "assets/images/collection10.png" },
-            { id: 204, title: "طرح ورنر هایزنبرگ", price: "520,000 Toman", img: "assets/images/collection11.png" },
-            { id: 205, title: "طرح ماری کوری", price: "480,000 Toman", img: "assets/images/collection12.png" },
-            { id: 206, title: "طرح ایلان ماسک", price: "530,000 Toman", img: "assets/images/collection30.png" },
-            { id: 207, title: "طرح بو علی سینا", price: "500,000 Toman", img: "assets/images/collection31.png" },
-            { id: 208, title: "طرح ایزاک نیوتن", price: "510,000 Toman", img: "assets/images/collection32.png" },
-            { id: 209, title: "طرح ابو ریحان بیرونی", price: "470,000 Toman", img: "assets/images/collection33.png" }
+            { id: 201, title: "طرح آلبرت انیشتین", price: "675,000 Toman", img: "assets/images/collection4.png" },
+            { id: 202, title: "طرح نیکولا تسلا", price: "650,000 Toman", img: "assets/images/collection5.png" },
+            { id: 203, title: "طرح مریم میرزا خانی", price: "590,000 Toman", img: "assets/images/collection10.png" },
+            { id: 204, title: "طرح ورنر هایزنبرگ", price: "626,000 Toman", img: "assets/images/collection11.png" },
+            { id: 205, title: "طرح ماری کوری", price: "578,000 Toman", img: "assets/images/collection12.png" },
+            { id: 206, title: "طرح ایلان ماسک", price: "638,000 Toman", img: "assets/images/collection30.png" },
+            { id: 207, title: "طرح بو علی سینا", price: "602,000 Toman", img: "assets/images/collection31.png" },
+            { id: 208, title: "طرح ایزاک نیوتن", price: "614,000 Toman", img: "assets/images/collection32.png" },
+            { id: 209, title: "طرح ابو ریحان بیرونی", price: "566,000 Toman", img: "assets/images/collection33.png" }
         ]
     },
     historical: {
         title: "مجموعه Historical",
         items: [
-            { id: 301, title: "طرح امیر کبیر", price: "465,000 Toman", img: "assets/images/collection13.png" },
-            { id: 302, title: "طرح نادرشاه", price: "525,000 Toman", img: "assets/images/collection2.png" },
-            { id: 303, title: "طرح کوروش کبیر", price: "570,000 Toman", img: "assets/images/collection14.png" },
-            { id: 304, title: "طرح ناپلئون", price: "490,000 Toman", img: "assets/images/collection15.png" },
-            { id: 305, title: "طرح کریم خان زند", price: "465,000 Toman", img: "assets/images/collection16.png" },
-            { id: 306, title: "طرح خشایارشاه", price: "540,000 Toman", img: "assets/images/collection34.png" },
-            { id: 307, title: "طرح بابک خرمدین", price: "500,000 Toman", img: "assets/images/collection35.png" },
-            { id: 308, title: "طرح آدولف هیتلر", price: "510,000 Toman", img: "assets/images/collection36.png" },
-            { id: 309, title: "طرح سردار سورنا", price: "495,000 Toman", img: "assets/images/collection37.png" }
+            { id: 301, title: "طرح امیر کبیر", price: "560,000 Toman", img: "assets/images/collection13.png" },
+            { id: 302, title: "طرح نادرشاه", price: "633,000 Toman", img: "assets/images/collection2.png" },
+            { id: 303, title: "طرح کوروش کبیر", price: "687,000 Toman", img: "assets/images/collection14.png" },
+            { id: 304, title: "طرح ناپلئون", price: "590,000 Toman", img: "assets/images/collection15.png" },
+            { id: 305, title: "طرح کریم خان زند", price: "560,000 Toman", img: "assets/images/collection16.png" },
+            { id: 306, title: "طرح خشایارشاه", price: "650,000 Toman", img: "assets/images/collection34.png" },
+            { id: 307, title: "طرح بابک خرمدین", price: "602,000 Toman", img: "assets/images/collection35.png" },
+            { id: 308, title: "طرح آدولف هیتلر", price: "614,000 Toman", img: "assets/images/collection36.png" },
+            { id: 309, title: "طرح سردار سورنا", price: "596,000 Toman", img: "assets/images/collection37.png" }
         ]
     },
     car: {
         title: "مجموعه Car",
         items: [
-            { id: 401, title: "Mercedes-Benz CLS 63", price: "550,000 Toman", img: "assets/images/collection3.png" },
-            { id: 402, title: "BMW M8", price: "585,000 Toman", img: "assets/images/collection17.png" },
-            { id: 403, title: "Nissan GTR", price: "550,000 Toman", img: "assets/images/collection18.png" },
-            { id: 404, title: "Lamborghini Aventador", price: "585,000 Toman", img: "assets/images/collection19.png" },
-            { id: 405, title: "Bugatti Chiron", price: "670,000 Toman", img: "assets/images/collection20.png" },
-            { id: 406, title: "Toyota Supra MK5", price: "610,000 Toman", img: "assets/images/collection38.png" },
-            { id: 407, title: "Porsche Panamera 4S", price: "590,000 Toman", img: "assets/images/collection39.png" },
-            { id: 408, title: "Ferrari F40", price: "600,000 Toman", img: "assets/images/collection40.png" },
-            { id: 409, title: "Dodge challenger", price: "615,000 Toman", img: "assets/images/collection41.png" },
-            { id: 410, title: "BMW M5 E60", price: "620,000 Toman", img: "assets/images/collection46.png" }
-            
-
+            { id: 401, title: "Mercedes-Benz CLS 63", price: "663,000 Toman", img: "assets/images/collection3.png" },
+            { id: 402, title: "BMW M8", price: "705,000 Toman", img: "assets/images/collection17.png" },
+            { id: 403, title: "Nissan GTR", price: "663,000 Toman", img: "assets/images/collection18.png" },
+            { id: 404, title: "Lamborghini Aventador", price: "705,000 Toman", img: "assets/images/collection19.png" },
+            { id: 405, title: "Bugatti Chiron", price: "807,000 Toman", img: "assets/images/collection20.png" },
+            { id: 406, title: "Toyota Supra MK5", price: "735,000 Toman", img: "assets/images/collection38.png" },
+            { id: 407, title: "Porsche Panamera 4S", price: "711,000 Toman", img: "assets/images/collection39.png" },
+            { id: 408, title: "Ferrari F40", price: "723,000 Toman", img: "assets/images/collection40.png" },
+            { id: 409, title: "Dodge challenger", price: "741,000 Toman", img: "assets/images/collection41.png" },
+            { id: 410, title: "BMW M5 E60", price: "747,000 Toman", img: "assets/images/collection46.png" }
         ]
     },
     gaming: {
         title: "مجموعه Gaming",
         items: [
-            { id: 501, title: "طرح Resident Evil 4", price: "580,000 Toman", img: "assets/images/collection21.png" },
-            { id: 502, title: "طرح God of War", price: "570,000 Toman", img: "assets/images/collection22.png" },
-            { id: 503, title: "طرح The Last of Us", price: "545,000 Toman", img: "assets/images/collection23.png" },
-            { id: 504, title: "طرح Elden Ring", price: "590,000 Toman", img: "assets/images/collection24.png" },
-            { id: 505, title: "طرح GTA VI", price: "640,000 Toman", img: "assets/images/collection25.png" },
-            { id: 506, title: "طرح ", price: "600,000 Toman", img: "assets/images/collection42.png" },
-            { id: 507, title: "طرح Red Dead Redemption 2", price: "610,000 Toman", img: "assets/images/collection44.png" },
-            { id: 508, title: "طرح Ghost of tsushima", price: "570,000 Toman", img: "assets/images/collection43.png" },
-            { id: 509, title: "طرح Assassin's creed : Brotherhood", price: "560,000 Toman", img: "assets/images/collection45.png" }
+            { id: 501, title: "طرح Resident Evil 4", price: "699,000 Toman", img: "assets/images/collection21.png" },
+            { id: 502, title: "طرح God of War", price: "687,000 Toman", img: "assets/images/collection22.png" },
+            { id: 503, title: "طرح The Last of Us", price: "657,000 Toman", img: "assets/images/collection23.png" },
+            { id: 504, title: "طرح Elden Ring", price: "711,000 Toman", img: "assets/images/collection24.png" },
+            { id: 505, title: "طرح GTA VI", price: "771,000 Toman", img: "assets/images/collection25.png" },
+            { id: 507, title: "طرح Red Dead Redemption 2", price: "735,000 Toman", img: "assets/images/collection44.png" },
+            { id: 508, title: "طرح Ghost of tsushima", price: "687,000 Toman", img: "assets/images/collection43.png" },
+            { id: 509, title: "طرح Assassin's creed : Brotherhood", price: "675,000 Toman", img: "assets/images/collection45.png" }
         ]
     },
     anime: {
         title: "مجموعه Anime",
         items: [
-            { id: 601, title: "طرح Solo Leveling", price: "560,000 Toman", img: "assets/images/collection47.png" },
-            { id: 602, title: "طرح Attack on Titan", price: "580,000 Toman", img: "assets/images/collection48.png" },
-            { id: 603, title: "طرح One Piece", price: "570,000 Toman", img: "assets/images/collection49.png" },
-            { id: 604, title: "طرح Demon Slayer", price: "590,000 Toman", img: "assets/images/collection50.png" },
-            { id: 605, title: "طرح Jujutsu Kaisen", price: "580,000 Toman", img: "assets/images/collection51.png" }
+            { id: 601, title: "طرح Solo Leveling", price: "675,000 Toman", img: "assets/images/collection47.png" },
+            { id: 602, title: "طرح Attack on Titan", price: "699,000 Toman", img: "assets/images/collection48.png" },
+            { id: 603, title: "طرح One Piece", price: "687,000 Toman", img: "assets/images/collection49.png" },
+            { id: 604, title: "طرح Demon Slayer", price: "711,000 Toman", img: "assets/images/collection50.png" },
+            { id: 605, title: "طرح Jujutsu Kaisen", price: "699,000 Toman", img: "assets/images/collection51.png" }
         ]
     },
-   movie: {
-    title: "مجموعه Movie",
-    items: [
-        { id: 702, title: "طرح Better Call Saul", price: "600,000 Toman", img: "assets/images/collection53.png" },
-        { id: 703, title: "طرح House of The Dragon", price: "590,000 Toman", img: "assets/images/collection54.png" },
-        { id: 704, title: "طرح The mentalist", price: "590,000 Toman", img: "assets/images/collection55.png" }
-    ]
+    movie: {
+        title: "مجموعه Movie",
+        items: [
+            { id: 701, title: "طرح Breaking Bad", price: "723,000 Toman", img: "assets/images/collection52.png" },
+            { id: 702, title: "طرح Better Call Saul", price: "723,000 Toman", img: "assets/images/collection53.png" },
+            { id: 703, title: "طرح House of The Dragon", price: "711,000 Toman", img: "assets/images/collection54.png" },
+            { id: 704, title: "طرح The Mentalist", price: "711,000 Toman", img: "assets/images/collection55.png" }
+        ]
+    },
+    football: {
+        title: "مجموعه Football",
+        items: [
+            { id: 801, title: "طرح کریستیانو رونالدو", price: "735,000 Toman", img: "assets/images/collection56.png" },
+            { id: 802, title: "طرح لیونل مسی", price: "735,000 Toman", img: "assets/images/collection57.png" },
+            { id: 803, title: "طرح دیگو مارادونا", price: "699,000 Toman", img: "assets/images/collection58.png" }
+        ]
     }
 };
+
 
 
 let currentSelectedProduct = null;
