@@ -415,8 +415,6 @@ const collectionsProducts = {
     }
 };
 
-
-
 let currentSelectedProduct = null;
 let selectedSize = '۲۰×۲۰ سانتی‌متر';
 let basePriceValue = 0;
