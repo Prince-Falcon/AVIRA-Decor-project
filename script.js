@@ -325,7 +325,7 @@ const collectionsProducts = {
             { id: 102, title: "طرح سامانه خورشیدی", price: "550,000 Toman", img: "assets/images/collection6.png" },
             { id: 103, title: "طرح مریخ", price: "475,000 Toman", img: "assets/images/collection7.png" },
             { id: 104, title: "طرح خورشید", price: "580,000 Toman", img: "assets/images/collection8.png" },
-            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "620,000 Toman", img: "assets/images/collection9.png", discount: 12 },
+            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "620,000 Toman", img: "assets/images/collection9.png" },
             { id: 106, title: "طرح کهکشان راه شیری", price: "565,000 Toman", img: "assets/images/collection26.png" },
             { id: 107, title: "طرح سیاه‌چاله", price: "605,000 Toman", img: "assets/images/collection27.png" },
             { id: 108, title: "طرح زحل", price: "555,000 Toman", img: "assets/images/collection28.png" },
@@ -367,7 +367,7 @@ const collectionsProducts = {
             { id: 402, title: "BMW M8", price: "705,000 Toman", img: "assets/images/collection17.png" },
             { id: 403, title: "Nissan GTR", price: "665,000 Toman", img: "assets/images/collection18.png" },
             { id: 404, title: "Lamborghini Aventador", price: "705,000 Toman", img: "assets/images/collection19.png" },
-            { id: 405, title: "Bugatti Chiron", price: "810,000 Toman", img: "assets/images/collection20.png", discount: 15 },
+            { id: 405, title: "Bugatti Chiron", price: "810,000 Toman", img: "assets/images/collection20.png" },
             { id: 406, title: "Toyota Supra MK5", price: "735,000 Toman", img: "assets/images/collection38.png" },
             { id: 407, title: "Porsche Panamera 4S", price: "710,000 Toman", img: "assets/images/collection39.png" },
             { id: 408, title: "Ferrari F40", price: "725,000 Toman", img: "assets/images/collection40.png" },
@@ -384,7 +384,7 @@ const collectionsProducts = {
             { id: 502, title: "طرح God of War", price: "685,000 Toman", img: "assets/images/collection22.png" },
             { id: 503, title: "طرح The Last of Us", price: "655,000 Toman", img: "assets/images/collection23.png" },
             { id: 504, title: "طرح Elden Ring", price: "710,000 Toman", img: "assets/images/collection24.png" },
-            { id: 505, title: "طرح GTA VI", price: "770,000 Toman", img: "assets/images/collection25.png", discount: 15 },
+            { id: 505, title: "طرح GTA VI", price: "770,000 Toman", img: "assets/images/collection25.png" },
             { id: 506, title: "طرح ", price: "725,000 Toman", img: "assets/images/collection42.png" },
             { id: 507, title: "طرح Red Dead Redemption 2", price: "735,000 Toman", img: "assets/images/collection44.png" },
             { id: 508, title: "طرح Ghost of tsushima", price: "685,000 Toman", img: "assets/images/collection43.png" },
@@ -407,13 +407,13 @@ const collectionsProducts = {
         { id: 702, title: "طرح Better Call Saul", price: "725,000 Toman", img: "assets/images/collection53.png" },
         { id: 703, title: "طرح House of The Dragon", price: "710,000 Toman", img: "assets/images/collection54.png" },
         { id: 704, title: "طرح The mentalist", price: "710,000 Toman", img: "assets/images/collection55.png" },
-        { id: 705, title: "طرح Breaking Bad", price: "725,000 Toman", img: "assets/images/collection57.png", discount: 18 }
+        { id: 705, title: "طرح Breaking Bad", price: "725,000 Toman", img: "assets/images/collection57.png" }
     ]
     },
     football: {
         title: "مجموعه Football",
         items: [
-            { id: 801, title: "طرح مسی", price: "700,000 Toman", img: "assets/images/collection58.png", discount: 15 },
+            { id: 801, title: "طرح مسی", price: "700,000 Toman", img: "assets/images/collection58.png" },
             { id: 802, title: "طرح رونالدو", price: "700,000 Toman", img: "assets/images/collection59.png" },
             { id: 803, title: "طرح جام جهانی", price: "685,000 Toman", img: "assets/images/collection60.png" },
             { id: 804, title: "طرح رئال مادرید", price: "670,000 Toman", img: "assets/images/collection61.png" },
@@ -421,6 +421,70 @@ const collectionsProducts = {
         ]
     }
 };
+
+// ==========================================
+// پک‌های ویژه (چند طرح مرتبط با هم، با تخفیف ترکیبی)
+// هر آیتم به category + id طرح داخل collectionsProducts اشاره می‌کنه
+// ==========================================
+const productBundles = [
+    {
+        id: "bundle-german",
+        title: "پک نوابغ آلمانی",
+        description: "قدرت مهندسی و نبوغ علمی آلمان، کنار هم روی یک دیوار",
+        discount: 15,
+        items: [
+            { category: "car", id: 401 },
+            { category: "scientific", id: 201 }
+        ]
+    },
+    {
+        id: "bundle-galaxy",
+        title: "پک کاشفان کهکشان",
+        description: "سه دریچه به عمق کیهان؛ از کهکشان آندرومدا تا مرزهای دیده‌شده با جیمز وب",
+        discount: 18,
+        items: [
+            { category: "astronomic", id: 101 },
+            { category: "astronomic", id: 102 },
+            { category: "astronomic", id: 109 }
+        ]
+    },
+    {
+        id: "bundle-bcs",
+        title: "پک دنیای Breaking Bad",
+        description: "دو طرح از یک دنیا؛ Breaking Bad و پیش‌درآمدش Better Call Saul",
+        discount: 15,
+        items: [
+            { category: "movie", id: 705 },
+            { category: "movie", id: 702 }
+        ]
+    },
+    {
+        id: "bundle-goat",
+        title: "پک افسانه‌های فوتبال",
+        description: "دو نامی که یک دهه فوتبال دنیا رو تعریف کردن",
+        discount: 15,
+        items: [
+            { category: "football", id: 801 },
+            { category: "football", id: 802 }
+        ]
+    },
+    {
+        id: "bundle-italian",
+        title: "پک سوپرکارهای ایتالیایی",
+        description: "لامبورگینی و فراری؛ دو غول ایتالیایی کنار هم",
+        discount: 15,
+        items: [
+            { category: "car", id: 404 },
+            { category: "car", id: 408 }
+        ]
+    }
+];
+
+function getProductByIdCat(category, id) {
+    const cat = collectionsProducts[category];
+    if (!cat) return null;
+    return (cat.items || []).find(p => p.id === id) || null;
+}
 
 
 let currentSelectedProduct = null;
@@ -430,45 +494,114 @@ let originalPriceValue = 0;
 let currentCalculatedPrice = "";
 
 // ==========================================
-// پیشنهادهای ویژه (صفحه اصلی) — بر اساس محصولاتی که discount دارن
+// پیشنهادهای ویژه (صفحه اصلی) — پک‌های چند طرحی مرتبط با تخفیف
 // ==========================================
 function initOffersSection() {
     const grid = document.getElementById("offers-grid");
     const section = document.getElementById("offers");
     if (!grid) return;
 
-    const offerItems = [];
-    Object.keys(collectionsProducts).forEach(catKey => {
-        const cat = collectionsProducts[catKey];
-        (cat.items || []).forEach(item => {
-            if (item.discount) {
-                offerItems.push({ ...item, category: catKey });
-            }
-        });
-    });
-
-    if (offerItems.length === 0) {
+    if (!productBundles || productBundles.length === 0) {
         if (section) section.style.display = "none";
         return;
     }
 
-    grid.innerHTML = offerItems.map(item => {
-        const originalNum = parsePriceToNumber(item.price);
-        const discountedNum = Math.round(originalNum * (1 - item.discount / 100) / 1000) * 1000;
+    grid.innerHTML = productBundles.map(bundle => {
+        const resolvedItems = bundle.items
+            .map(ref => getProductByIdCat(ref.category, ref.id))
+            .filter(Boolean);
+
+        if (resolvedItems.length === 0) return "";
+
+        const originalTotal = resolvedItems.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
+        const discountedTotal = Math.round(originalTotal * (1 - bundle.discount / 100) / 1000) * 1000;
+
+        const thumbsHtml = resolvedItems.map(p => `<div class="bundle-thumb" style="background-image: url('${p.img}');"></div>`).join("");
+
         return `
-            <a class="offer-card" href="/collections?category=${encodeURIComponent(item.category)}&product=${item.id}">
-                <div class="offer-badge">${item.discount}٪ تخفیف</div>
-                <div class="offer-image" style="background-image: url('${item.img}');"></div>
+            <div class="offer-card bundle-card" onclick="openBundleModal('${bundle.id}')">
+                <div class="offer-badge">${bundle.discount}٪ تخفیف پک</div>
+                <div class="bundle-thumbs bundle-thumbs-${resolvedItems.length}">${thumbsHtml}</div>
                 <div class="offer-info">
-                    <h3>${escapeHtml(item.title)}</h3>
+                    <h3>${escapeHtml(bundle.title)}</h3>
+                    <p class="bundle-desc">${escapeHtml(bundle.description)}</p>
                     <div class="offer-prices">
-                        <span class="offer-original">${formatPrice(originalNum)}</span>
-                        <span class="offer-final">${formatPrice(discountedNum)}</span>
+                        <span class="offer-original">${formatPrice(originalTotal)}</span>
+                        <span class="offer-final">${formatPrice(discountedTotal)}</span>
                     </div>
                 </div>
-            </a>
+            </div>
         `;
     }).join("");
+}
+
+// مودال جزئیات پک + افزودن کل پک به سبد خرید
+let currentBundle = null;
+
+function openBundleModal(bundleId) {
+    const bundle = productBundles.find(b => b.id === bundleId);
+    if (!bundle) return;
+    currentBundle = bundle;
+
+    const resolvedItems = bundle.items.map(ref => getProductByIdCat(ref.category, ref.id)).filter(Boolean);
+    const originalTotal = resolvedItems.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
+    const discountedTotal = Math.round(originalTotal * (1 - bundle.discount / 100) / 1000) * 1000;
+
+    const titleElem = document.getElementById("bundle-modal-title");
+    const descElem = document.getElementById("bundle-modal-desc");
+    const itemsElem = document.getElementById("bundle-modal-items");
+    const priceElem = document.getElementById("bundle-modal-price");
+    const originalPriceElem = document.getElementById("bundle-modal-original-price");
+    const badgeElem = document.getElementById("bundle-modal-discount-badge");
+
+    if (titleElem) titleElem.textContent = bundle.title;
+    if (descElem) descElem.textContent = bundle.description;
+    if (itemsElem) {
+        itemsElem.innerHTML = resolvedItems.map(p => `
+            <div class="bundle-modal-item">
+                <img src="${p.img}" alt="${escapeHtml(p.title)}">
+                <span>${escapeHtml(p.title)}</span>
+            </div>
+        `).join("");
+    }
+    if (priceElem) priceElem.textContent = formatPrice(discountedTotal);
+    if (originalPriceElem) originalPriceElem.textContent = formatPrice(originalTotal);
+    if (badgeElem) badgeElem.textContent = `${bundle.discount}٪ تخفیف`;
+
+    const modal = document.getElementById("bundle-modal");
+    if (modal) modal.style.display = "flex";
+}
+
+function closeBundleModal() {
+    const modal = document.getElementById("bundle-modal");
+    if (modal) modal.style.display = "none";
+    currentBundle = null;
+}
+
+function addBundleToCart() {
+    if (!currentBundle) return;
+
+    const resolvedItems = currentBundle.items.map(ref => getProductByIdCat(ref.category, ref.id)).filter(Boolean);
+    const factor = 1 - currentBundle.discount / 100;
+
+    let cart = getCart();
+    resolvedItems.forEach(p => {
+        const itemPrice = Math.round(parsePriceToNumber(p.price) * factor / 1000) * 1000;
+        cart.push({
+            type: "collection",
+            id: p.id,
+            title: p.title,
+            price: formatPrice(itemPrice),
+            size: "۱۸×۲۰ سانتی‌متر",
+            material: "normal",
+            img: p.img
+        });
+    });
+
+    localStorage.setItem("avira_cart", JSON.stringify(cart));
+    showToast(`«${currentBundle.title}» با موفقیت به سبد خرید اضافه شد!`, "success");
+    updateCartBadge();
+    closeBundleModal();
 }
 
 function initProductsGrid() {

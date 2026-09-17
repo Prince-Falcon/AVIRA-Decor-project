@@ -165,6 +165,7 @@ section {
     overflow: hidden;
     text-decoration: none;
     color: inherit;
+    cursor: pointer;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -191,6 +192,80 @@ section {
     height: 180px;
     background-size: cover;
     background-position: center;
+}
+
+/* پک‌های چند طرحی */
+.bundle-thumbs {
+    display: flex;
+    height: 150px;
+}
+
+.bundle-thumb {
+    flex: 1;
+    background-size: cover;
+    background-position: center;
+    border-left: 2px solid #161616;
+}
+.bundle-thumb:last-child {
+    border-left: none;
+}
+
+.bundle-desc {
+    font-size: 0.82rem;
+    color: #999;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.bundle-modal-content {
+    max-width: 480px;
+    text-align: right;
+    padding: 30px;
+}
+
+.bundle-modal-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.bundle-modal-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 90px;
+}
+
+.bundle-modal-item img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.bundle-modal-item span {
+    font-size: 0.75rem;
+    color: #ccc;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.bundle-note {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 12px;
+    line-height: 1.7;
+}
+
+body.light-theme .bundle-desc,
+body.light-theme .bundle-note {
+    color: #666;
+}
+body.light-theme .bundle-modal-item span {
+    color: #333;
 }
 
 .offer-info {
