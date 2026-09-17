@@ -4,8 +4,8 @@
       <!-- متاتگ‌های پایه سئو -->
  <meta name="description" content="گالری تابلوهای لوکس و دکوراتیو آویرا؛ عرضه انواع تابلوهای مدرن در طرح‌های نجومی، علمی، تاریخی، خودرو و گیمینگ با کیفیت عالی و سفارش اختصاصی.">
  <meta name="keywords" content="تابلو دکوراتیو, خرید تابلو لوکس, تابلو مدرن, سفارش اختصاصی تابلو, تابلو ماشین, تابلو گیمینگ">
- <meta name="robots" content="index, follow">
- <link rel="canonical" href="https://aviradecoratives.vercel.app/">
+ <meta name="robots" content="noindex, nofollow">
+ <link rel="canonical" href="https://aviradecoratives.vercel.app/admin">
 
  <!-- متاتگ‌های Open Graph (برای نمایش جذاب هنگام اشتراک‌گذاری در تلگرام، واتساپ و شبکه های اجتماعی) -->
  <meta property="og:type" content="website">
@@ -51,18 +51,19 @@
         </form>
     </main>
 
-    <main class="custom-container show" id="admin-dashboard" style="display: none; max-width: 900px; margin-top: 100px; position: relative; z-index: 20;">
+    <main class="custom-container show" id="admin-dashboard" style="display: none; max-width: 1000px; margin-top: 100px; position: relative; z-index: 20;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <h1>پنل مدیریت آویرا</h1>
-                <p class="subtitle">مدیریت سفارشات، کاربران و پیام‌های پشتیبانی</p>
+                <p class="subtitle">مدیریت سفارشات، کاربران، دیدگاه‌ها و پیام‌های پشتیبانی</p>
             </div>
             <button onclick="logoutAdmin()" class="btn-submit" style="background:#ef4444; width:auto; padding:8px 15px;">خروج</button>
         </div>
 
-        <div style="display:flex; gap:20px; margin-bottom:20px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom:10px;">
+        <div style="display:flex; gap:20px; margin-bottom:20px; border-bottom: 1px solid rgba(212,175,55,0.3); padding-bottom:10px; flex-wrap: wrap;">
             <button id="btn-tab-orders" onclick="switchAdminTab('orders')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:1;">🛍️ سفارشات</button>
             <button id="btn-tab-users" onclick="switchAdminTab('users')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:0.5;">👥 کاربران</button>
+            <button id="btn-tab-reviews" onclick="switchAdminTab('reviews')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:0.5;">⭐ دیدگاه‌ها</button>
             <button id="btn-tab-support" onclick="switchAdminTab('support')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:0.5;">💬 پیام‌های پشتیبانی</button>
         </div>
 
@@ -78,9 +79,20 @@
             </div>
         </div>
 
+        <div id="tab-reviews" style="display:none;">
+            <div id="admin-reviews-list" style="text-align: right;">
+                <p style="color: #aaa; text-align: center;">در حال دریافت دیدگاه‌ها...</p>
+            </div>
+        </div>
+
         <div id="tab-support" style="display:none;">
-            <div id="admin-support-list" style="text-align: right;">
-                <p style="color: #aaa; text-align: center;">در حال دریافت پیام‌ها...</p>
+            <div class="admin-chat-wrapper">
+                <div class="admin-chat-userlist" id="admin-chat-userlist">
+                    <p style="color: #aaa; text-align: center; padding: 20px;">در حال دریافت مکالمات...</p>
+                </div>
+                <div class="admin-chat-thread" id="admin-chat-thread">
+                    <div class="admin-chat-placeholder">یک کاربر را از لیست سمت راست انتخاب کنید تا گفتگویش را ببینید</div>
+                </div>
             </div>
         </div>
     </main>

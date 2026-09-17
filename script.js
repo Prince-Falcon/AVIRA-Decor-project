@@ -423,69 +423,71 @@ const collectionsProducts = {
 };
 
 // ==========================================
-// پک‌های ویژه (چند طرح مرتبط با هم، با تخفیف ترکیبی)
-// هر آیتم به category + id طرح داخل collectionsProducts اشاره می‌کنه
+// پک‌های ترکیبی (پیشنهادهای ویژه) — چند طرح مرتبط با تم مشترک
+// هر پک: ۲ تا ۴ طرح از کالکشن‌های مختلف که به‌صورت یک ست با تخفیف پکیج فروخته می‌شن
+// سایز و جنس، مثل بقیه محصولات، روی کل پک اعمال می‌شه و قیمت رو تغییر می‌ده
 // ==========================================
-const productBundles = [
+const BUNDLE_DISCOUNT_PERCENT = 12;
+
+const bundlePacks = [
     {
-        id: "bundle-german",
+        id: "heisenberg",
+        title: "پک هایزنبرگ",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
+        refs: [
+            { id: 705, category: "movie" },
+            { id: 204, category: "scientific" },
+            { id: 201, category: "scientific" },
+            { id: 407, category: "car" }
+        ]
+    },
+    {
+        id: "german-geniuses",
         title: "پک نوابغ آلمانی",
-        description: "قدرت مهندسی و نبوغ علمی آلمان، کنار هم روی یک دیوار",
-        discount: 15,
-        items: [
-            { category: "car", id: 401 },
-            { category: "scientific", id: 201 }
+        description: "آلبرت انیشتین و ورنر هایزنبرگ، دو ستون علم فیزیک قرن بیستم، کنار هم روی دیوار.",
+        refs: [
+            { id: 201, category: "scientific" },
+            { id: 204, category: "scientific" }
         ]
     },
     {
-        id: "bundle-galaxy",
-        title: "پک کاشفان کهکشان",
-        description: "سه دریچه به عمق کیهان؛ از کهکشان آندرومدا تا مرزهای دیده‌شده با جیمز وب",
-        discount: 18,
-        items: [
-            { category: "astronomic", id: 101 },
-            { category: "astronomic", id: 102 },
-            { category: "astronomic", id: 109 }
+        id: "galaxy-trio",
+        title: "پک کهکشان",
+        description: "سه نگاه به بی‌نهایت هستی: کهکشان راه شیری، آندرومدا و سیاه‌چاله.",
+        refs: [
+            { id: 106, category: "astronomic" },
+            { id: 101, category: "astronomic" },
+            { id: 107, category: "astronomic" }
         ]
     },
     {
-        id: "bundle-bcs",
-        title: "پک دنیای Breaking Bad",
-        description: "دو طرح از یک دنیا؛ Breaking Bad و پیش‌درآمدش Better Call Saul",
-        discount: 15,
-        items: [
-            { category: "movie", id: 705 },
-            { category: "movie", id: 702 }
-        ]
-    },
-    {
-        id: "bundle-goat",
+        id: "football-legends",
         title: "پک افسانه‌های فوتبال",
-        description: "دو نامی که یک دهه فوتبال دنیا رو تعریف کردن",
-        discount: 15,
-        items: [
-            { category: "football", id: 801 },
-            { category: "football", id: 802 }
+        description: "مسی، رونالدو و دو باشگاه بزرگ اروپا در یک ست چهارتایی.",
+        refs: [
+            { id: 801, category: "football" },
+            { id: 802, category: "football" },
+            { id: 804, category: "football" },
+            { id: 805, category: "football" }
         ]
     },
     {
-        id: "bundle-italian",
-        title: "پک سوپرکارهای ایتالیایی",
-        description: "لامبورگینی و فراری؛ دو غول ایتالیایی کنار هم",
-        discount: 15,
-        items: [
-            { category: "car", id: 404 },
-            { category: "car", id: 408 }
+        id: "breaking-universe",
+        title: "پک دنیای برکینگ بد",
+        description: "برکینگ بد و بتر کال سال — یک دنیا، یک داستان.",
+        refs: [
+            { id: 705, category: "movie" },
+            { id: 702, category: "movie" }
         ]
     }
 ];
 
-function getProductByIdCat(category, id) {
-    const cat = collectionsProducts[category];
-    if (!cat) return null;
-    return (cat.items || []).find(p => p.id === id) || null;
+function resolveBundleItems(bundle) {
+    return bundle.refs.map(ref => {
+        const product = (collectionsProducts[ref.category]?.items || []).find(p => p.id === ref.id);
+        return product ? { ...product, category: ref.category } : null;
+    }).filter(Boolean);
 }
-
 
 let currentSelectedProduct = null;
 let selectedSize = '۲۰×۲۰ سانتی‌متر';
@@ -494,81 +496,79 @@ let originalPriceValue = 0;
 let currentCalculatedPrice = "";
 
 // ==========================================
-// پیشنهادهای ویژه (صفحه اصلی) — پک‌های چند طرحی مرتبط با تخفیف
+// پیشنهادهای ویژه (صفحه اصلی) — رندر پک‌های ترکیبی
 // ==========================================
 function initOffersSection() {
     const grid = document.getElementById("offers-grid");
     const section = document.getElementById("offers");
     if (!grid) return;
 
-    if (!productBundles || productBundles.length === 0) {
+    if (!bundlePacks || bundlePacks.length === 0) {
         if (section) section.style.display = "none";
         return;
     }
 
-    grid.innerHTML = productBundles.map(bundle => {
-        const resolvedItems = bundle.items
-            .map(ref => getProductByIdCat(ref.category, ref.id))
-            .filter(Boolean);
+    grid.innerHTML = bundlePacks.map(bundle => {
+        const items = resolveBundleItems(bundle);
+        if (items.length === 0) return "";
 
-        if (resolvedItems.length === 0) return "";
+        const sumBase = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
+        const discountedBase = Math.round(sumBase * (1 - BUNDLE_DISCOUNT_PERCENT / 100) / 1000) * 1000;
 
-        const originalTotal = resolvedItems.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
-        const discountedTotal = Math.round(originalTotal * (1 - bundle.discount / 100) / 1000) * 1000;
-
-        const thumbsHtml = resolvedItems.map(p => `<div class="bundle-thumb" style="background-image: url('${p.img}');"></div>`).join("");
+        const thumbsHtml = items.slice(0, 4).map(p => `<div class="offer-thumb" style="background-image: url('${p.img}');"></div>`).join("");
 
         return `
-            <div class="offer-card bundle-card" onclick="openBundleModal('${bundle.id}')">
-                <div class="offer-badge">${bundle.discount}٪ تخفیف پک</div>
-                <div class="bundle-thumbs bundle-thumbs-${resolvedItems.length}">${thumbsHtml}</div>
+            <a class="offer-card bundle-card" href="javascript:void(0)" onclick="openBundleModal('${bundle.id}')">
+                <div class="offer-badge">${items.length} تابلو | ${BUNDLE_DISCOUNT_PERCENT}٪ تخفیف پک</div>
+                <div class="offer-thumbs offer-thumbs-${items.length}">${thumbsHtml}</div>
                 <div class="offer-info">
                     <h3>${escapeHtml(bundle.title)}</h3>
-                    <p class="bundle-desc">${escapeHtml(bundle.description)}</p>
+                    <p class="offer-desc">${escapeHtml(bundle.description)}</p>
                     <div class="offer-prices">
-                        <span class="offer-original">${formatPrice(originalTotal)}</span>
-                        <span class="offer-final">${formatPrice(discountedTotal)}</span>
+                        <span class="offer-original">${formatPrice(sumBase)}</span>
+                        <span class="offer-final">از ${formatPrice(discountedBase)}</span>
                     </div>
                 </div>
-            </div>
+            </a>
         `;
     }).join("");
 }
 
-// مودال جزئیات پک + افزودن کل پک به سبد خرید
 let currentBundle = null;
+let bundleBaseSum = 0;
+let selectedBundleSize = "۲۰×۲۰ سانتی‌متر";
 
 function openBundleModal(bundleId) {
-    const bundle = productBundles.find(b => b.id === bundleId);
+    const bundle = bundlePacks.find(b => b.id === bundleId);
     if (!bundle) return;
-    currentBundle = bundle;
+    const items = resolveBundleItems(bundle);
+    if (items.length === 0) return;
 
-    const resolvedItems = bundle.items.map(ref => getProductByIdCat(ref.category, ref.id)).filter(Boolean);
-    const originalTotal = resolvedItems.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
-    const discountedTotal = Math.round(originalTotal * (1 - bundle.discount / 100) / 1000) * 1000;
+    currentBundle = { ...bundle, items };
+    bundleBaseSum = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
 
     const titleElem = document.getElementById("bundle-modal-title");
     const descElem = document.getElementById("bundle-modal-desc");
-    const itemsElem = document.getElementById("bundle-modal-items");
-    const priceElem = document.getElementById("bundle-modal-price");
-    const originalPriceElem = document.getElementById("bundle-modal-original-price");
-    const badgeElem = document.getElementById("bundle-modal-discount-badge");
+    const thumbsElem = document.getElementById("bundle-modal-items");
+    const modal = document.getElementById("bundle-modal");
 
     if (titleElem) titleElem.textContent = bundle.title;
     if (descElem) descElem.textContent = bundle.description;
-    if (itemsElem) {
-        itemsElem.innerHTML = resolvedItems.map(p => `
+    if (thumbsElem) {
+        thumbsElem.innerHTML = items.map(p => `
             <div class="bundle-modal-item">
                 <img src="${p.img}" alt="${escapeHtml(p.title)}">
                 <span>${escapeHtml(p.title)}</span>
             </div>
         `).join("");
     }
-    if (priceElem) priceElem.textContent = formatPrice(discountedTotal);
-    if (originalPriceElem) originalPriceElem.textContent = formatPrice(originalTotal);
-    if (badgeElem) badgeElem.textContent = `${bundle.discount}٪ تخفیف`;
 
-    const modal = document.getElementById("bundle-modal");
+    document.querySelectorAll("#bundle-modal .size-btn").forEach((btn, i) => btn.classList.toggle("active", i === 0));
+    const normalRadio = document.querySelector('#bundle-modal input[name="bundle-material"][value="normal"]');
+    if (normalRadio) normalRadio.checked = true;
+    selectedBundleSize = "۲۰×۲۰ سانتی‌متر";
+
+    updateBundlePriceView();
     if (modal) modal.style.display = "flex";
 }
 
@@ -578,28 +578,51 @@ function closeBundleModal() {
     currentBundle = null;
 }
 
+function selectBundleSize(btn) {
+    document.querySelectorAll("#bundle-modal .size-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedBundleSize = btn.textContent.trim();
+    updateBundlePriceView();
+}
+
+function updateBundlePriceView() {
+    const priceElem = document.getElementById("bundle-modal-price");
+    const originalElem = document.getElementById("bundle-modal-original-price");
+    if (!priceElem || !bundleBaseSum) return;
+
+    const materialInput = document.querySelector('#bundle-modal input[name="bundle-material"]:checked');
+    const materialMult = materialInput ? (materialMultipliers[materialInput.value] || 1.0) : 1.0;
+    const sizeMult = sizeMultipliers[selectedBundleSize] || 1.0;
+
+    const originalCalc = bundleBaseSum * sizeMult * materialMult;
+    const finalCalc = originalCalc * (1 - BUNDLE_DISCOUNT_PERCENT / 100);
+
+    if (originalElem) originalElem.textContent = formatPrice(originalCalc);
+    priceElem.textContent = formatPrice(finalCalc);
+}
+
 function addBundleToCart() {
     if (!currentBundle) return;
 
-    const resolvedItems = currentBundle.items.map(ref => getProductByIdCat(ref.category, ref.id)).filter(Boolean);
-    const factor = 1 - currentBundle.discount / 100;
+    const materialInput = document.querySelector('#bundle-modal input[name="bundle-material"]:checked');
+    const materialVal = materialInput ? materialInput.value : "normal";
+    const materialMult = materialMultipliers[materialVal] || 1.0;
+    const sizeMult = sizeMultipliers[selectedBundleSize] || 1.0;
+
+    const finalCalc = bundleBaseSum * sizeMult * materialMult * (1 - BUNDLE_DISCOUNT_PERCENT / 100);
 
     let cart = getCart();
-    resolvedItems.forEach(p => {
-        const itemPrice = Math.round(parsePriceToNumber(p.price) * factor / 1000) * 1000;
-        cart.push({
-            type: "collection",
-            id: p.id,
-            title: p.title,
-            price: formatPrice(itemPrice),
-            size: "۱۸×۲۰ سانتی‌متر",
-            material: "normal",
-            img: p.img
-        });
+    cart.push({
+        type: "bundle",
+        id: currentBundle.id,
+        title: `${currentBundle.title} (${currentBundle.items.length} تابلو)`,
+        price: formatPrice(finalCalc),
+        size: selectedBundleSize,
+        material: materialVal
     });
-
     localStorage.setItem("avira_cart", JSON.stringify(cart));
-    showToast(`«${currentBundle.title}» با موفقیت به سبد خرید اضافه شد!`, "success");
+
+    showToast(`"${currentBundle.title}" به سبد خرید اضافه شد!`, "success");
     updateCartBadge();
     closeBundleModal();
 }
@@ -817,6 +840,11 @@ async function loadProductReviews(productId) {
                 <span class="review-item-stars">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span>
             </div>
             <p class="review-item-text">${escapeHtml(r.comment)}</p>
+            ${r.admin_reply ? `
+                <div class="review-admin-reply">
+                    <strong>پاسخ آویرا:</strong> ${escapeHtml(r.admin_reply)}
+                </div>
+            ` : ''}
         </div>
     `).join("");
 
@@ -865,6 +893,87 @@ async function submitReview() {
 
     showToast("دیدگاه شما با موفقیت ثبت شد.", "success");
     loadProductReviews(currentSelectedProduct.id);
+}
+
+// ==========================================
+// مدیریت دیدگاه‌ها در پنل ادمین (مشاهده همه + پاسخ به هرکدام)
+// ==========================================
+async function loadAdminReviews() {
+    const listBox = document.getElementById("admin-reviews-list");
+    if (!listBox || !supabaseClient) return;
+
+    listBox.innerHTML = skeletonCards(3);
+
+    const { data: reviews, error } = await supabaseClient
+        .from('product_reviews')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        listBox.innerHTML = `<p style="color: #f87171; text-align: center; padding: 30px;">خطا در دریافت دیدگاه‌ها! (احتمالاً هنوز جدول product_reviews رو نساختید)</p>`;
+        return;
+    }
+
+    if (!reviews || reviews.length === 0) {
+        listBox.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هنوز دیدگاهی ثبت نشده است.</p>`;
+        return;
+    }
+
+    listBox.innerHTML = reviews.map(r => {
+        const productTitle = getProductTitleById(r.product_id) || `محصول #${r.product_id}`;
+        return `
+            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.25); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 8px;">
+                    <span>🖼️ ${escapeHtml(productTitle)}</span>
+                    <span>📅 ${formatDatePersian(r.created_at)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="color: #fff; font-size: 0.9rem;">👤 ${escapeHtml(r.user_name || "کاربر آویرا")}</span>
+                    <span style="color: #d4af37;">${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)}</span>
+                </div>
+                <p style="color: #fff; font-size: 0.95rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                    ${escapeHtml(r.comment)}
+                </p>
+                ${r.admin_reply ? `
+                    <p style="color: #4ade80; font-size: 0.88rem; background: rgba(74, 222, 128, 0.1); padding: 8px; border-radius: 6px; margin-bottom: 10px;">
+                        <strong>پاسخ شما:</strong> ${escapeHtml(r.admin_reply)}
+                    </p>
+                ` : ''}
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <input type="text" id="review-reply-input-${r.id}" placeholder="پاسخ به این دیدگاه..." value="${escapeHtml(r.admin_reply || '')}" style="flex: 1; padding: 8px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 0.85rem;">
+                    <button onclick="replyToReview('${r.id}')" style="background: #d4af37; color: #121212; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">ثبت پاسخ</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function getProductTitleById(productId) {
+    for (const catKey of Object.keys(collectionsProducts)) {
+        const found = (collectionsProducts[catKey].items || []).find(p => p.id === productId);
+        if (found) return found.title;
+    }
+    return null;
+}
+
+async function replyToReview(reviewId) {
+    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+    const inputElem = document.getElementById(`review-reply-input-${reviewId}`);
+    const replyText = inputElem ? inputElem.value.trim() : "";
+
+    if (!replyText) return alert("لطفاً متن پاسخ را وارد کنید.");
+
+    const { error } = await supabaseClient
+        .from('product_reviews')
+        .update({ admin_reply: replyText })
+        .eq('id', reviewId);
+
+    if (error) {
+        alert("خطا در ثبت پاسخ: " + error.message);
+    } else {
+        showToast("پاسخ با موفقیت ثبت شد.", "success");
+        loadAdminReviews();
+    }
 }
 
 function selectSize(btn) {
@@ -1563,22 +1672,26 @@ async function loadLiveChatMessages() {
         return;
     }
 
-    chatBox.innerHTML = messages.map(msg => `
-        <div style="display: flex; flex-direction: column; align-items: flex-end;">
-            <div style="background: #d4af37; color: #121212; padding: 8px 12px; border-radius: 12px 12px 0 12px; max-width: 80%; font-size: 0.9rem;">
-                ${escapeHtml(msg.message)}
-            </div>
-            <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">${formatDatePersian(msg.created_at)}</span>
-        </div>
-        ${msg.admin_reply ? `
-            <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                <div style="background: #2a2a2a; border: 1px solid rgba(212,175,55,0.3); color: #fff; padding: 8px 12px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 0.9rem;">
-                    <small style="color: #d4af37; display: block; font-size: 0.75rem; margin-bottom: 2px;">پشتیبانی آویرا:</small>
-                    ${escapeHtml(msg.admin_reply)}
+    chatBox.innerHTML = messages.map(msg => {
+        const isAdmin = msg.sender === 'admin';
+        return `
+            <div style="display: flex; flex-direction: column; align-items: ${isAdmin ? 'flex-start' : 'flex-end'};">
+                <div style="background: ${isAdmin ? '#2a2a2a' : '#d4af37'}; border: ${isAdmin ? '1px solid rgba(212,175,55,0.3)' : 'none'}; color: ${isAdmin ? '#fff' : '#121212'}; padding: 8px 12px; border-radius: ${isAdmin ? '12px 12px 12px 0' : '12px 12px 0 12px'}; max-width: 80%; font-size: 0.9rem;">
+                    ${isAdmin ? `<small style="color: #d4af37; display: block; font-size: 0.75rem; margin-bottom: 2px;">پشتیبانی آویرا:</small>` : ''}
+                    ${escapeHtml(msg.message)}
                 </div>
+                <span style="font-size: 0.7rem; color: #666; margin-top: 2px;">${formatDatePersian(msg.created_at)}</span>
             </div>
-        ` : ''}
-    `).join('');
+            ${(!isAdmin && msg.admin_reply) ? `
+                <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <div style="background: #2a2a2a; border: 1px solid rgba(212,175,55,0.3); color: #fff; padding: 8px 12px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 0.9rem;">
+                        <small style="color: #d4af37; display: block; font-size: 0.75rem; margin-bottom: 2px;">پشتیبانی آویرا:</small>
+                        ${escapeHtml(msg.admin_reply)}
+                    </div>
+                </div>
+            ` : ''}
+        `;
+    }).join('');
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -1605,6 +1718,7 @@ async function submitSupportMessage() {
             user_id: user.id,
             user_email: user.email,
             message: messageText,
+            sender: 'user',
             status: 'pending'
         }]);
 
@@ -1655,7 +1769,7 @@ async function loadUserSupportTickets() {
             .from('support_messages')
             .select('*')
             .eq('user_id', user.id)
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: true });
 
         if (error) {
             listContainer.innerHTML = `<p style="color: #f87171; text-align: center;">خطا در دریافت پیام‌ها!</p>`;
@@ -1663,21 +1777,32 @@ async function loadUserSupportTickets() {
         }
 
         if (!tickets || tickets.length === 0) {
-            listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">هیچ پیام پشتیبانی ثبت نشده است.</p>`;
+            listContainer.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">هنوز گفتگویی ثبت نشده. پیام خود را بنویسید.</p>`;
             return;
         }
 
-        listContainer.innerHTML = tickets.map(ticket => `
-            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.3); border-radius: 10px; padding: 15px; margin-bottom: 12px;">
-                <p style="color: #fff; margin-bottom: 5px;"><strong>پیام شما:</strong> ${escapeHtml(ticket.message)}</p>
-                <span style="font-size: 0.8rem; color: #aaa;">📅 ${formatDatePersian(ticket.created_at)}</span>
-                ${ticket.admin_reply ? `
-                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1); color: #4ade80;">
-                        <strong>پاسخ پشتیبانی:</strong> ${escapeHtml(ticket.admin_reply)}
+        listContainer.innerHTML = tickets.map(ticket => {
+            const isAdmin = ticket.sender === 'admin';
+            return `
+                <div style="display: flex; flex-direction: column; align-items: ${isAdmin ? 'flex-start' : 'flex-end'};">
+                    <div style="background: ${isAdmin ? '#242424' : '#d4af37'}; border: ${isAdmin ? '1px solid rgba(212,175,55,0.3)' : 'none'}; color: ${isAdmin ? '#fff' : '#121212'}; padding: 10px 14px; border-radius: ${isAdmin ? '12px 12px 12px 0' : '12px 12px 0 12px'}; max-width: 80%; font-size: 0.9rem;">
+                        ${isAdmin ? `<small style="color: #d4af37; display: block; font-size: 0.75rem; margin-bottom: 3px;">پشتیبانی آویرا</small>` : ''}
+                        ${escapeHtml(ticket.message)}
                     </div>
-                ` : `<p style="font-size: 0.8rem; color: #d4af37; margin-top: 5px;">⏳ در انتظار پاسخ پشتیبانی...</p>`}
-            </div>
-        `).join('');
+                    <span style="font-size: 0.75rem; color: #777; margin-top: 3px;">${formatDatePersian(ticket.created_at)}</span>
+                </div>
+                ${(!isAdmin && ticket.admin_reply) ? `
+                    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                        <div style="background: #242424; border: 1px solid rgba(212,175,55,0.3); color: #fff; padding: 10px 14px; border-radius: 12px 12px 12px 0; max-width: 80%; font-size: 0.9rem;">
+                            <small style="color: #d4af37; display: block; font-size: 0.75rem; margin-bottom: 3px;">پشتیبانی آویرا</small>
+                            ${escapeHtml(ticket.admin_reply)}
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }).join('');
+
+        listContainer.scrollTop = listContainer.scrollHeight;
     } catch (err) {
         console.error("Error loading support tickets:", err);
     }
@@ -1774,36 +1899,32 @@ function switchAdminTab(tab) {
     const tabOrders = document.getElementById("tab-orders");
     const tabUsers = document.getElementById("tab-users");
     const tabSupport = document.getElementById("tab-support");
+    const tabReviews = document.getElementById("tab-reviews");
 
     const btnOrders = document.getElementById("btn-tab-orders");
     const btnUsers = document.getElementById("btn-tab-users");
     const btnSupport = document.getElementById("btn-tab-support");
+    const btnReviews = document.getElementById("btn-tab-reviews");
+
+    const allTabs = [tabOrders, tabUsers, tabSupport, tabReviews];
+    const allBtns = [btnOrders, btnUsers, btnSupport, btnReviews];
+    allTabs.forEach(t => { if (t) t.style.display = "none"; });
+    allBtns.forEach(b => { if (b) b.style.opacity = "0.5"; });
 
     if (tab === 'orders') {
         if (tabOrders) tabOrders.style.display = "block";
-        if (tabUsers) tabUsers.style.display = "none";
-        if (tabSupport) tabSupport.style.display = "none";
-
         if (btnOrders) btnOrders.style.opacity = "1";
-        if (btnUsers) btnUsers.style.opacity = "0.5";
-        if (btnSupport) btnSupport.style.opacity = "0.5";
         loadAdminDashboard();
     } else if (tab === 'users') {
-        if (tabOrders) tabOrders.style.display = "none";
         if (tabUsers) tabUsers.style.display = "block";
-        if (tabSupport) tabSupport.style.display = "none";
-
-        if (btnOrders) btnOrders.style.opacity = "0.5";
         if (btnUsers) btnUsers.style.opacity = "1";
-        if (btnSupport) btnSupport.style.opacity = "0.5";
         loadAdminUsers();
+    } else if (tab === 'reviews') {
+        if (tabReviews) tabReviews.style.display = "block";
+        if (btnReviews) btnReviews.style.opacity = "1";
+        loadAdminReviews();
     } else {
-        if (tabOrders) tabOrders.style.display = "none";
-        if (tabUsers) tabUsers.style.display = "none";
         if (tabSupport) tabSupport.style.display = "block";
-
-        if (btnOrders) btnOrders.style.opacity = "0.5";
-        if (btnUsers) btnUsers.style.opacity = "0.5";
         if (btnSupport) btnSupport.style.opacity = "1";
         loadAdminSupportTickets();
     }
@@ -1969,72 +2090,137 @@ async function loadAdminUsers() {
     }
 }
 
-async function loadAdminSupportTickets() {
-    const supportList = document.getElementById("admin-support-list");
-    if (!supportList || !supabaseClient) return;
+// ==========================================
+// پیام‌های پشتیبانی در پنل ادمین — رابط چت‌مانند (مثل تلگرام/واتساپ)
+// لیست کاربران سمت راست، کلیک روی هرکدوم کل گفتگو رو باز می‌کنه
+// ==========================================
+let adminChatGroups = {}; // user_id -> { name, email, messages: [] }
+let currentAdminChatUserId = null;
 
-    supportList.innerHTML = skeletonCards(3);
+async function loadAdminSupportTickets() {
+    const userListBox = document.getElementById("admin-chat-userlist");
+    if (!userListBox || !supabaseClient) return;
+
+    userListBox.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">در حال دریافت مکالمات...</p>`;
 
     try {
         const { data: messages, error } = await supabaseClient
             .from('support_messages')
             .select('*')
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: true });
 
         if (error) throw error;
 
-        if (!messages || messages.length === 0) {
-            supportList.innerHTML = `<p style="color: #aaa; text-align: center; padding: 30px;">هیچ پیام پشتیبانی ثبت نشده است.</p>`;
+        adminChatGroups = {};
+        (messages || []).forEach(msg => {
+            const key = msg.user_id;
+            if (!adminChatGroups[key]) {
+                adminChatGroups[key] = { name: msg.user_email || "کاربر", messages: [] };
+            }
+            // اگه پیام sender نداشته باشه (داده‌های قدیمی)، یعنی sender = 'user' بوده
+            adminChatGroups[key].messages.push({ ...msg, sender: msg.sender || 'user' });
+            // داده‌های قدیمی که admin_reply جدا داشتن رو هم به شکل یک پیام مجزا نشون بدیم
+            if (msg.admin_reply) {
+                adminChatGroups[key].messages.push({
+                    id: msg.id + '-legacy-reply',
+                    message: msg.admin_reply,
+                    sender: 'admin',
+                    created_at: msg.created_at
+                });
+            }
+        });
+
+        const userIds = Object.keys(adminChatGroups);
+
+        if (userIds.length === 0) {
+            userListBox.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">هیچ پیام پشتیبانی ثبت نشده است.</p>`;
             return;
         }
 
-        supportList.innerHTML = messages.map(msg => `
-            <div style="background: #1e1e1e; border: 1px solid rgba(212,175,55,0.25); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 8px;">
-                    <span>👤 ${escapeHtml(msg.user_email) || 'کاربر'}</span>
-                    <span>📅 ${formatDatePersian(msg.created_at)}</span>
+        userListBox.innerHTML = userIds.map(uid => {
+            const group = adminChatGroups[uid];
+            const lastMsg = group.messages[group.messages.length - 1];
+            const isActive = uid === currentAdminChatUserId;
+            return `
+                <div class="admin-chat-user-row ${isActive ? 'active' : ''}" onclick="openAdminChatThread('${uid}')">
+                    <div class="admin-chat-user-avatar">${escapeHtml((group.name || "?").charAt(0).toUpperCase())}</div>
+                    <div class="admin-chat-user-info">
+                        <span class="admin-chat-user-name">${escapeHtml(group.name)}</span>
+                        <span class="admin-chat-user-preview">${lastMsg ? escapeHtml(lastMsg.message.slice(0, 40)) : ''}</span>
+                    </div>
                 </div>
-                <p style="color: #fff; font-size: 0.95rem; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
-                    ${escapeHtml(msg.message)}
-                </p>
-                ${msg.admin_reply ? `
-                    <p style="color: #4ade80; font-size: 0.88rem; background: rgba(74, 222, 128, 0.1); padding: 8px; border-radius: 6px; margin-bottom: 10px;">
-                        <strong>پاسخ شما:</strong> ${escapeHtml(msg.admin_reply)}
-                    </p>
-                ` : ''}
-                <div style="display: flex; gap: 8px; margin-top: 10px;">
-                    <input type="text" id="reply-input-${msg.id}" placeholder="پاسخ به این پیام..." style="flex: 1; padding: 8px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 6px; font-size: 0.85rem;">
-                    <button onclick="replyToSupportMessage('${msg.id}')" style="background: #d4af37; color: #121212; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 0.85rem;">ارسال پاسخ</button>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+
+        // اگر یه گفتگو الان بازه، محتواش رو رفرش کن
+        if (currentAdminChatUserId && adminChatGroups[currentAdminChatUserId]) {
+            renderAdminChatThread(currentAdminChatUserId);
+        }
     } catch (err) {
         console.error("خطا در بارگذاری پیام‌های پشتیبانی:", err);
-        supportList.innerHTML = `<p style="color: #f87171; text-align: center; padding: 30px;">خطا در دریافت پیام‌ها!</p>`;
+        userListBox.innerHTML = `<p style="color: #f87171; text-align: center; padding: 30px;">خطا در دریافت پیام‌ها!</p>`;
     }
 }
 
-async function replyToSupportMessage(msgId) {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-    const inputElem = document.getElementById(`reply-input-${msgId}`);
+function openAdminChatThread(userId) {
+    currentAdminChatUserId = userId;
+    document.querySelectorAll(".admin-chat-user-row").forEach(row => row.classList.remove("active"));
+    renderAdminChatThread(userId);
+    loadAdminSupportTickets(); // برای هایلایت شدن ردیف انتخاب‌شده
+}
+
+function renderAdminChatThread(userId) {
+    const threadBox = document.getElementById("admin-chat-thread");
+    const group = adminChatGroups[userId];
+    if (!threadBox || !group) return;
+
+    const bubblesHtml = group.messages.map(m => `
+        <div class="admin-chat-bubble-row ${m.sender === 'admin' ? 'from-admin' : 'from-user'}">
+            <div class="admin-chat-bubble">
+                ${escapeHtml(m.message)}
+                <span class="admin-chat-bubble-time">${formatDatePersian(m.created_at)}</span>
+            </div>
+        </div>
+    `).join('');
+
+    threadBox.innerHTML = `
+        <div class="admin-chat-thread-header">${escapeHtml(group.name)}</div>
+        <div class="admin-chat-messages" id="admin-chat-messages">${bubblesHtml}</div>
+        <div class="admin-chat-input-row">
+            <input type="text" id="admin-chat-reply-input" placeholder="پاسخ خود را بنویسید..." onkeypress="if(event.key === 'Enter') sendAdminChatReply()">
+            <button onclick="sendAdminChatReply()">ارسال</button>
+        </div>
+    `;
+
+    const messagesBox = document.getElementById("admin-chat-messages");
+    if (messagesBox) messagesBox.scrollTop = messagesBox.scrollHeight;
+}
+
+async function sendAdminChatReply() {
+    if (!supabaseClient || !currentAdminChatUserId) return;
+
+    const inputElem = document.getElementById("admin-chat-reply-input");
     const replyText = inputElem ? inputElem.value.trim() : "";
+    if (!replyText) return;
 
-    if (!replyText) return alert("لطفاً متن پاسخ را وارد کنید.");
+    const group = adminChatGroups[currentAdminChatUserId];
 
-    const { error } = await supabaseClient
-        .from('support_messages')
-        .update({
-            admin_reply: replyText,
-            status: 'replied'
-        })
-        .eq('id', msgId);
+    const { error } = await supabaseClient.from('support_messages').insert([{
+        user_id: currentAdminChatUserId,
+        user_email: group ? group.name : null,
+        message: replyText,
+        sender: 'admin',
+        status: 'replied'
+    }]);
 
     if (error) {
-        alert("خطا در ثبت پاسخ: " + error.message);
-    } else {
-        alert("پاسخ شما با موفقیت ثبت و ارسال شد.");
-        loadAdminSupportTickets();
+        alert("خطا در ارسال پاسخ: " + error.message);
+        return;
     }
+
+    if (inputElem) inputElem.value = "";
+    await loadAdminSupportTickets();
+    renderAdminChatThread(currentAdminChatUserId);
 }
 
 document.addEventListener("mousemove", (e) => {

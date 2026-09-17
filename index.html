@@ -445,6 +445,69 @@
         </div>
     </div>
 
+    <!-- مودال جزئیات پک ترکیبی -->
+    <div id="bundle-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeBundleModal()">&times;</span>
+
+            <div class="modal-body bundle-modal-body">
+                <div class="bundle-modal-items" id="bundle-modal-items"></div>
+
+                <div class="modal-details">
+                    <h2 id="bundle-modal-title">نام پک</h2>
+                    <p class="bundle-modal-desc" id="bundle-modal-desc"></p>
+
+                    <div class="size-selection">
+                        <label class="section-label">انتخاب سایز (برای همه‌ی تابلوهای پک):</label>
+                        <div class="size-options">
+                            <button type="button" class="size-btn active" onclick="selectBundleSize(this)">۲۰×۲۰ سانتی‌متر</button>
+                            <button type="button" class="size-btn" onclick="selectBundleSize(this)">۲۰×۳۰ سانتی‌متر</button>
+                            <button type="button" class="size-btn" onclick="selectBundleSize(this)">۳۰×۴۰ سانتی‌متر</button>
+                            <button type="button" class="size-btn" onclick="selectBundleSize(this)">۳۰×۴۵ سانتی‌متر</button>
+                            <button type="button" class="size-btn" onclick="selectBundleSize(this)">۴۰×۶۰ سانتی‌متر</button>
+                        </div>
+                    </div>
+
+                    <div class="material-selection">
+                        <label class="section-label">انتخاب جنس / کیفیت (برای همه‌ی تابلوهای پک):</label>
+                        <div class="material-options">
+                            <label class="material-card">
+                                <input type="radio" name="bundle-material" value="economy" onchange="updateBundlePriceView()">
+                                <div class="card-content">
+                                    <span class="material-title">Economy</span>
+                                    <span class="material-desc">اقتصادی (-۱۵٪)</span>
+                                </div>
+                            </label>
+                            <label class="material-card">
+                                <input type="radio" name="bundle-material" value="normal" checked onchange="updateBundlePriceView()">
+                                <div class="card-content">
+                                    <span class="material-title">Normal</span>
+                                    <span class="material-desc">استاندارد</span>
+                                </div>
+                            </label>
+                            <label class="material-card">
+                                <input type="radio" name="bundle-material" value="luxury" onchange="updateBundlePriceView()">
+                                <div class="card-content">
+                                    <span class="material-title">Luxury</span>
+                                    <span class="material-desc">لوکس (+۳۵٪)</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="price-display">
+                        <span>قیمت نهایی پک (با تخفیف):</span>
+                        <span class="price" id="bundle-modal-price">0 Toman</span>
+                        <span class="original-price" id="bundle-modal-original-price"></span>
+                    </div>
+
+                    <button class="btn-submit" onclick="addBundleToCart()">افزودن کل پک به سبد خرید</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
+
 </html>
