@@ -192,9 +192,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll('img').forEach(img => img.addEventListener('contextmenu', (e) => e.preventDefault()));
 
     initProductsGrid();
+    initOffersSection();
     renderCartPage();
     initAuthListener();
     initAdminPageAuthCheck();
+    initSearchLogic(); // فعالسازی جستجو
     applyStoredTheme();
     updateCartBadge();
 });
@@ -472,10 +474,7 @@ function initOffersSection() {
 function initProductsGrid() {
     const grid = document.getElementById("products-grid");
     const titleElement = document.getElementById("collection-title");
-    if (!grid) {
-        console.error("❌ productsGrid پیدا نشد");
-        return;
-    }
+    if (!grid) return; // این تابع فقط توی صفحه collections کاربرد داره؛ نبودن grid توی بقیه صفحات عادیه
 
     const params = new URLSearchParams(window.location.search);
     const catKey = params.get("category");
@@ -1072,10 +1071,30 @@ function initAuthListener() {
                 const displayName = user.user_metadata?.full_name || user.email.split('@')[0];
                 userEmailElem.textContent = displayName;
             }
+
+            ensureUserProfile(user);
         } else {
             if (loggedOutView) loggedOutView.style.display = "block";
             if (loggedInView) loggedInView.style.display = "none";
         }
+    });
+}
+
+// اگر کاربر لاگین است ولی به هر دلیلی (مثلاً تایید ایمیل معلق یا خطای قدیمی دیتابیس)
+// هنوز ردیفی در جدول profiles نداره، این تابع خودکار یک ردیف پایه براش می‌سازه
+// تا هم توی پنل مدیریت دیده بشه هم بقیه‌ی قابلیت‌ها (سفارش، دیدگاه و...) کار کنن.
+// اطلاعات قبلی کاربر رو دست نمی‌زنه — فقط وقتی ردیف اصلاً وجود نداشته باشه اجرا می‌شه.
+async function ensureUserProfile(user) {
+    if (!user || !supabaseClient) return;
+    const { data: existing } = await supabaseClient.from('profiles').select('id').eq('id', user.id).maybeSingle();
+    if (existing) return;
+
+    await supabaseClient.from('profiles').insert({
+        id: user.id,
+        full_name: user.user_metadata?.full_name || '',
+        phone: user.user_metadata?.phone || '',
+        postcode: user.user_metadata?.postcode || '',
+        updated_at: new Date().toISOString()
     });
 }
 
@@ -1884,53 +1903,6 @@ async function replyToSupportMessage(msgId) {
         loadAdminSupportTickets();
     }
 }
-// ==========================================
-// ۳. راه‌اندازی و رویدادهای عمومی DOM + قابلیت سرچ
-// ==========================================
-document.addEventListener("DOMContentLoaded", () => {
-    if (document.getElementById("user-orders-list")) loadUserOrders();
-    if (document.getElementById("user-support-list")) loadUserSupportTickets();
-    if (document.getElementById("profile-settings-form")) loadUserSettings();
-
-    const sections = document.querySelectorAll("section");
-    if (sections.length > 0) {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = "1";
-                    entry.target.style.transform = "translateY(0)";
-                }
-            });
-        }, { threshold: 0.15 });
-
-        sections.forEach(section => {
-            section.style.opacity = "0";
-            section.style.transform = "translateY(40px)";
-            section.style.transition = "0.8s ease";
-            observer.observe(section);
-        });
-    }
-
-    const menu = document.querySelector(".menu");
-    const nav = document.querySelector("nav");
-    if (menu && nav) {
-        menu.addEventListener("click", () => {
-            const isFlex = nav.style.display === "flex";
-            nav.style.display = isFlex ? "none" : "flex";
-            if (!isFlex) nav.style.flexDirection = "column";
-        });
-    }
-
-    document.querySelectorAll('img').forEach(img => img.addEventListener('contextmenu', (e) => e.preventDefault()));
-
-    initProductsGrid();
-    initOffersSection();
-    renderCartPage();
-    initAuthListener();
-    initSearchLogic(); // فعالسازی جستجو
-    applyStoredTheme();
-    updateCartBadge();
-});
 
 document.addEventListener("mousemove", (e) => {
     document.documentElement.style.setProperty("--x", e.clientX + "px");
