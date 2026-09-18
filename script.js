@@ -459,14 +459,14 @@ const bundlePacks = [
         ]
     },
     {
-        id: "football-legends",
-        title: "پک افسانه‌های فوتبال",
-        description: "مسی، رونالدو و دو باشگاه بزرگ اروپا در یک ست چهارتایی.",
+        id: "German-beasts",
+        title: "بانوان آلمانی",
+        description: "برای جان بخشیدن به روح اتاق عاشقان ماشین",
         refs: [
-            { id: 801, category: "football" },
-            { id: 802, category: "football" },
-            { id: 804, category: "football" },
-            { id: 805, category: "football" }
+            { id: 401, category: "car" },
+            { id: 402, category: "caR" },
+            { id: 407, category: "car" },
+            { id: 410, category: "car" }
         ]
     },
     {
