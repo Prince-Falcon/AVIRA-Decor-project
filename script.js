@@ -433,7 +433,7 @@ const bundlePacks = [
     {
         id: "heisenberg",
         title: "پک هایزنبرگ",
-        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، دنیای برکینگ بد — ست کامل برای عاشقان علم و سینما.",
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
@@ -450,7 +450,7 @@ const bundlePacks = [
     },
     {
         id: "galaxy-trio",
-        title: "پک کهکشان",
+        title: "پک نجومی",
         description: "سه نگاه به بی‌نهایت هستی: کهکشان راه شیری، آندرومدا و سیاه‌چاله.",
         refs: [
             { id: 106, category: "astronomic" },
