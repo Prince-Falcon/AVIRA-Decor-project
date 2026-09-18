@@ -437,8 +437,6 @@ const bundlePacks = [
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
-            { id: 201, category: "scientific" },
-            { id: 407, category: "car" }
         ]
     },
     {
@@ -1498,7 +1496,7 @@ let userOrdersSubscription = null;
 // ==========================================
 // لغو سفارش توسط خود کاربر (فقط تا مرحله «تایید شده و در حال ساخت»)
 // ==========================================
-async function cancelOrder(orderId) {
+async function cancelOrder(orderCode) {
     if (!supabaseClient) return;
     if (!confirm("آیا از لغو این سفارش مطمئن هستید؟ این عمل قابل بازگشت نیست.")) return;
 
@@ -1508,16 +1506,12 @@ async function cancelOrder(orderId) {
     const { error } = await supabaseClient
         .from('custom_orders')
         .update({ status: 'لغو شده' })
-        .eq('id', orderId)
+        .eq('order_code', orderCode)
         .eq('user_id', user.id);
 
-    if (error) {
-        alert("خطا در لغو سفارش: " + error.message);
-    } else {
-        showToast("سفارش با موفقیت لغو شد.", "success");
-        loadUserOrders();
-    }
+    // ...
 }
+
 
 async function loadUserOrders() {
     const listContainer = document.getElementById("user-orders-list");
@@ -1594,7 +1588,7 @@ async function loadUserOrders() {
 
                     <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
                         <span class="order-status" style="display: inline-block; padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3);">وضعیت: ${order.status || 'در انتظار بررسی'}</span>
-                        ${['در انتظار بررسی', 'تایید شده و در حال ساخت'].includes(order.status || 'در انتظار بررسی') ? `<button onclick="cancelOrder('${order.id}')" style="background: transparent; border: 1px solid #f87171; color: #f87171; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">لغو سفارش</button>` : ''}
+                        ${['در انتظار بررسی', 'تایید شده و در حال ساخت'].includes(order.status || 'در انتظار بررسی') ? `<button onclick="cancelOrder('${order.order_code}')" style="background: transparent; border: 1px solid #f87171; color: #f87171; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">لغو سفارش</button>` : ''}
                     </div>
                 </div>
             `;
@@ -2005,7 +1999,7 @@ async function loadAdminDashboard() {
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; flex-wrap: wrap; gap: 10px;">
                         <div>
                             <label style="color: #aaa; font-size: 0.85rem; margin-left: 8px;">تغییر وضعیت:</label>
-                            <select onchange="updateOrderStatus('${order.id}', this.value)" style="background: #2a2a2a; color: #fff; border: 1px solid #d4af37; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                            <select onchange= <select onchange="updateOrderStatus('${order.order_code}', this.value)" style="background: #2a2a2a; color: #fff; border: 1px solid #d4af37; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
                                 <option value="در انتظار بررسی" ${order.status === 'در انتظار بررسی' ? 'selected' : ''}>در انتظار بررسی</option>
                                 <option value="تایید شده و در حال ساخت" ${order.status === 'تایید شده و در حال ساخت' ? 'selected' : ''}>تایید شده و در حال ساخت</option>
                                 <option value="ارسال شده" ${order.status === 'ارسال شده' ? 'selected' : ''}>ارسال شده</option>
@@ -2013,7 +2007,7 @@ async function loadAdminDashboard() {
                                 <option value="لغو شده" ${order.status === 'لغو شده' ? 'selected' : ''}>لغو شده</option>
                             </select>
                         </div>
-                        <button onclick="deleteOrder('${order.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف سفارش</button>
+                        <button onclick="deleteOrder('${order.order_code}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف سفارش</button>
                     </div>
                 </div>
             `;
@@ -2025,12 +2019,13 @@ async function loadAdminDashboard() {
     }
 }
 
-async function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderCode, newStatus) {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+
     const { error } = await supabaseClient
         .from('custom_orders')
         .update({ status: newStatus })
-        .eq('id', orderId);
+        .eq('order_code', orderCode);
 
     if (error) {
         alert("خطا در به روزرسانی وضعیت: " + error.message);
@@ -2039,14 +2034,15 @@ async function updateOrderStatus(orderId, newStatus) {
     }
 }
 
-async function deleteOrder(orderId) {
+
+async function deleteOrder(orderCode) {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
     if (!confirm("آیا از حذف این سفارش اطمینان دارید؟")) return;
 
     const { error } = await supabaseClient
         .from('custom_orders')
         .delete()
-        .eq('id', orderId);
+        .eq('order_code', orderCode);
 
     if (error) {
         alert("خطا در حذف سفارش: " + error.message);
@@ -2055,6 +2051,7 @@ async function deleteOrder(orderId) {
         loadAdminDashboard();
     }
 }
+
 
 async function loadAdminUsers() {
     const usersList = document.getElementById("admin-users-list");
