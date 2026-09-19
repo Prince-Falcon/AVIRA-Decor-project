@@ -148,6 +148,73 @@ section {
     padding: 70px 10% 20px;
 }
 
+/* ==========================================
+   بخش سوالات متداول
+   ========================================== */
+.faq-section {
+    padding: 80px 10%;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.faq-item {
+    background: #161616;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+}
+
+.faq-item summary {
+    cursor: pointer;
+    color: #fff;
+    font-weight: bold;
+    font-size: 1rem;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-item summary::after {
+    content: "+";
+    color: #d4af37;
+    font-size: 1.3rem;
+    margin-right: 10px;
+    transition: transform 0.2s ease;
+}
+
+.faq-item[open] summary::after {
+    transform: rotate(45deg);
+}
+
+.faq-item p {
+    margin-top: 12px;
+    color: #ccc;
+    font-size: 0.9rem;
+    line-height: 1.9;
+}
+
+body.light-theme .faq-item {
+    background: #ffffff;
+    border-color: #e0d5b8;
+}
+body.light-theme .faq-item summary {
+    color: #1c1c1c;
+}
+body.light-theme .faq-item p {
+    color: #444;
+}
+
 .offers-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

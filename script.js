@@ -433,10 +433,12 @@ const bundlePacks = [
     {
         id: "heisenberg",
         title: "پک هایزنبرگ",
-        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، دنیای برکینگ بد — ست کامل برای عاشقان علم و سینما.",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
+            { id: 201, category: "scientific" },
+            { id: 407, category: "car" }
         ]
     },
     {
@@ -450,7 +452,7 @@ const bundlePacks = [
     },
     {
         id: "galaxy-trio",
-        title: "پک نجومی",
+        title: "پک کهکشان",
         description: "سه نگاه به بی‌نهایت هستی: کهکشان راه شیری، آندرومدا و سیاه‌چاله.",
         refs: [
             { id: 106, category: "astronomic" },
@@ -459,14 +461,14 @@ const bundlePacks = [
         ]
     },
     {
-        id: "German-beasts",
-        title: "بانوان آلمانی",
-        description: "برای جان بخشیدن به روح اتاق عاشقان ماشین",
+        id: "football-legends",
+        title: "پک افسانه‌های فوتبال",
+        description: "مسی، رونالدو و دو باشگاه بزرگ اروپا در یک ست چهارتایی.",
         refs: [
-            { id: 401, category: "car" },
-            { id: 402, category: "caR" },
-            { id: 407, category: "car" },
-            { id: 410, category: "car" }
+            { id: 801, category: "football" },
+            { id: 802, category: "football" },
+            { id: 804, category: "football" },
+            { id: 805, category: "football" }
         ]
     },
     {
@@ -1020,6 +1022,17 @@ function showPayment() {
     }
 
     const file = imageInput.files[0];
+
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // ۵ مگابایت
+    if (file.size > MAX_FILE_SIZE) {
+        alert("حجم عکس بیش از حد مجاز است (حداکثر ۵ مگابایت). لطفاً عکس کوچک‌تری آپلود کنید.");
+        return;
+    }
+    if (!file.type.startsWith("image/")) {
+        alert("فقط فایل تصویری مجاز است.");
+        return;
+    }
+
     const reader = new FileReader();
 
     reader.onload = function (e) {
@@ -1496,7 +1509,7 @@ let userOrdersSubscription = null;
 // ==========================================
 // لغو سفارش توسط خود کاربر (فقط تا مرحله «تایید شده و در حال ساخت»)
 // ==========================================
-async function cancelOrder(orderCode) {
+async function cancelOrder(orderId) {
     if (!supabaseClient) return;
     if (!confirm("آیا از لغو این سفارش مطمئن هستید؟ این عمل قابل بازگشت نیست.")) return;
 
@@ -1506,12 +1519,16 @@ async function cancelOrder(orderCode) {
     const { error } = await supabaseClient
         .from('custom_orders')
         .update({ status: 'لغو شده' })
-        .eq('order_code', orderCode)
+        .eq('id', orderId)
         .eq('user_id', user.id);
 
-    // ...
+    if (error) {
+        alert("خطا در لغو سفارش: " + error.message);
+    } else {
+        showToast("سفارش با موفقیت لغو شد.", "success");
+        loadUserOrders();
+    }
 }
-
 
 async function loadUserOrders() {
     const listContainer = document.getElementById("user-orders-list");
@@ -1588,7 +1605,7 @@ async function loadUserOrders() {
 
                     <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
                         <span class="order-status" style="display: inline-block; padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3);">وضعیت: ${order.status || 'در انتظار بررسی'}</span>
-                        ${['در انتظار بررسی', 'تایید شده و در حال ساخت'].includes(order.status || 'در انتظار بررسی') ? `<button onclick="cancelOrder('${order.order_code}')" style="background: transparent; border: 1px solid #f87171; color: #f87171; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">لغو سفارش</button>` : ''}
+                        ${['در انتظار بررسی', 'تایید شده و در حال ساخت'].includes(order.status || 'در انتظار بررسی') ? `<button onclick="cancelOrder('${order.id}')" style="background: transparent; border: 1px solid #f87171; color: #f87171; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">لغو سفارش</button>` : ''}
                     </div>
                 </div>
             `;
@@ -1999,7 +2016,7 @@ async function loadAdminDashboard() {
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; flex-wrap: wrap; gap: 10px;">
                         <div>
                             <label style="color: #aaa; font-size: 0.85rem; margin-left: 8px;">تغییر وضعیت:</label>
-                            <select onchange= <select onchange="updateOrderStatus('${order.order_code}', this.value)" style="background: #2a2a2a; color: #fff; border: 1px solid #d4af37; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
+                            <select onchange="updateOrderStatus('${order.id}', this.value)" style="background: #2a2a2a; color: #fff; border: 1px solid #d4af37; padding: 6px 10px; border-radius: 6px; cursor: pointer;">
                                 <option value="در انتظار بررسی" ${order.status === 'در انتظار بررسی' ? 'selected' : ''}>در انتظار بررسی</option>
                                 <option value="تایید شده و در حال ساخت" ${order.status === 'تایید شده و در حال ساخت' ? 'selected' : ''}>تایید شده و در حال ساخت</option>
                                 <option value="ارسال شده" ${order.status === 'ارسال شده' ? 'selected' : ''}>ارسال شده</option>
@@ -2007,7 +2024,7 @@ async function loadAdminDashboard() {
                                 <option value="لغو شده" ${order.status === 'لغو شده' ? 'selected' : ''}>لغو شده</option>
                             </select>
                         </div>
-                        <button onclick="deleteOrder('${order.order_code}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف سفارش</button>
+                        <button onclick="deleteOrder('${order.id}')" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف سفارش</button>
                     </div>
                 </div>
             `;
@@ -2019,13 +2036,12 @@ async function loadAdminDashboard() {
     }
 }
 
-async function updateOrderStatus(orderCode, newStatus) {
+async function updateOrderStatus(orderId, newStatus) {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
     const { error } = await supabaseClient
         .from('custom_orders')
         .update({ status: newStatus })
-        .eq('order_code', orderCode);
+        .eq('id', orderId);
 
     if (error) {
         alert("خطا در به روزرسانی وضعیت: " + error.message);
@@ -2034,15 +2050,14 @@ async function updateOrderStatus(orderCode, newStatus) {
     }
 }
 
-
-async function deleteOrder(orderCode) {
+async function deleteOrder(orderId) {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
     if (!confirm("آیا از حذف این سفارش اطمینان دارید؟")) return;
 
     const { error } = await supabaseClient
         .from('custom_orders')
         .delete()
-        .eq('order_code', orderCode);
+        .eq('id', orderId);
 
     if (error) {
         alert("خطا در حذف سفارش: " + error.message);
@@ -2051,7 +2066,6 @@ async function deleteOrder(orderCode) {
         loadAdminDashboard();
     }
 }
-
 
 async function loadAdminUsers() {
     const usersList = document.getElementById("admin-users-list");
