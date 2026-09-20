@@ -433,12 +433,10 @@ const bundlePacks = [
     {
         id: "heisenberg",
         title: "پک هایزنبرگ",
-        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، دنیای برکینگ - برای عاشقان علم و سینما.",
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
-            { id: 201, category: "scientific" },
-            { id: 407, category: "car" }
         ]
     },
     {
@@ -452,12 +450,12 @@ const bundlePacks = [
     },
     {
         id: "galaxy-trio",
-        title: "پک کهکشان",
+        title: "پک نجومی",
         description: "سه نگاه به بی‌نهایت هستی: کهکشان راه شیری، آندرومدا و سیاه‌چاله.",
         refs: [
             { id: 106, category: "astronomic" },
             { id: 101, category: "astronomic" },
-            { id: 107, category: "astronomic" }
+            { id: 107, category: "astronomic" },
         ]
     },
     {
@@ -465,10 +463,11 @@ const bundlePacks = [
         title: "پک افسانه‌های فوتبال",
         description: "مسی، رونالدو و دو باشگاه بزرگ اروپا در یک ست چهارتایی.",
         refs: [
-            { id: 801, category: "football" },
-            { id: 802, category: "football" },
-            { id: 804, category: "football" },
-            { id: 805, category: "football" }
+             { id: 402, title: "BMW M8" },
+             { id: 401, title: "Mercedes-Benz CLS 63", }
+             { id: 407, title: "Porsche Panamera 4S"}
+
+       
         ]
     },
     {
