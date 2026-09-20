@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.querySelectorAll('img').forEach(img => img.addEventListener('contextmenu', (e) => e.preventDefault()));
 
-    await loadPriceMultiplier(); // قیمت‌ها باید بعد از دریافت نرخ دلار رندر بشن
+    await Promise.all([loadPriceMultiplier(), loadProductCatalog()]); // قیمت و کاتالوگ باید قبل از رندر آماده باشن
     initProductsGrid();
     initOffersSection();
     renderCartPage();
@@ -335,127 +335,45 @@ function showToast(message, type = "success") {
 }
 
 // ==========================================
-// ۴. داده‌های کالکشن‌ها و مودال محصول
+// ۴. کاتالوگ محصولات
 // ==========================================
-//
-// راهنمای تغییر قیمت‌ها (بدون نیاز به دانش برنامه‌نویسی):
-// هر محصول یک خط مثل این داره:
-//   { id: 101, title: "طرح آندرومدا", price: "490,000 Toman", img: "..." }
-// فقط عدد داخل "price" رو عوض کن (فرمت هرچی باشه فرقی نمی‌کنه، فقط
-// خود عدد و کلمه Toman مهمه — نقطه، کاما یا فاصله رو ماشین حذف می‌کنه).
-// این عدد قیمت پایه با جنس Normal و سایز ۲۰×۲۰ هست؛ قیمت نهایی که به
-// مشتری نشون داده می‌شه با ضرب در sizeMultipliers و materialMultipliers
-// (بالاتر در همین فایل) محاسبه می‌شه، پس لازم نیست برای هر سایز/جنس
-// جدا قیمت بنویسی.
-// برای اضافه کردن محصول جدید به یک مجموعه: یک خط جدید با همین ساختار
-// و یک id منحصربه‌فرد (که با بقیه تکراری نباشه) داخل آرایه items اضافه کن.
-// برای اضافه کردن مجموعه کاملاً جدید: یک کلید جدید مثل anime/movie
-// پایین اضافه کن و همون ساختار title + items رو رعایت کن.
-//
-const collectionsProducts = {
-    astronomic: {
-        title: "مجموعه Astronomic",
-        items: [
-            { id: 101, title: "طرح آندرومدا", price: "590,000 Toman", img: "assets/images/collection1.png" },
-            { id: 102, title: "طرح سامانه خورشیدی", price: "550,000 Toman", img: "assets/images/collection6.png" },
-            { id: 103, title: "طرح مریخ", price: "475,000 Toman", img: "assets/images/collection7.png" },
-            { id: 104, title: "طرح خورشید", price: "580,000 Toman", img: "assets/images/collection8.png" },
-            { id: 105, title: "طرح ایستگاه فضایی بین المللی", price: "620,000 Toman", img: "assets/images/collection9.png" },
-            { id: 106, title: "طرح کهکشان راه شیری", price: "565,000 Toman", img: "assets/images/collection26.png" },
-            { id: 107, title: "طرح سیاه‌چاله", price: "605,000 Toman", img: "assets/images/collection27.png" },
-            { id: 108, title: "طرح زحل", price: "555,000 Toman", img: "assets/images/collection28.png" },
-            { id: 109, title: "طرح جیمز وب", price: "530,000 Toman", img: "assets/images/collection29.png" }
-        ]
-    },
-    scientific: {
-        title: "مجموعه Scientific",
-        items: [
-            { id: 201, title: "طرح آلبرت انیشتین", price: "675,000 Toman", img: "assets/images/collection4.png" },
-            { id: 202, title: "طرح نیکولا تسلا", price: "650,000 Toman", img: "assets/images/collection5.png" },
-            { id: 203, title: "طرح مریم میرزا خانی", price: "590,000 Toman", img: "assets/images/collection10.png" },
-            { id: 204, title: "طرح ورنر هایزنبرگ", price: "625,000 Toman", img: "assets/images/collection11.png" },
-            { id: 205, title: "طرح ماری کوری", price: "580,000 Toman", img: "assets/images/collection12.png" },
-            { id: 206, title: "طرح ایلان ماسک", price: "640,000 Toman", img: "assets/images/collection30.png" },
-            { id: 207, title: "طرح بو علی سینا", price: "605,000 Toman", img: "assets/images/collection31.png" },
-            { id: 208, title: "طرح ایزاک نیوتن", price: "615,000 Toman", img: "assets/images/collection32.png" },
-            { id: 209, title: "طرح ابو ریحان بیرونی", price: "565,000 Toman", img: "assets/images/collection33.png" }
-        ]
-    },
-    historical: {
-        title: "مجموعه Historical",
-        items: [
-            { id: 301, title: "طرح امیر کبیر", price: "560,000 Toman", img: "assets/images/collection13.png" },
-            { id: 302, title: "طرح نادرشاه", price: "635,000 Toman", img: "assets/images/collection2.png" },
-            { id: 303, title: "طرح کوروش کبیر", price: "685,000 Toman", img: "assets/images/collection14.png" },
-            { id: 304, title: "طرح ناپلئون", price: "590,000 Toman", img: "assets/images/collection15.png" },
-            { id: 305, title: "طرح کریم خان زند", price: "560,000 Toman", img: "assets/images/collection16.png" },
-            { id: 306, title: "طرح خشایارشاه", price: "650,000 Toman", img: "assets/images/collection34.png" },
-            { id: 307, title: "طرح بابک خرمدین", price: "605,000 Toman", img: "assets/images/collection35.png" },
-            { id: 308, title: "طرح آدولف هیتلر", price: "615,000 Toman", img: "assets/images/collection36.png" },
-            { id: 309, title: "طرح سردار سورنا", price: "595,000 Toman", img: "assets/images/collection37.png" }
-        ]
-    },
-    car: {
-        title: "مجموعه Car",
-        items: [
-            { id: 401, title: "Mercedes-Benz CLS 63", price: "665,000 Toman", img: "assets/images/collection3.png" },
-            { id: 402, title: "BMW M8", price: "705,000 Toman", img: "assets/images/collection17.png" },
-            { id: 403, title: "Nissan GTR", price: "665,000 Toman", img: "assets/images/collection18.png" },
-            { id: 404, title: "Lamborghini Aventador", price: "705,000 Toman", img: "assets/images/collection19.png" },
-            { id: 405, title: "Bugatti Chiron", price: "810,000 Toman", img: "assets/images/collection20.png" },
-            { id: 406, title: "Toyota Supra MK5", price: "735,000 Toman", img: "assets/images/collection38.png" },
-            { id: 407, title: "Porsche Panamera 4S", price: "710,000 Toman", img: "assets/images/collection39.png" },
-            { id: 408, title: "Ferrari F40", price: "725,000 Toman", img: "assets/images/collection40.png" },
-            { id: 409, title: "Dodge challenger", price: "740,000 Toman", img: "assets/images/collection41.png" },
-            { id: 410, title: "BMW M5 E60", price: "745,000 Toman", img: "assets/images/collection46.png" }
-            
+// محصولات و قیمت‌ها دیگه اینجا نوشته نمی‌شن — از پنل مدیریت (/admin → تب
+// «➕ افزودن محصول») اضافه/ویرایش می‌شن و از جدول‌های products/categories
+// توی Supabase خونده می‌شن (تابع loadProductCatalog پایین‌تر همین فایل).
+// شکل نهایی این متغیر دقیقاً همونیه که قبلاً هاردکد بود، پس بقیه‌ی کد
+// (initProductsGrid، initOffersSection، سرچ، پک‌ها و...) بدون تغییر کار می‌کنن.
+let collectionsProducts = {};
 
-        ]
-    },
-    gaming: {
-        title: "مجموعه Gaming",
-        items: [
-            { id: 501, title: "طرح Resident Evil 4", price: "700,000 Toman", img: "assets/images/collection21.png" },
-            { id: 502, title: "طرح God of War", price: "685,000 Toman", img: "assets/images/collection22.png" },
-            { id: 503, title: "طرح The Last of Us", price: "655,000 Toman", img: "assets/images/collection23.png" },
-            { id: 504, title: "طرح Elden Ring", price: "710,000 Toman", img: "assets/images/collection24.png" },
-            { id: 505, title: "طرح GTA VI", price: "770,000 Toman", img: "assets/images/collection25.png" },
-            { id: 506, title: "طرح ", price: "725,000 Toman", img: "assets/images/collection42.png" },
-            { id: 507, title: "طرح Red Dead Redemption 2", price: "735,000 Toman", img: "assets/images/collection44.png" },
-            { id: 508, title: "طرح Ghost of tsushima", price: "685,000 Toman", img: "assets/images/collection43.png" },
-            { id: 509, title: "طرح Assassin's creed : Brotherhood", price: "675,000 Toman", img: "assets/images/collection45.png" }
-        ]
-    },
-    anime: {
-        title: "مجموعه Anime",
-        items: [
-            { id: 601, title: "طرح Solo Leveling", price: "675,000 Toman", img: "assets/images/collection47.png" },
-            { id: 602, title: "طرح Attack on Titan", price: "700,000 Toman", img: "assets/images/collection48.png" },
-            { id: 603, title: "طرح One Piece", price: "685,000 Toman", img: "assets/images/collection49.png" },
-            { id: 604, title: "طرح Demon Slayer", price: "710,000 Toman", img: "assets/images/collection50.png" },
-            { id: 605, title: "طرح Jujutsu Kaisen", price: "700,000 Toman", img: "assets/images/collection51.png" }
-        ]
-    },
-   movie: {
-    title: "مجموعه Movie",
-    items: [
-        { id: 702, title: "طرح Better Call Saul", price: "725,000 Toman", img: "assets/images/collection53.png" },
-        { id: 703, title: "طرح House of The Dragon", price: "710,000 Toman", img: "assets/images/collection54.png" },
-        { id: 704, title: "طرح The mentalist", price: "710,000 Toman", img: "assets/images/collection55.png" },
-        { id: 705, title: "طرح Breaking Bad", price: "725,000 Toman", img: "assets/images/collection57.png" }
-    ]
-    },
-    football: {
-        title: "مجموعه Football",
-        items: [
-            { id: 801, title: "طرح مسی", price: "700,000 Toman", img: "assets/images/collection58.png" },
-            { id: 802, title: "طرح رونالدو", price: "700,000 Toman", img: "assets/images/collection59.png" },
-            { id: 803, title: "طرح جام جهانی", price: "685,000 Toman", img: "assets/images/collection60.png" },
-            { id: 804, title: "طرح رئال مادرید", price: "670,000 Toman", img: "assets/images/collection61.png" },
-            { id: 805, title: "طرح بارسلونا", price: "670,000 Toman", img: "assets/images/collection62.png" }
-        ]
+async function loadProductCatalog() {
+    if (!supabaseClient) return;
+    try {
+        const [{ data: cats, error: catErr }, { data: prods, error: prodErr }] = await Promise.all([
+            supabaseClient.from('categories').select('*').order('sort_order', { ascending: true }),
+            supabaseClient.from('products').select('*').order('id', { ascending: true })
+        ]);
+
+        if (catErr || prodErr) {
+            console.error("خطا در دریافت کاتالوگ محصولات از دیتابیس:", catErr || prodErr);
+            return;
+        }
+
+        const rebuilt = {};
+        (cats || []).forEach(cat => {
+            rebuilt[cat.key] = { title: cat.title, items: [] };
+        });
+        (prods || []).forEach(p => {
+            if (!rebuilt[p.category]) rebuilt[p.category] = { title: p.category, items: [] };
+            const item = { id: p.id, title: p.title, price: p.price, img: p.img };
+            if (p.discount) item.discount = p.discount;
+            rebuilt[p.category].items.push(item);
+        });
+
+        collectionsProducts = rebuilt;
+        console.log(`✅ کاتالوگ محصولات از دیتابیس بارگذاری شد: ${Object.keys(rebuilt).length} دسته`);
+    } catch (err) {
+        console.error("خطای غیرمنتظره در بارگذاری کاتالوگ محصولات:", err);
     }
-};
+}
 
 // ==========================================
 // پک‌های ترکیبی (پیشنهادهای ویژه) — چند طرح مرتبط با تم مشترک
@@ -468,10 +386,12 @@ const bundlePacks = [
     {
         id: "heisenberg",
         title: "پک هایزنبرگ",
-        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)،دنیای برکینگ بد — ست کامل برای عاشقان علم و سینما.",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
+            { id: 201, category: "scientific" },
+            { id: 407, category: "car" }
         ]
     },
     {
@@ -2002,14 +1922,16 @@ function switchAdminTab(tab) {
     const tabUsers = document.getElementById("tab-users");
     const tabSupport = document.getElementById("tab-support");
     const tabReviews = document.getElementById("tab-reviews");
+    const tabProducts = document.getElementById("tab-products");
 
     const btnOrders = document.getElementById("btn-tab-orders");
     const btnUsers = document.getElementById("btn-tab-users");
     const btnSupport = document.getElementById("btn-tab-support");
     const btnReviews = document.getElementById("btn-tab-reviews");
+    const btnProducts = document.getElementById("btn-tab-products");
 
-    const allTabs = [tabOrders, tabUsers, tabSupport, tabReviews];
-    const allBtns = [btnOrders, btnUsers, btnSupport, btnReviews];
+    const allTabs = [tabOrders, tabUsers, tabSupport, tabReviews, tabProducts];
+    const allBtns = [btnOrders, btnUsers, btnSupport, btnReviews, btnProducts];
     allTabs.forEach(t => { if (t) t.style.display = "none"; });
     allBtns.forEach(b => { if (b) b.style.opacity = "0.5"; });
 
@@ -2025,11 +1947,149 @@ function switchAdminTab(tab) {
         if (tabReviews) tabReviews.style.display = "block";
         if (btnReviews) btnReviews.style.opacity = "1";
         loadAdminReviews();
+    } else if (tab === 'products') {
+        if (tabProducts) tabProducts.style.display = "block";
+        if (btnProducts) btnProducts.style.opacity = "1";
+        loadCategoriesIntoAdminForm();
     } else {
         if (tabSupport) tabSupport.style.display = "block";
         if (btnSupport) btnSupport.style.opacity = "1";
         loadAdminSupportTickets();
     }
+}
+
+// ==========================================
+// افزودن محصول جدید از پنل مدیریت (بدون نیاز به کدنویسی)
+// ==========================================
+async function loadCategoriesIntoAdminForm() {
+    const select = document.getElementById("new-product-category");
+    if (!select || !supabaseClient) return;
+
+    const { data: cats, error } = await supabaseClient
+        .from('categories')
+        .select('*')
+        .order('sort_order', { ascending: true });
+
+    const newCatOption = `<option value="__new__">➕ دسته‌بندی جدید...</option>`;
+
+    if (error || !cats) {
+        select.innerHTML = `<option value="">خطا در دریافت دسته‌ها</option>` + newCatOption;
+        return;
+    }
+
+    select.innerHTML = cats.map(c => `<option value="${c.key}">${escapeHtml(c.title)} (${c.key})</option>`).join("") + newCatOption;
+
+    select.onchange = () => {
+        const newCatFields = document.getElementById("new-category-fields");
+        if (newCatFields) newCatFields.style.display = select.value === "__new__" ? "block" : "none";
+    };
+}
+
+async function submitNewProduct() {
+    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
+
+    const statusElem = document.getElementById("new-product-status");
+    const categorySelect = document.getElementById("new-product-category");
+    const titleInput = document.getElementById("new-product-title");
+    const priceInput = document.getElementById("new-product-price");
+    const discountInput = document.getElementById("new-product-discount");
+    const imageInput = document.getElementById("new-product-image");
+
+    const title = titleInput ? titleInput.value.trim() : "";
+    const priceNum = priceInput ? parseInt(priceInput.value, 10) : 0;
+    const discountNum = discountInput && discountInput.value ? parseInt(discountInput.value, 10) : null;
+    const file = imageInput && imageInput.files ? imageInput.files[0] : null;
+
+    if (!title || !priceNum || priceNum <= 0) {
+        alert("لطفاً نام طرح و قیمت معتبر وارد کنید.");
+        return;
+    }
+    if (!file) {
+        alert("لطفاً یک تصویر برای طرح انتخاب کنید.");
+        return;
+    }
+
+    let categoryKey = categorySelect ? categorySelect.value : "";
+
+    if (categoryKey === "__new__") {
+        const newKeyInput = document.getElementById("new-category-key");
+        const newTitleInput = document.getElementById("new-category-title");
+        const newKey = newKeyInput ? newKeyInput.value.trim().toLowerCase() : "";
+        const newTitle = newTitleInput ? newTitleInput.value.trim() : "";
+
+        if (!/^[a-z0-9_-]+$/.test(newKey) || !newTitle) {
+            alert("کلید دسته باید فقط حروف انگلیسی کوچک باشه و عنوان نمایشی هم نباید خالی باشه.");
+            return;
+        }
+
+        const { error: catError } = await supabaseClient
+            .from('categories')
+            .insert([{ key: newKey, title: newTitle }]);
+
+        if (catError) {
+            alert("خطا در ساخت دسته‌بندی جدید: " + catError.message);
+            return;
+        }
+        categoryKey = newKey;
+    }
+
+    if (!categoryKey) {
+        alert("لطفاً یک دسته‌بندی انتخاب کنید.");
+        return;
+    }
+
+    if (statusElem) statusElem.textContent = "در حال آپلود تصویر...";
+
+    const fileExt = file.name.split('.').pop();
+    const filePath = `${categoryKey}-${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabaseClient.storage
+        .from('product-images')
+        .upload(filePath, file);
+
+    if (uploadError) {
+        if (statusElem) statusElem.textContent = "";
+        alert("خطا در آپلود تصویر: " + uploadError.message);
+        return;
+    }
+
+    const { data: publicUrlData } = supabaseClient.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+    const imageUrl = publicUrlData.publicUrl;
+
+    if (statusElem) statusElem.textContent = "در حال ثبت محصول...";
+
+    const newProduct = {
+        category: categoryKey,
+        title: title,
+        price: `${priceNum.toLocaleString('en-US')} Toman`,
+        img: imageUrl
+    };
+    if (discountNum && discountNum > 0) newProduct.discount = discountNum;
+
+    const { error: insertError } = await supabaseClient.from('products').insert([newProduct]);
+
+    if (insertError) {
+        if (statusElem) statusElem.textContent = "";
+        alert("خطا در ثبت محصول: " + insertError.message);
+        return;
+    }
+
+    if (statusElem) statusElem.textContent = "";
+    showToast("محصول با موفقیت اضافه شد!", "success");
+
+    // پاک کردن فرم برای محصول بعدی
+    if (titleInput) titleInput.value = "";
+    if (priceInput) priceInput.value = "";
+    if (discountInput) discountInput.value = "";
+    if (imageInput) imageInput.value = "";
+    const newCatFields = document.getElementById("new-category-fields");
+    if (newCatFields) newCatFields.style.display = "none";
+
+    await loadProductCatalog(); // کاتالوگ توی حافظه هم بروز بشه
+    loadCategoriesIntoAdminForm(); // اگه دسته جدید ساخته شده، لیست دسته‌ها هم بروز بشه
 }
 
 async function loadAdminDashboard() {

@@ -72,6 +72,7 @@
             <button id="btn-tab-orders" onclick="switchAdminTab('orders')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:1;">🛍️ سفارشات</button>
             <button id="btn-tab-users" onclick="switchAdminTab('users')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:0.5;">👥 کاربران</button>
             <button id="btn-tab-reviews" onclick="switchAdminTab('reviews')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:0.5;">⭐ دیدگاه‌ها</button>
+            <button id="btn-tab-products" onclick="switchAdminTab('products')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:0.5;">➕ افزودن محصول</button>
             <button id="btn-tab-support" onclick="switchAdminTab('support')" style="background:transparent; border:none; color:#d4af37; font-size:1.1rem; font-weight:bold; cursor:pointer; opacity:0.5;">💬 پیام‌های پشتیبانی</button>
         </div>
 
@@ -90,6 +91,50 @@
         <div id="tab-reviews" style="display:none;">
             <div id="admin-reviews-list" style="text-align: right;">
                 <p style="color: #aaa; text-align: center;">در حال دریافت دیدگاه‌ها...</p>
+            </div>
+        </div>
+
+        <div id="tab-products" style="display:none;">
+            <div style="max-width: 480px; margin: 0 auto; background: #1e1e1e; border: 1px solid rgba(212,175,55,0.25); border-radius: 12px; padding: 25px; text-align: right;">
+                <h3 style="color: #d4af37; margin-bottom: 18px;">افزودن محصول جدید</h3>
+
+                <div class="form-group">
+                    <label for="new-product-category">دسته‌بندی:</label>
+                    <select id="new-product-category" style="width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 6px;">
+                        <option value="">در حال بارگذاری دسته‌ها...</option>
+                        <option value="__new__">➕ دسته‌بندی جدید...</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="new-category-fields" style="display:none;">
+                    <label for="new-category-key">کلید دسته جدید (فقط حروف انگلیسی کوچک، بدون فاصله؛ مثلاً: sports):</label>
+                    <input type="text" id="new-category-key" placeholder="مثلاً: sports" style="direction: ltr; text-align: right;">
+                    <label for="new-category-title" style="margin-top: 10px; display:block;">عنوان نمایشی دسته (مثلاً: مجموعه Sports):</label>
+                    <input type="text" id="new-category-title" placeholder="مجموعه Sports">
+                </div>
+
+                <div class="form-group">
+                    <label for="new-product-title">نام طرح:</label>
+                    <input type="text" id="new-product-title" placeholder="مثلاً: طرح مسی">
+                </div>
+
+                <div class="form-group">
+                    <label for="new-product-price">قیمت پایه (تومان — سایز ۲۰×۲۰، جنس Normal، با همون نرخ دلار فعلی):</label>
+                    <input type="number" id="new-product-price" placeholder="مثلاً: 590000" style="direction: ltr; text-align: right;">
+                </div>
+
+                <div class="form-group">
+                    <label for="new-product-discount">درصد تخفیف (اختیاری):</label>
+                    <input type="number" id="new-product-discount" placeholder="مثلاً: 15" style="direction: ltr; text-align: right;">
+                </div>
+
+                <div class="form-group">
+                    <label for="new-product-image">تصویر طرح:</label>
+                    <input type="file" id="new-product-image" accept="image/*">
+                </div>
+
+                <button type="button" class="btn-submit" onclick="submitNewProduct()" style="width: 100%; margin-top: 10px;">افزودن محصول</button>
+                <p id="new-product-status" style="text-align: center; margin-top: 10px; font-size: 0.85rem; color: #999;"></p>
             </div>
         </div>
 
