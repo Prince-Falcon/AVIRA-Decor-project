@@ -12,6 +12,39 @@ if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
 // ==========================================
 // ۲. ضرایب قیمتی و توابع کمکی محاسبات
 // ==========================================
+
+// همه‌ی قیمت‌های پایه‌ی محصولات (collectionsProducts) بر اساس این نرخ دلار محاسبه شده‌اند.
+// اگه نرخ فعلی توی جدول site_settings دلاری غیر از این باشه، همه‌ی قیمت‌های سایت
+// به‌صورت خودکار با نسبت (نرخ فعلی / این نرخ) ضرب می‌شن — بدون نیاز به دست‌کاری
+// تک‌تک قیمت‌های محصولات.
+const REFERENCE_USD_RATE = 229000;
+let priceMultiplier = 1.0;
+
+async function loadPriceMultiplier() {
+    if (!supabaseClient) return;
+    try {
+        const { data, error } = await supabaseClient
+            .from('site_settings')
+            .select('value')
+            .eq('key', 'usd_rate')
+            .maybeSingle();
+
+        if (error || !data || !data.value) {
+            console.warn("نرخ دلار از دیتابیس دریافت نشد؛ از قیمت‌های پایه استفاده می‌شود.");
+            priceMultiplier = 1.0;
+            return;
+        }
+
+        const currentRate = parseFloat(data.value);
+        if (currentRate > 0) {
+            priceMultiplier = currentRate / REFERENCE_USD_RATE;
+        }
+    } catch (err) {
+        console.warn("خطا در دریافت نرخ دلار:", err);
+        priceMultiplier = 1.0;
+    }
+}
+
 const sizeMultipliers = {
     '۲۰×۲۰ سانتی‌متر': 1.0,
     '۲۰×۳۰ سانتی‌متر': 1.25,
@@ -156,7 +189,7 @@ function escapeHtml(str) {
 // ==========================================
 // ۳. راه‌اندازی و رویدادهای عمومی DOM
 // ==========================================
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     if (document.getElementById("user-orders-list")) loadUserOrders();
     if (document.getElementById("user-support-list")) loadUserSupportTickets();
     if (document.getElementById("profile-settings-form")) loadUserSettings();
@@ -192,6 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll('img').forEach(img => img.addEventListener('contextmenu', (e) => e.preventDefault()));
 
+    await loadPriceMultiplier(); // قیمت‌ها باید بعد از دریافت نرخ دلار رندر بشن
     initProductsGrid();
     initOffersSection();
     renderCartPage();
@@ -434,10 +468,12 @@ const bundlePacks = [
     {
         id: "heisenberg",
         title: "پک هایزنبرگ",
-        description: "هایزنبرگ واقعی (ورنر هایزنبرگ) , دنیای برکینگ بد  — ست کامل برای عاشقان علم و سینما.",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
+            { id: 201, category: "scientific" },
+            { id: 407, category: "car" }
         ]
     },
     {
@@ -516,7 +552,7 @@ function initOffersSection() {
                 return "";
             }
 
-            const sumBase = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
+            const sumBase = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0) * priceMultiplier;
             const discountedBase = Math.round(sumBase * (1 - BUNDLE_DISCOUNT_PERCENT / 100) / 1000) * 1000;
 
             const thumbsHtml = items.slice(0, 4).map(p => `<div class="offer-thumb" style="background-image: url('${p.img}');"></div>`).join("");
@@ -555,7 +591,7 @@ function openBundleModal(bundleId) {
     if (items.length === 0) return;
 
     currentBundle = { ...bundle, items };
-    bundleBaseSum = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
+    bundleBaseSum = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0) * priceMultiplier;
 
     const titleElem = document.getElementById("bundle-modal-title");
     const descElem = document.getElementById("bundle-modal-desc");
@@ -738,7 +774,7 @@ function openProductModal(productId, catKey) {
 
     currentSelectedProduct = product;
     currentSelectedProduct.category = catKey;
-    originalPriceValue = parsePriceToNumber(product.price);
+    originalPriceValue = parsePriceToNumber(product.price) * priceMultiplier;
     basePriceValue = product.discount ? originalPriceValue * (1 - product.discount / 100) : originalPriceValue;
 
     const imgElem = document.getElementById("modal-product-img");
@@ -1883,6 +1919,53 @@ function showAdminDashboard() {
     if (loginBox) loginBox.style.display = "none";
     if (adminDashboard) adminDashboard.style.display = "block";
     loadAdminDashboard();
+    loadUsdRateIntoAdminField();
+}
+
+// ==========================================
+// کنترل نرخ دلار توسط ادمین — همه‌ی قیمت‌های سایت از این تبعیت می‌کنن
+// ==========================================
+async function loadUsdRateIntoAdminField() {
+    const input = document.getElementById("admin-usd-rate-input");
+    const statusElem = document.getElementById("admin-usd-rate-status");
+    if (!input || !supabaseClient) return;
+
+    const { data, error } = await supabaseClient
+        .from('site_settings')
+        .select('value, updated_at')
+        .eq('key', 'usd_rate')
+        .maybeSingle();
+
+    if (!error && data) {
+        input.value = data.value;
+        if (statusElem) statusElem.textContent = `آخرین بروزرسانی: ${formatDatePersian(data.updated_at)}`;
+    } else {
+        input.value = REFERENCE_USD_RATE;
+        if (statusElem) statusElem.textContent = "هنوز نرخی ثبت نشده — مقدار پیش‌فرض نشون داده شده";
+    }
+}
+
+async function saveUsdRate() {
+    const input = document.getElementById("admin-usd-rate-input");
+    const statusElem = document.getElementById("admin-usd-rate-status");
+    if (!input || !supabaseClient) return;
+
+    const newRate = parseInt(input.value, 10);
+    if (!newRate || newRate <= 0) {
+        alert("لطفاً یک عدد معتبر برای نرخ دلار وارد کنید.");
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('site_settings')
+        .upsert({ key: 'usd_rate', value: String(newRate), updated_at: new Date().toISOString() }, { onConflict: 'key' });
+
+    if (error) {
+        alert("خطا در ذخیره نرخ دلار: " + error.message);
+    } else {
+        showToast("نرخ دلار بروزرسانی شد. قیمت‌های سایت از بارگذاری بعدی صفحه اعمال می‌شن.", "success");
+        if (statusElem) statusElem.textContent = `آخرین بروزرسانی: همین الان`;
+    }
 }
 
 // اگر مدیر قبلاً وارد شده باشد (نشست فعال Supabase)، مستقیم به داشبورد برود
