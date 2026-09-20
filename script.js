@@ -13,11 +13,12 @@ if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
 // ۲. ضرایب قیمتی و توابع کمکی محاسبات
 // ==========================================
 const sizeMultipliers = {
-    '۱۸×۲۰ سانتی‌متر': 1.0,
+    '۲۰×۲۰ سانتی‌متر': 1.0,
     '۲۰×۳۰ سانتی‌متر': 1.25,
     '۳۰×۴۰ سانتی‌متر': 1.7,
     '۳۰×۴۵ سانتی‌متر': 1.85,
-    '۴۰×۶۰ سانتی‌متر': 2.4
+    '۳۷×۲۷ سانتی‌متر': 1.55,
+    '۲۸×۲۰ سانتی‌متر': 1.2
 };
 
 const materialMultipliers = {
@@ -433,50 +434,52 @@ const bundlePacks = [
     {
         id: "heisenberg",
         title: "پک هایزنبرگ",
-        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، دنیای برکینگ - برای عاشقان علم و سینما.",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
-        ]
-    },
-    {
-        id: "german-geniuses",
-        title: "پک نوابغ آلمانی",
-        description: "آلبرت انیشتین و ورنر هایزنبرگ، دو ستون علم فیزیک قرن بیستم، کنار هم روی دیوار.",
-        refs: [
             { id: 201, category: "scientific" },
-            { id: 204, category: "scientific" }
+            { id: 407, category: "car" }
         ]
     },
     {
-        id: "galaxy-trio",
-        title: "پک نجومی",
-        description: "سه نگاه به بی‌نهایت هستی: کهکشان راه شیری، آندرومدا و سیاه‌چاله.",
+        id: "iran-pride",
+        title: "پک افتخار ایران زمین",
+        description: "کوروش کبیر، نادرشاه، بابک خرمدین و مریم میرزاخانی — از پادشاهان و قهرمانان تا نابغه‌ی ریاضی‌دان روزگار ما.",
         refs: [
-            { id: 106, category: "astronomic" },
-            { id: 101, category: "astronomic" },
-            { id: 107, category: "astronomic" },
+            { id: 303, category: "historical" },
+            { id: 302, category: "historical" },
+            { id: 307, category: "historical" },
+            { id: 203, category: "scientific" }
         ]
     },
     {
-        id: "football-legends",
-        title: "پک افسانه‌های فوتبال",
-        description: "مسی، رونالدو و دو باشگاه بزرگ اروپا در یک ست چهارتایی.",
+        id: "german-engineering",
+        title: "پک مهندسی آلمان",
+        description: "چهار غول خودروسازی آلمان کنار هم: مرسدس، دو مدل BMW و پورشه.",
         refs: [
-             { id: 402, title: "BMW M8" },
-             { id: 401, title: "Mercedes-Benz CLS 63", }
-             { id: 407, title: "Porsche Panamera 4S"}
-
-       
+            { id: 401, category: "car" },
+            { id: 402, category: "car" },
+            { id: 407, category: "car" },
+            { id: 410, category: "car" }
         ]
     },
     {
-        id: "breaking-universe",
-        title: "پک دنیای برکینگ بد",
+        id: "breaking-bad-pack",
+        title: "پک برکینگ بد",
         description: "برکینگ بد و بتر کال سال — یک دنیا، یک داستان.",
         refs: [
             { id: 705, category: "movie" },
             { id: 702, category: "movie" }
+        ]
+    },
+    {
+        id: "cosmic-siblings",
+        title: "پک خواهر برادر کیهانی",
+        description: "کهکشان راه شیری و همسایه‌اش آندرومدا — دو کهکشان همسایه که میلیاردها سال آینده در هم ادغام می‌شوند.",
+        refs: [
+            { id: 106, category: "astronomic" },
+            { id: 101, category: "astronomic" }
         ]
     }
 ];
@@ -502,40 +505,50 @@ function initOffersSection() {
     const section = document.getElementById("offers");
     if (!grid) return;
 
-    if (!bundlePacks || bundlePacks.length === 0) {
-        if (section) section.style.display = "none";
-        return;
-    }
+    try {
+        if (!bundlePacks || bundlePacks.length === 0) {
+            if (section) section.style.display = "none";
+            return;
+        }
 
-    grid.innerHTML = bundlePacks.map(bundle => {
-        const items = resolveBundleItems(bundle);
-        if (items.length === 0) return "";
+        const cardsHtml = bundlePacks.map(bundle => {
+            const items = resolveBundleItems(bundle);
+            if (items.length === 0) {
+                console.warn(`⚠️ پک "${bundle.title}" هیچ محصول معتبری پیدا نکرد — چک کنید id/category هر ref با collectionsProducts مطابقت داره.`);
+                return "";
+            }
 
-        const sumBase = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
-        const discountedBase = Math.round(sumBase * (1 - BUNDLE_DISCOUNT_PERCENT / 100) / 1000) * 1000;
+            const sumBase = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0);
+            const discountedBase = Math.round(sumBase * (1 - BUNDLE_DISCOUNT_PERCENT / 100) / 1000) * 1000;
 
-        const thumbsHtml = items.slice(0, 4).map(p => `<div class="offer-thumb" style="background-image: url('${p.img}');"></div>`).join("");
+            const thumbsHtml = items.slice(0, 4).map(p => `<div class="offer-thumb" style="background-image: url('${p.img}');"></div>`).join("");
 
-        return `
-            <a class="offer-card bundle-card" href="javascript:void(0)" onclick="openBundleModal('${bundle.id}')">
-                <div class="offer-badge">${items.length} تابلو | ${BUNDLE_DISCOUNT_PERCENT}٪ تخفیف پک</div>
-                <div class="offer-thumbs offer-thumbs-${items.length}">${thumbsHtml}</div>
-                <div class="offer-info">
-                    <h3>${escapeHtml(bundle.title)}</h3>
-                    <p class="offer-desc">${escapeHtml(bundle.description)}</p>
-                    <div class="offer-prices">
-                        <span class="offer-original">${formatPrice(sumBase)}</span>
-                        <span class="offer-final">از ${formatPrice(discountedBase)}</span>
+            return `
+                <a class="offer-card bundle-card" href="javascript:void(0)" onclick="openBundleModal('${bundle.id}')">
+                    <div class="offer-badge">${items.length} تابلو | ${BUNDLE_DISCOUNT_PERCENT}٪ تخفیف پک</div>
+                    <div class="offer-thumbs offer-thumbs-${items.length}">${thumbsHtml}</div>
+                    <div class="offer-info">
+                        <h3>${escapeHtml(bundle.title)}</h3>
+                        <p class="offer-desc">${escapeHtml(bundle.description)}</p>
+                        <div class="offer-prices">
+                            <span class="offer-original">${formatPrice(sumBase)}</span>
+                            <span class="offer-final">از ${formatPrice(discountedBase)}</span>
+                        </div>
                     </div>
-                </div>
-            </a>
-        `;
-    }).join("");
+                </a>
+            `;
+        }).join("");
+
+        grid.innerHTML = cardsHtml;
+        console.log(`✅ ${bundlePacks.length} پک ویژه رندر شد`);
+    } catch (err) {
+        console.error("❌ خطا در رندر پک‌های ویژه:", err);
+    }
 }
 
 let currentBundle = null;
 let bundleBaseSum = 0;
-let selectedBundleSize = "۲۰×۲۰ سانتی‌متر";
+let selectedBundleSize = "۳۷×۲۷ سانتی‌متر";
 
 function openBundleModal(bundleId) {
     const bundle = bundlePacks.find(b => b.id === bundleId);
@@ -565,7 +578,7 @@ function openBundleModal(bundleId) {
     document.querySelectorAll("#bundle-modal .size-btn").forEach((btn, i) => btn.classList.toggle("active", i === 0));
     const normalRadio = document.querySelector('#bundle-modal input[name="bundle-material"][value="normal"]');
     if (normalRadio) normalRadio.checked = true;
-    selectedBundleSize = "۲۰×۲۰ سانتی‌متر";
+    selectedBundleSize = "۳۷×۲۷ سانتی‌متر";
 
     updateBundlePriceView();
     if (modal) modal.style.display = "flex";
