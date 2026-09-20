@@ -468,12 +468,10 @@ const bundlePacks = [
     {
         id: "heisenberg",
         title: "پک هایزنبرگ",
-        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)، آلبرت انیشتین، دنیای برکینگ بد و یک قدرت مهندسی آلمان — ست کامل برای عاشقان علم و سینما.",
+        description: "هایزنبرگ واقعی (ورنر هایزنبرگ)،دنیای برکینگ بد — ست کامل برای عاشقان علم و سینما.",
         refs: [
             { id: 705, category: "movie" },
             { id: 204, category: "scientific" },
-            { id: 201, category: "scientific" },
-            { id: 407, category: "car" }
         ]
     },
     {
