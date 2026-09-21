@@ -228,6 +228,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await Promise.all([loadPriceMultiplier(), loadProductCatalog()]); // قیمت و کاتالوگ باید قبل از رندر آماده باشن
     initProductsGrid();
     initOffersSection();
+    renderHomeCollectionCards();
     renderCartPage();
     initAuthListener();
     initAdminPageAuthCheck();
@@ -452,6 +453,36 @@ let currentCalculatedPrice = "";
 // ==========================================
 // پیشنهادهای ویژه (صفحه اصلی) — رندر پک‌های ترکیبی
 // ==========================================
+// ==========================================
+// کارت‌های کالکشن در صفحه اصلی — از همون جدول categories که پنل مدیریت
+// کنترلش می‌کنه رندر می‌شه. اگه دسته‌ای از پنل حذف بشه، کارتش هم خودکار حذف می‌شه.
+// ==========================================
+function renderHomeCollectionCards() {
+    const container = document.getElementById("home-cards");
+    if (!container) return;
+
+    const keys = Object.keys(collectionsProducts);
+    if (keys.length === 0) {
+        container.innerHTML = `<p style="color:#999; text-align:center;">هنوز مجموعه‌ای ثبت نشده.</p>`;
+        return;
+    }
+
+    container.innerHTML = keys.map(catKey => {
+        const cat = collectionsProducts[catKey];
+        const items = (cat.items || []).filter(i => i.isAvailable !== false);
+        const bannerImg = items.length > 0 ? items[0].img : (cat.items[0] ? cat.items[0].img : "");
+        const count = cat.items ? cat.items.length : 0;
+
+        return `
+            <a href="/collections?category=${encodeURIComponent(catKey)}" class="card">
+                <div class="card-image" style="background-image: url('${bannerImg}'); background-size: cover; background-position: center;"></div>
+                <h3>${escapeHtml(cat.title)}</h3>
+                <p>${count} طرح</p>
+            </a>
+        `;
+    }).join("");
+}
+
 function initOffersSection() {
     const grid = document.getElementById("offers-grid");
     const section = document.getElementById("offers");
@@ -2011,6 +2042,52 @@ async function loadCategoriesIntoAdminForm() {
     };
 }
 
+// ==========================================
+// فشرده‌سازی تصویر قبل از آپلود (سمت مرورگر، بدون نیاز به سرور)
+// عکس رو حداکثر به ۱۲۰۰ پیکسل توی بعد بزرگ‌تر ریسایز و به JPEG با کیفیت ۸۲٪ تبدیل می‌کنه
+// این باعث می‌شه سایت روی موبایل سریع‌تر بارگذاری بشه
+// ==========================================
+function compressImageFile(file, maxDimension, quality) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => { img.src = e.target.result; };
+        reader.onerror = reject;
+
+        img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDimension || height > maxDimension) {
+                if (width > height) {
+                    height = Math.round(height * (maxDimension / width));
+                    width = maxDimension;
+                } else {
+                    width = Math.round(width * (maxDimension / height));
+                    height = maxDimension;
+                }
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob(
+                (blob) => {
+                    if (blob) resolve(blob);
+                    else reject(new Error("تبدیل تصویر ناموفق بود"));
+                },
+                "image/jpeg",
+                quality
+            );
+        };
+        img.onerror = reject;
+
+        reader.readAsDataURL(file);
+    });
+}
+
 async function submitNewProduct() {
     if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
 
@@ -2064,14 +2141,22 @@ async function submitNewProduct() {
         return;
     }
 
+    if (statusElem) statusElem.textContent = "در حال فشرده‌سازی تصویر...";
+
+    let uploadFile = file;
+    try {
+        uploadFile = await compressImageFile(file, 1200, 0.82);
+    } catch (err) {
+        console.warn("فشرده‌سازی تصویر ناموفق بود، فایل اصلی آپلود می‌شود:", err);
+    }
+
     if (statusElem) statusElem.textContent = "در حال آپلود تصویر...";
 
-    const fileExt = file.name.split('.').pop();
-    const filePath = `${categoryKey}-${Date.now()}.${fileExt}`;
+    const filePath = `${categoryKey}-${Date.now()}.jpg`;
 
     const { error: uploadError } = await supabaseClient.storage
         .from('product-images')
-        .upload(filePath, file);
+        .upload(filePath, uploadFile);
 
     if (uploadError) {
         if (statusElem) statusElem.textContent = "";
@@ -2299,14 +2384,20 @@ async function migrateLegacyImages() {
             const absoluteImgUrl = p.img.startsWith('/') || p.img.startsWith('http') ? p.img : '/' + p.img;
             const imgResponse = await fetch(absoluteImgUrl);
             if (!imgResponse.ok) throw new Error("دریافت فایل تصویر ناموفق بود");
-            const blob = await imgResponse.blob();
+            const originalBlob = await imgResponse.blob();
 
-            const fileExt = p.img.split('.').pop();
-            const filePath = `legacy-${p.id}.${fileExt}`;
+            let uploadBlob = originalBlob;
+            try {
+                uploadBlob = await compressImageFile(originalBlob, 1200, 0.82);
+            } catch (compressErr) {
+                console.warn(`فشرده‌سازی عکس محصول ${p.id} ناموفق بود، نسخه اصلی آپلود می‌شه:`, compressErr);
+            }
+
+            const filePath = `legacy-${p.id}.jpg`;
 
             const { error: uploadError } = await supabaseClient.storage
                 .from('product-images')
-                .upload(filePath, blob, { upsert: true });
+                .upload(filePath, uploadBlob, { upsert: true });
 
             if (uploadError) throw uploadError;
 

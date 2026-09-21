@@ -1463,6 +1463,55 @@ body.light-theme .admin-chat-input-row input {
     }
 }
 
+/* ==========================================
+   منوی موبایل: نمایش/پنهان‌سازی درست همبرگر و nav
+   ========================================== */
+@media (max-width: 900px) {
+    .menu {
+        display: block;
+    }
+    nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        margin-top: 10px;
+        background: rgba(10, 10, 10, 0.97);
+        border-radius: 14px;
+        padding: 16px;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    nav a {
+        display: block;
+        padding: 10px 0;
+        margin: 0;
+        width: 100%;
+        text-align: center;
+    }
+    .header {
+        flex-wrap: wrap;
+        gap: 10px 14px;
+    }
+}
+
+body.light-theme nav {
+    background: rgba(255, 255, 255, 0.98);
+}
+body.light-theme nav a {
+    color: #1c1c1c;
+}
+
+/* روی موبایل background-attachment: fixed کند و پرباگه؛ برای عملکرد بهتر خاموشش می‌کنیم */
+@media (max-width: 768px) {
+    .hero {
+        background-attachment: scroll;
+    }
+}
+
 @media (max-width: 600px) {
     .header {
         padding: 12px 20px;

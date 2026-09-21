@@ -20,7 +20,7 @@
     <link rel="icon" type="image/png" href="assets/images/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <style>
         #support-modal {
             display: none;
@@ -392,54 +392,8 @@
             <h2>مجموعه‌ها</h2>
         </div>
 
-        <div class="cards">
-            <a href="/collections?category=astronomic" class="card">
-                <div class="card-image image-one"></div>
-                <h3>astronomic</h3>
-                <p>نقاشی خداوند | به پهنای هستی | ابدیت</p>
-            </a>
-
-            <a href="/collections?category=scientific" class="card">
-                <div class="card-image image-two"></div>
-                <h3>scientific</h3>
-                <p>ذهنی زیبا | کاشف | خاص</p>
-            </a>
-
-            <a href="/collections?category=historical" class="card">
-                <div class="card-image image-four"></div>
-                <h3>historical</h3>
-                <p>از خود گذشته | با تدبیر | شجاع</p>
-            </a>
-
-            <a href="/collections?category=car" class="card">
-                <div class="card-image image-three"></div>
-                <h3>Car</h3>
-                <p>قدرتمند | پولادین | زیبا</p>
-            </a>
-
-            <a href="/collections?category=gaming" class="card">
-                <div class="card-image image-gaming" style="background-image: url('assets/images/collection21.png'); background-size: cover; background-position: center;"></div>
-                <h3>Gaming</h3>
-                <p>دنیای بازی‌ها | حماسی | هیجان‌انگیز</p>
-            </a>
-
-            <a href="/collections?category=anime" class="card">
-                <div class="card-image image-anime" style="background-image: url('assets/images/collection47.png'); background-size: cover; background-position: center;"></div>
-                <h3>Anime</h3>
-                <p>دنیای انیمه | پرانرژی | خاطره‌انگیز</p>
-            </a>
-
-            <a href="/collections?category=movie" class="card">
-                <div class="card-image image-movie" style="background-image: url('assets/images/collection53.png'); background-size: cover; background-position: center;"></div>
-                <h3>Movie</h3>
-                <p>دنیای سینما | نمادین | ماندگار</p>
-            </a>
-
-            <a href="/collections?category=football" class="card">
-                <div class="card-image image-football" style="background-image: url('assets/images/collection58.png'); background-size: cover; background-position: center;"></div>
-                <h3>Football</h3>
-                <p>هیجان فوتبال | افسانه‌ها | قهرمانی</p>
-            </a>
+        <div class="cards" id="home-cards">
+            <!-- به‌صورت خودکار از JS پر می‌شود — منبعش دقیقاً همون جدول categories که از پنل مدیریت کنترل می‌شه -->
         </div>
     </section>
 
@@ -463,7 +417,7 @@
             </details>
             <details class="faq-item">
                 <summary>چه جنس و کیفیتی برای تابلوها ارائه می‌شود؟</summary>
-                <p>سه کلاس کیفی وجود دارد: Economy (اقتصادی، چاپ  شده روی کاغذ گلاسه به همراه قاب)، Normal (نرمال چاپ روی شاسی ام دی اف هستش که با تزریق رنگ به چوب عمل) و Luxury (لوکس، چاپ روی متال).</p>
+                <p>سه کلاس کیفی وجود دارد: Economy (اقتصادی، ۱۵٪ ارزان‌تر از قیمت پایه)، Normal (استاندارد) و Luxury (لوکس، ۳۵٪ گران‌تر از قیمت پایه با کیفیت چاپ و قاب بالاتر).</p>
             </details>
             <details class="faq-item">
                 <summary>چطور سفارش ثبت کنم و پرداخت چگونه است؟</summary>
@@ -617,7 +571,7 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
