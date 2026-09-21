@@ -363,7 +363,7 @@ async function loadProductCatalog() {
         });
         (prods || []).forEach(p => {
             if (!rebuilt[p.category]) rebuilt[p.category] = { title: p.category, items: [] };
-            const item = { id: p.id, title: p.title, price: p.price, img: p.img };
+            const item = { id: p.id, title: p.title, price: p.price, img: p.img, isAvailable: p.is_available !== false };
             if (p.discount) item.discount = p.discount;
             rebuilt[p.category].items.push(item);
         });
@@ -467,6 +467,10 @@ function initOffersSection() {
             const items = resolveBundleItems(bundle);
             if (items.length === 0) {
                 console.warn(`⚠️ پک "${bundle.title}" هیچ محصول معتبری پیدا نکرد — چک کنید id/category هر ref با collectionsProducts مطابقت داره.`);
+                return "";
+            }
+            if (items.some(p => p.isAvailable === false)) {
+                console.warn(`⚠️ پک "${bundle.title}" چون یکی از تابلوهاش ناموجوده نمایش داده نمی‌شه.`);
                 return "";
             }
 
@@ -639,11 +643,12 @@ function initProductsGrid() {
     grid.innerHTML = categoryData.items.map(item => {
         return `
             <div 
-                class="product-card"
+                class="product-card${item.isAvailable === false ? ' product-unavailable' : ''}"
                 data-product-id="${item.id}"
                 data-category="${catKey}"
                 tabindex="0"
             >
+                ${item.isAvailable === false ? '<span class="unavailable-badge">ناموجود</span>' : ''}
                 <img 
                     src="${item.img}"
                     alt="${item.title}"
@@ -705,6 +710,21 @@ function openProductModal(productId, catKey) {
     if (discountBadge) discountBadge.style.display = product.discount ? "inline-block" : "none";
     if (discountBadge) discountBadge.textContent = product.discount ? `${product.discount}٪ تخفیف` : "";
     if (originalPriceElem) originalPriceElem.style.display = product.discount ? "inline" : "none";
+
+    const addToCartBtn = document.querySelector(".add-to-cart-btn");
+    if (addToCartBtn) {
+        if (product.isAvailable === false) {
+            addToCartBtn.disabled = true;
+            addToCartBtn.textContent = "ناموجود";
+            addToCartBtn.style.opacity = "0.5";
+            addToCartBtn.style.cursor = "not-allowed";
+        } else {
+            addToCartBtn.disabled = false;
+            addToCartBtn.textContent = "افزودن به سبد خرید";
+            addToCartBtn.style.opacity = "1";
+            addToCartBtn.style.cursor = "pointer";
+        }
+    }
 
     const sizeBtns = document.querySelectorAll(".size-btn");
     sizeBtns.forEach((btn, index) => {
@@ -1035,6 +1055,10 @@ function getCart() {
 
 function addToCart(event) {
     if (!currentSelectedProduct) return;
+    if (currentSelectedProduct.isAvailable === false) {
+        alert("این محصول در حال حاضر ناموجود است.");
+        return;
+    }
 
     const chosenMaterial = getSelectedMaterial();
     let cart = getCart();
@@ -1951,6 +1975,8 @@ function switchAdminTab(tab) {
         if (tabProducts) tabProducts.style.display = "block";
         if (btnProducts) btnProducts.style.opacity = "1";
         loadCategoriesIntoAdminForm();
+        loadAdminProductsList();
+        loadAdminCategoriesList();
     } else {
         if (tabSupport) tabSupport.style.display = "block";
         if (btnSupport) btnSupport.style.opacity = "1";
@@ -2090,6 +2116,151 @@ async function submitNewProduct() {
 
     await loadProductCatalog(); // کاتالوگ توی حافظه هم بروز بشه
     loadCategoriesIntoAdminForm(); // اگه دسته جدید ساخته شده، لیست دسته‌ها هم بروز بشه
+    loadAdminProductsList();
+    loadAdminCategoriesList();
+}
+
+// ==========================================
+// لیست محصولات موجود در پنل — ناموجود کردن / حذف
+// ==========================================
+async function loadAdminProductsList() {
+    const listBox = document.getElementById("admin-products-list");
+    if (!listBox || !supabaseClient) return;
+
+    listBox.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">در حال دریافت محصولات...</p>`;
+
+    const { data: prods, error } = await supabaseClient
+        .from('products')
+        .select('*')
+        .order('category', { ascending: true })
+        .order('id', { ascending: true });
+
+    if (error) {
+        listBox.innerHTML = `<p style="color: #f87171; text-align: center; padding: 20px;">خطا در دریافت محصولات!</p>`;
+        return;
+    }
+
+    if (!prods || prods.length === 0) {
+        listBox.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">هنوز محصولی ثبت نشده.</p>`;
+        return;
+    }
+
+    listBox.innerHTML = `
+        <div style="max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+            ${prods.map(p => `
+                <div style="display: flex; align-items: center; gap: 12px; background: #1e1e1e; border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 8px 12px; ${p.is_available === false ? 'opacity: 0.55;' : ''}">
+                    <img src="${p.img}" alt="${escapeHtml(p.title)}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; flex-shrink: 0;">
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(p.title)}</div>
+                        <div style="color: #999; font-size: 0.75rem;">${escapeHtml(p.category)} · ${escapeHtml(p.price)}${p.is_available === false ? ' · <span style="color:#ef4444;">ناموجود</span>' : ''}</div>
+                    </div>
+                    <button onclick="toggleProductAvailability('${p.id}', ${p.is_available !== false})" style="background: transparent; border: 1px solid ${p.is_available === false ? '#4ade80' : '#f59e0b'}; color: ${p.is_available === false ? '#4ade80' : '#f59e0b'}; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; white-space: nowrap;">
+                        ${p.is_available === false ? 'موجود کن' : 'ناموجود کن'}
+                    </button>
+                    <button onclick="deleteProduct('${p.id}')" style="background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">حذف</button>
+                </div>
+            `).join("")}
+        </div>
+    `;
+}
+
+async function toggleProductAvailability(productId, currentlyAvailable) {
+    if (!supabaseClient) return;
+    const { error } = await supabaseClient
+        .from('products')
+        .update({ is_available: !currentlyAvailable })
+        .eq('id', productId);
+
+    if (error) {
+        alert("خطا در تغییر وضعیت موجودی: " + error.message);
+        return;
+    }
+    showToast(currentlyAvailable ? "محصول ناموجود شد." : "محصول موجود شد.", "success");
+    await loadProductCatalog();
+    loadAdminProductsList();
+}
+
+async function deleteProduct(productId) {
+    if (!supabaseClient) return;
+    if (!confirm("آیا از حذف کامل این محصول مطمئن هستید؟ این عمل قابل بازگشت نیست. (اگه فقط می‌خواید موقتاً از دسترس خارج بشه، به‌جاش «ناموجود کن» رو بزنید.)")) return;
+
+    const { error } = await supabaseClient.from('products').delete().eq('id', productId);
+
+    if (error) {
+        alert("خطا در حذف محصول: " + error.message);
+        return;
+    }
+    showToast("محصول حذف شد.", "success");
+    await loadProductCatalog();
+    loadAdminProductsList();
+}
+
+// ==========================================
+// لیست دسته‌بندی‌ها در پنل — حذف یک دسته (همراه با محصولاتش)
+// ==========================================
+async function loadAdminCategoriesList() {
+    const listBox = document.getElementById("admin-categories-list");
+    if (!listBox || !supabaseClient) return;
+
+    listBox.innerHTML = `<p style="color: #aaa; text-align: center; padding: 20px;">در حال دریافت دسته‌ها...</p>`;
+
+    const [{ data: cats, error: catErr }, { data: prods, error: prodErr }] = await Promise.all([
+        supabaseClient.from('categories').select('*').order('sort_order', { ascending: true }),
+        supabaseClient.from('products').select('category')
+    ]);
+
+    if (catErr || prodErr || !cats) {
+        listBox.innerHTML = `<p style="color: #f87171; text-align: center; padding: 20px;">خطا در دریافت دسته‌ها!</p>`;
+        return;
+    }
+
+    const counts = {};
+    (prods || []).forEach(p => { counts[p.category] = (counts[p.category] || 0) + 1; });
+
+    listBox.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${cats.map(c => `
+                <div style="display: flex; align-items: center; gap: 12px; background: #1e1e1e; border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 10px 14px;">
+                    <div style="flex: 1;">
+                        <span style="color: #fff; font-size: 0.9rem;">${escapeHtml(c.title)}</span>
+                        <span style="color: #999; font-size: 0.75rem;"> (${escapeHtml(c.key)}) — ${counts[c.key] || 0} محصول</span>
+                    </div>
+                    <button onclick="deleteCategory('${c.key}', ${counts[c.key] || 0})" style="background: transparent; border: 1px solid #ef4444; color: #ef4444; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف دسته</button>
+                </div>
+            `).join("")}
+        </div>
+    `;
+}
+
+async function deleteCategory(categoryKey, productCount) {
+    if (!supabaseClient) return;
+
+    const warningText = productCount > 0
+        ? `این دسته ${productCount} محصول داره. با حذف دسته، همه‌ی این محصولات هم برای همیشه حذف می‌شن. آیا مطمئنید؟`
+        : "آیا از حذف این دسته‌ی خالی مطمئن هستید؟";
+
+    if (!confirm(warningText)) return;
+    if (productCount > 0 && !confirm("تایید نهایی: این عمل قابل بازگشت نیست. واقعاً حذف بشه؟")) return;
+
+    if (productCount > 0) {
+        const { error: delProdErr } = await supabaseClient.from('products').delete().eq('category', categoryKey);
+        if (delProdErr) {
+            alert("خطا در حذف محصولات این دسته: " + delProdErr.message);
+            return;
+        }
+    }
+
+    const { error: delCatErr } = await supabaseClient.from('categories').delete().eq('key', categoryKey);
+    if (delCatErr) {
+        alert("خطا در حذف دسته‌بندی: " + delCatErr.message);
+        return;
+    }
+
+    showToast("دسته‌بندی حذف شد.", "success");
+    await loadProductCatalog();
+    loadAdminCategoriesList();
+    loadAdminProductsList();
+    loadCategoriesIntoAdminForm();
 }
 
 async function loadAdminDashboard() {
@@ -2409,6 +2580,7 @@ function initSearchLogic() {
     Object.keys(collectionsProducts).forEach(catKey => {
         const cat = collectionsProducts[catKey];
         (cat.items || []).forEach(item => {
+            if (item.isAvailable === false) return; // محصولات ناموجود توی نتایج سرچ نمیان
             searchIndex.push({
                 id: item.id,
                 title: item.title,

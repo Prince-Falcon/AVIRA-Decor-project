@@ -776,6 +776,26 @@ body.custom-order-page, body.collection-page, body.settings-page {
     box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
 }
 
+.product-card.product-unavailable {
+    position: relative;
+    opacity: 0.55;
+}
+.product-card.product-unavailable img {
+    filter: grayscale(60%);
+}
+.unavailable-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 20px;
+    z-index: 2;
+}
+
 .product-card img {
     width: 100%;
     height: 220px;
