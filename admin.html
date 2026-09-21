@@ -152,6 +152,16 @@
                     <p style="color: #aaa; text-align: center; padding: 20px;">در حال دریافت دسته‌ها...</p>
                 </div>
             </div>
+
+            <!-- انتقال عکس‌های قدیمی از گیت به Storage -->
+            <div style="max-width: 700px; margin: 30px auto 0; background: rgba(212,175,55,0.06); border: 1px solid rgba(212,175,55,0.25); border-radius: 10px; padding: 16px 20px; text-align: right;">
+                <h3 style="color: #d4af37; margin-bottom: 8px; font-size: 1rem;">🔄 یکسان‌سازی محل ذخیره عکس‌ها</h3>
+                <p style="color: #999; font-size: 0.82rem; line-height: 1.8; margin-bottom: 12px;">
+                    عکس‌های محصولات قدیمی هنوز فایل ثابت روی گیت هستن؛ عکس‌هایی که از این پنل آپلود می‌کنید توی Storage. این دکمه عکس‌های قدیمی رو هم به همون Storage منتقل می‌کنه تا همه‌جا یکسان باشه.
+                </p>
+                <button type="button" onclick="migrateLegacyImages()" style="background: linear-gradient(135deg, #d4af37, #aa8c2c); color: #121212; border: none; padding: 8px 18px; border-radius: 6px; font-weight: bold; cursor: pointer;">شروع انتقال</button>
+                <p id="legacy-migration-status" style="margin-top: 10px; font-size: 0.82rem; color: #999;"></p>
+            </div>
         </div>
 
         <div id="tab-support" style="display:none;">

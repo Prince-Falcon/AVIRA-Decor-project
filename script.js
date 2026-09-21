@@ -2263,6 +2263,79 @@ async function deleteCategory(categoryKey, productCount) {
     loadCategoriesIntoAdminForm();
 }
 
+// ==========================================
+// انتقال عکس‌های قدیمی (فایل‌های روی گیت) به Supabase Storage
+// تا همه‌ی عکس‌ها (قدیمی و جدید) یک‌جا مدیریت بشن
+// ==========================================
+async function migrateLegacyImages() {
+    if (!supabaseClient) return;
+    const statusElem = document.getElementById("legacy-migration-status");
+
+    const { data: prods, error } = await supabaseClient
+        .from('products')
+        .select('id, img')
+        .like('img', 'assets/%');
+
+    if (error) {
+        alert("خطا در دریافت لیست محصولات: " + error.message);
+        return;
+    }
+
+    if (!prods || prods.length === 0) {
+        if (statusElem) statusElem.textContent = "✅ همه‌ی عکس‌ها از قبل توی Storage هستن — نیازی به انتقال نیست.";
+        return;
+    }
+
+    if (!confirm(`${prods.length} عکس قدیمی پیدا شد. شروع به انتقال به Storage بشه؟ ممکنه چند دقیقه طول بکشه و نباید صفحه رو ببندید.`)) return;
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < prods.length; i++) {
+        const p = prods[i];
+        if (statusElem) statusElem.textContent = `⏳ در حال انتقال ${i + 1} از ${prods.length}...`;
+
+        try {
+            const absoluteImgUrl = p.img.startsWith('/') || p.img.startsWith('http') ? p.img : '/' + p.img;
+            const imgResponse = await fetch(absoluteImgUrl);
+            if (!imgResponse.ok) throw new Error("دریافت فایل تصویر ناموفق بود");
+            const blob = await imgResponse.blob();
+
+            const fileExt = p.img.split('.').pop();
+            const filePath = `legacy-${p.id}.${fileExt}`;
+
+            const { error: uploadError } = await supabaseClient.storage
+                .from('product-images')
+                .upload(filePath, blob, { upsert: true });
+
+            if (uploadError) throw uploadError;
+
+            const { data: publicUrlData } = supabaseClient.storage
+                .from('product-images')
+                .getPublicUrl(filePath);
+
+            const { error: updateError } = await supabaseClient
+                .from('products')
+                .update({ img: publicUrlData.publicUrl })
+                .eq('id', p.id);
+
+            if (updateError) throw updateError;
+
+            successCount++;
+        } catch (err) {
+            console.error(`❌ خطا در انتقال عکس محصول ${p.id}:`, err);
+            failCount++;
+        }
+    }
+
+    const summary = `✅ تمام شد — ${successCount} عکس منتقل شد${failCount > 0 ? `، ${failCount} تا ناموفق بود (کنسول رو چک کنید)` : ''}.`;
+    if (statusElem) statusElem.textContent = summary;
+    showToast("انتقال عکس‌های قدیمی به Storage تمام شد.", "success");
+
+    await loadProductCatalog();
+    loadAdminProductsList();
+}
+
 async function loadAdminDashboard() {
     const ordersList = document.getElementById("orders-list");
     if (!ordersList || !supabaseClient) return;
