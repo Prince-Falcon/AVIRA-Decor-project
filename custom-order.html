@@ -5,7 +5,7 @@
  <meta name="description" content="گالری تابلوهای لوکس و دکوراتیو آویرا؛ عرضه انواع تابلوهای مدرن در طرح‌های نجومی، علمی، تاریخی، خودرو و گیمینگ با کیفیت عالی و سفارش اختصاصی.">
  <meta name="keywords" content="تابلو دکوراتیو, خرید تابلو لوکس, تابلو مدرن, سفارش اختصاصی تابلو, تابلو ماشین, تابلو گیمینگ">
  <meta name="robots" content="index, follow">
- <link rel="canonical" href="https://aviradecoratives.vercel.app/">
+ <link rel="canonical" href="https://aviradecoratives.vercel.app/custom-order">
 
  <!-- متاتگ‌های Open Graph (برای نمایش جذاب هنگام اشتراک‌گذاری در تلگرام، واتساپ و شبکه های اجتماعی) -->
  <meta property="og:type" content="website">
@@ -18,7 +18,7 @@
     <title>سفارش اختصاصی | AVIRA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 </head>
 <body class="custom-order-page">
 
@@ -74,6 +74,26 @@
                 <input type="file" id="design-image" accept="image/*" required>
             </div>
 
+            <!-- انتخاب سایز -->
+            <div class="form-group">
+                <label class="section-label" style="display: block; margin-bottom: 10px; color: #e0e0e0;">انتخاب سایز:</label>
+                <div class="material-options" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <label class="material-card" style="flex: 1; min-width: 130px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="radio" name="custom-size" value="۳۷×۲۷ سانتی‌متر" checked>
+                        <div class="card-content">
+                            <span class="material-title" style="display: block; font-weight: bold; color: #fff;">۳۷×۲۷ سانتی‌متر</span>
+                        </div>
+                    </label>
+
+                    <label class="material-card" style="flex: 1; min-width: 130px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; padding: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        <input type="radio" name="custom-size" value="۲۸×۲۰ سانتی‌متر">
+                        <div class="card-content">
+                            <span class="material-title" style="display: block; font-weight: bold; color: #fff;">۲۸×۲۰ سانتی‌متر</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <!-- انتخاب کلاس اقتصادی / متریال -->
             <div class="form-group">
                 <label class="section-label" style="display: block; margin-bottom: 10px; color: #e0e0e0;">انتخاب کلاس اقتصادی / کیفیت:</label>
@@ -113,6 +133,6 @@
         </form>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

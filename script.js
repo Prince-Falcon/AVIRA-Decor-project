@@ -1053,9 +1053,12 @@ function showPayment() {
     reader.onload = function (e) {
         const base64Image = e.target.result;
         const selectedMat = getSelectedMaterial();
+        const sizeInput = document.querySelector('input[name="custom-size"]:checked');
+        const selectedSize = sizeInput ? sizeInput.value : '۳۷×۲۷ سانتی‌متر';
         const customBasePrice = 480000;
         const materialMult = materialMultipliers[selectedMat] || 1.0;
-        const finalCustomPrice = formatPrice(customBasePrice * materialMult);
+        const sizeMult = sizeMultipliers[selectedSize] || 1.0;
+        const finalCustomPrice = formatPrice(customBasePrice * materialMult * sizeMult * priceMultiplier);
 
         let cart = getCart();
 
@@ -1063,7 +1066,7 @@ function showPayment() {
             type: "custom",
             title: "سفارش اختصاصی تابلو",
             price: finalCustomPrice,
-            size: "اختصاصی",
+            size: selectedSize,
             material: selectedMat,
             description: descriptionInput.value.trim(),
             img: base64Image
