@@ -809,6 +809,7 @@ body.custom-order-page, body.collection-page, body.settings-page {
     max-width: 880px;         /* محدودسازی عرض جهت جلوگیری از عریض شدن */
     max-height: 90vh;          /* محدودسازی ارتفاع تا از صفحه بیرون نزند */
     overflow-y: auto;          /* اسکرول داخلی در صورت بلند بودن محتوا */
+    overflow-x: hidden;        /* هر چیزی که به هر دلیلی عریض‌تر بشه، به‌جای بیرون‌زدگی بصری، داخل کارت مهار می‌شه */
     background: #141414;
     border: 1px solid rgba(212, 175, 55, 0.3);
     border-radius: 20px;
@@ -1551,6 +1552,24 @@ body.light-theme nav a {
 
     .material-options {
         grid-template-columns: 1fr;
+    }
+
+    /* مهار قطعی دکمه‌های سایز روی موبایل — به‌جای تکیه به flex-wrap،
+       یک گرید با تعداد ستون مشخص که هیچ‌وقت از عرض کارت بیرون نمی‌زنه */
+    .size-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    .size-btn {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 4px;
+        font-size: 0.78rem;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     /* کاهش فاصله‌ها و اندازه‌ی فونت‌ها روی موبایل تا صفحه سبک‌تر و جمع‌وجورتر باشه */
