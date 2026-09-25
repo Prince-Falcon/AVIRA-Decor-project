@@ -87,7 +87,7 @@ function formatDatePersian(dateStr) {
 
 function parsePriceToNumber(priceStr) {
     if (!priceStr) return 0;
-    const faToEnDigits = String(priceStr).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+    const faToEnDigits = toEnglishDigits(priceStr);
     const cleanNum = faToEnDigits.replace(/[^0-9]/g, '');
     return parseInt(cleanNum, 10) || 0;
 }
@@ -213,9 +213,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    initMobileNavigation();
     const menu = document.querySelector(".menu");
     const nav = document.querySelector("nav");
-    if (menu && nav) {
+    if (menu && nav && !document.querySelector(".mobile-dock")) {
         menu.addEventListener("click", () => {
             const isFlex = nav.style.display === "flex";
             nav.style.display = isFlex ? "none" : "flex";
@@ -273,6 +274,10 @@ function updateCartBadge() {
     const badge = document.getElementById("cart-badge");
     if (!badge) return;
     const count = getCart().length;
+    document.querySelectorAll('.mobile-cart-count').forEach(el => {
+        el.textContent = count;
+        el.hidden = count === 0;
+    });
     badge.textContent = count;
     badge.style.display = count > 0 ? "flex" : "none";
     badge.classList.remove("bump");
@@ -470,7 +475,7 @@ function renderHomeCollectionCards() {
     container.innerHTML = keys.map(catKey => {
         const cat = collectionsProducts[catKey];
         const items = (cat.items || []).filter(i => i.isAvailable !== false);
-        const bannerImg = items.length > 0 ? items[0].img : (cat.items[0] ? cat.items[0].img : "");
+        const bannerImg = safeImageUrl(items.length > 0 ? items[0].img : (cat.items[0] ? cat.items[0].img : ''));
         const count = cat.items ? cat.items.length : 0;
 
         return `
@@ -496,7 +501,7 @@ function initOffersSection() {
 
         const cardsHtml = bundlePacks.map(bundle => {
             const items = resolveBundleItems(bundle);
-            if (items.length === 0) {
+            if (items.length !== bundle.refs.length) {
                 console.warn(`⚠️ پک "${bundle.title}" هیچ محصول معتبری پیدا نکرد — چک کنید id/category هر ref با collectionsProducts مطابقت داره.`);
                 return "";
             }
@@ -508,7 +513,7 @@ function initOffersSection() {
             const sumBase = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0) * priceMultiplier;
             const discountedBase = Math.round(sumBase * (1 - BUNDLE_DISCOUNT_PERCENT / 100) / 1000) * 1000;
 
-            const thumbsHtml = items.slice(0, 4).map(p => `<div class="offer-thumb" style="background-image: url('${p.img}');"></div>`).join("");
+            const thumbsHtml = items.slice(0, 4).map(p => `<div class="offer-thumb" style="background-image: url('${safeImageUrl(p.img)}');"></div>`).join("");
 
             return `
                 <a class="offer-card bundle-card" href="javascript:void(0)" onclick="openBundleModal('${bundle.id}')">
@@ -541,7 +546,7 @@ function openBundleModal(bundleId) {
     const bundle = bundlePacks.find(b => b.id === bundleId);
     if (!bundle) return;
     const items = resolveBundleItems(bundle);
-    if (items.length === 0) return;
+    if (items.length !== bundle.refs.length || items.some(p => p.isAvailable === false)) return;
 
     currentBundle = { ...bundle, items };
     bundleBaseSum = items.reduce((sum, p) => sum + parsePriceToNumber(p.price), 0) * priceMultiplier;
@@ -556,7 +561,7 @@ function openBundleModal(bundleId) {
     if (thumbsElem) {
         thumbsElem.innerHTML = items.map(p => `
             <div class="bundle-modal-item">
-                <img src="${p.img}" alt="${escapeHtml(p.title)}">
+                <img src="${safeImageUrl(p.img)}" alt="${escapeHtml(p.title)}">
                 <span>${escapeHtml(p.title)}</span>
             </div>
         `).join("");
@@ -675,20 +680,20 @@ function initProductsGrid() {
         return `
             <div 
                 class="product-card${item.isAvailable === false ? ' product-unavailable' : ''}"
-                data-product-id="${item.id}"
-                data-category="${catKey}"
+                data-product-id="${escapeHtml(item.id)}"
+                data-category="${escapeHtml(catKey)}"
                 tabindex="0"
             >
                 ${item.isAvailable === false ? '<span class="unavailable-badge">ناموجود</span>' : ''}
                 <img 
-                    src="${item.img}"
-                    alt="${item.title}"
+                    src="${safeImageUrl(item.img)}"
+                    alt="${escapeHtml(item.title)}"
                     loading="lazy"
                 >
 
-                <h3>${item.title}</h3>
+                <h3>${escapeHtml(item.title)}</h3>
 
-                <span class="price">${item.price}</span>
+                <span class="price">${escapeHtml(item.price)}</span>
             </div>
         `;
     }).join("");
@@ -723,7 +728,7 @@ function openProductModal(productId, catKey) {
     const categoryData = collectionsProducts[catKey];
     if (!categoryData) return;
 
-    const product = categoryData.items.find(p => p.id === productId);
+    const product = categoryData.items.find(p => Number(p.id) === Number(productId));
     if (!product) return;
 
     currentSelectedProduct = product;
@@ -1072,19 +1077,41 @@ function showPayment() {
             img: base64Image
         });
 
-        localStorage.setItem("avira_cart", JSON.stringify(cart));
+        if (!persistCart(cart)) return;
         showToast("سفارش اختصاصی شما به سبد خرید اضافه شد!", "success");
         window.location.href = "/cart";
     };
 
-    reader.readAsDataURL(file);
+    compressImageFile(file, 1000, 0.76).then(blob => {
+        if (blob.size > 1.5 * 1024 * 1024) throw new Error('تصویر فشرده‌شده هنوز بزرگ است');
+        reader.readAsDataURL(blob);
+    }).catch(() => showToast('این تصویر قابل پردازش نیست؛ یک فایل JPG یا PNG کوچک‌تر انتخاب کنید.', 'error'));
 }
 
 // ==========================================
 // ۶. مدیریت سبد خرید و فاکتور
 // ==========================================
 function getCart() {
-    return JSON.parse(localStorage.getItem("avira_cart") || "[]");
+    try {
+        const cart = JSON.parse(localStorage.getItem("avira_cart") || "[]");
+        return Array.isArray(cart) ? cart.slice(0, 40) : [];
+    } catch {
+        localStorage.removeItem("avira_cart");
+        return [];
+    }
+}
+function safeImageUrl(value) {
+    try {
+        const url = new URL(String(value || ''), location.origin);
+        return ['https:', 'http:'].includes(url.protocol) ? escapeHtml(url.href.replace(/'/g, '%27')) : '';
+    } catch { return ''; }
+}
+function persistCart(cart) {
+    try { localStorage.setItem('avira_cart', JSON.stringify(cart)); return true; }
+    catch { showToast('فضای ذخیره‌سازی مرورگر کافی نیست؛ تصویر کوچک‌تری انتخاب کنید.', 'error'); return false; }
+}
+function toEnglishDigits(value) {
+    return String(value).replace(/[۰-۹]/g, digit => '۰۱۲۳۴۵۶۷۸۹'.indexOf(digit)).replace(/[٠-٩]/g, digit => '٠١٢٣٤٥٦٧٨٩'.indexOf(digit));
 }
 
 function addToCart(event) {
@@ -1142,11 +1169,11 @@ async function renderCartPage() {
     container.innerHTML = cart.map((item, index) => `
         <div class="cart-item-row" id="cart-row-${index}" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(212,175,55,0.2); border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; animation-delay: ${index * 0.06}s;">
             <div>
-                <h4 style="color: #fff; margin-bottom: 5px;">${item.title}</h4>
+                <h4 style="color: #fff; margin-bottom: 5px;">${escapeHtml(item.title)}</h4>
                 <p style="font-size: 0.85rem; color: #aaa;">
-                    سایز: <span style="color:#fff;">${item.size || 'اختصاصی'}</span> | 
-                    جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
-                    قیمت: <span style="color: #4ade80;">${item.price}</span>
+                    سایز: <span style="color:#fff;">${escapeHtml(item.size || 'اختصاصی')}</span> | 
+                    جنس: <span style="color: #d4af37;">${escapeHtml(translateMaterial(item.material))}</span> | 
+                    قیمت: <span style="color: #4ade80;">${escapeHtml(item.price)}</span>
                 </p>
             </div>
             <button onclick="removeFromCart(${index})" style="background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">حذف</button>
@@ -1169,7 +1196,7 @@ async function renderCartPage() {
     if (checkoutBox && codeElem) {
         checkoutBox.style.display = "block";
         if (codeElem.textContent === "---" || !codeElem.textContent) {
-            codeElem.textContent = "AVR-" + Math.floor(100000 + Math.random() * 900000);
+            codeElem.textContent = "پس از ثبت ساخته می‌شود";
         }
     }
 
@@ -1246,82 +1273,36 @@ function toggleRecipientEdit() {
 }
 
 async function submitFinalOrder() {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
-
-    if (!user) {
-        alert("لطفاً ابتدا وارد حساب کاربری خود شوید.");
-        window.location.href = "/login";
-        return;
-    }
-
-    const phoneVal = document.getElementById("checkout-phone")?.value.trim() || "";
-    const postcodeVal = document.getElementById("checkout-postcode")?.value.trim() || "";
-    const addressVal = document.getElementById("checkout-address")?.value.trim() || "";
-
-    if (!phoneVal) {
-        alert("لطفاً شماره تلفن همراه خود را برای ثبت سفارش وارد کنید.");
-        document.getElementById("checkout-phone")?.focus();
-        return;
-    }
-
-    if (!postcodeVal) {
-        alert("لطفاً کد پستی ۱۰ رقمی خود را جهت ثبت سفارش وارد کنید.");
-        document.getElementById("checkout-postcode")?.focus();
-        return;
-    }
-
-    if (!addressVal) {
-        alert("لطفاً آدرس دقیق پستی خود را جهت ارسال سفارش ثبت نمایید.");
-        document.getElementById("checkout-address")?.focus();
-        return;
-    }
-
-    await supabaseClient.from('profiles').upsert({
-        id: user.id,
-        phone: phoneVal,
-        address: addressVal,
-        postcode: postcodeVal,
-        updated_at: new Date().toISOString()
-    });
-
-    let cart = getCart();
-    const codeElem = document.getElementById("checkout-order-code");
-    let orderCode = codeElem ? codeElem.textContent : ("AVR-" + Math.floor(100000 + Math.random() * 900000));
-
-    if (cart.length === 0) return alert("سبد خرید شما خالی است!");
-
-    const imagesList = cart.map(item => {
-        if (item.img && item.img.startsWith("data:image")) {
-            return "[تصویر فایل اختصاصی کاربر]";
-        }
-        return item.img;
-    }).join(' | ');
-
-    const descriptionText = cart.map(item => `${item.title} (سایز: ${item.size || 'اختصاصی'} - جنس: ${translateMaterial(item.material)})`).join('؛ ');
-    const materialsList = [...new Set(cart.map(i => translateMaterial(i.material)))].join(', ');
-    const sizesList = [...new Set(cart.map(i => i.size || 'اختصاصی'))].join(', ');
-
-    const { error } = await supabaseClient
-        .from('custom_orders')
-        .insert([{
-            order_code: orderCode,
-            description: `سبد خرید (${cart.length} آیتم): ${descriptionText} | 📍 آدرس تحویل: ${addressVal} | 📮 کد پستی: ${postcodeVal} | 📞 تلفن: ${phoneVal}`,
-            image_url: imagesList,
-            user_id: user.id,
-            items: cart,
-            material: materialsList,
-            size: sizesList,
-            status: 'در انتظار بررسی'
-        }]);
-
-    if (error) {
-        alert("خطا در ثبت سفارش: " + error.message);
-    } else {
-        alert("سفارش شما با موفقیت ثبت شد! لطفاً پس از واریز بیعانه، عکس رسید را ارسال فرمایید.");
-        localStorage.removeItem("avira_cart");
-        window.location.href = "/orders";
+    if (!supabaseClient) return showToast('اتصال به فروشگاه برقرار نیست.', 'error');
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) { location.href = '/login'; return; }
+    const phone = toEnglishDigits(document.getElementById('checkout-phone')?.value.trim() || '').replace(/[\s-]/g, '');
+    const postcode = toEnglishDigits(document.getElementById('checkout-postcode')?.value.trim() || '').replace(/\s/g, '');
+    const address = document.getElementById('checkout-address')?.value.trim() || '';
+    if (!/^09\d{9}$/.test(phone)) return showToast('شماره موبایل را با ۱۱ رقم و پیش‌شماره ۰۹ وارد کنید.', 'error');
+    if (!/^\d{10}$/.test(postcode)) return showToast('کد پستی باید دقیقاً ۱۰ رقم باشد.', 'error');
+    if (address.length < 12 || address.length > 500) return showToast('آدرس کامل را وارد کنید (حداقل ۱۲ نویسه).', 'error');
+    const items = getCart();
+    if (!items.length) return showToast('سبد خرید خالی است.', 'error');
+    const button = document.querySelector('#cart-checkout-box .btn-submit');
+    if (button?.disabled) return;
+    if (button) { button.disabled = true; button.textContent = 'در حال ثبت امن سفارش...'; }
+    try {
+        const response = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+            body: JSON.stringify({ items, phone, postcode, address })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || 'ثبت سفارش ناموفق بود');
+        localStorage.removeItem('avira_cart');
+        showToast(`سفارش ${result.orderCode} ثبت شد. بیعانه: ${formatPrice(result.deposit)}؛ رسید را به اینستاگرام آویرا ارسال کنید.`, 'success');
+        alert(`سفارش ${result.orderCode} با مبلغ ${formatPrice(result.total)} ثبت شد. بیعانه ${formatPrice(result.deposit)} را واریز کرده و رسید را همراه کد سفارش به اینستاگرام آویرا ارسال کنید.`);
+        location.href = '/orders';
+    } catch (error) {
+        showToast(error.message || 'خطا در ثبت سفارش؛ دوباره تلاش کنید.', 'error');
+    } finally {
+        if (button) { button.disabled = false; button.textContent = 'تایید نهایی و ارسال به سیستم'; }
     }
 }
 
@@ -1531,25 +1512,21 @@ let userOrdersSubscription = null;
 // ==========================================
 // لغو سفارش توسط خود کاربر (فقط تا مرحله «تایید شده و در حال ساخت»)
 // ==========================================
+async function callOrderAction(payload) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) throw new Error('برای ادامه وارد حساب شوید.');
+    const response = await fetch('/api/order-action', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify(payload)
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'درخواست انجام نشد.');
+    return result;
+}
 async function cancelOrder(orderId) {
-    if (!supabaseClient) return;
-    if (!confirm("آیا از لغو این سفارش مطمئن هستید؟ این عمل قابل بازگشت نیست.")) return;
-
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) return;
-
-    const { error } = await supabaseClient
-        .from('custom_orders')
-        .update({ status: 'لغو شده' })
-        .eq('id', orderId)
-        .eq('user_id', user.id);
-
-    if (error) {
-        alert("خطا در لغو سفارش: " + error.message);
-    } else {
-        showToast("سفارش با موفقیت لغو شد.", "success");
-        loadUserOrders();
-    }
+    if (!confirm('آیا از لغو این سفارش مطمئن هستید؟')) return;
+    try { await callOrderAction({ action: 'cancel', id: orderId }); showToast('سفارش لغو شد.', 'success'); loadUserOrders(); }
+    catch (error) { showToast(error.message, 'error'); }
 }
 
 async function loadUserOrders() {
@@ -1594,9 +1571,9 @@ async function loadUserOrders() {
                     <div style="background: rgba(255,255,255,0.03); border-right: 3px solid #d4af37; padding: 8px 12px; margin: 6px 0; border-radius: 6px; font-size: 0.88rem;">
                         <div><strong style="color: #fff;">${escapeHtml(item.title)}</strong></div>
                         <div style="color: #aaa; font-size: 0.8rem; margin-top: 3px;">
-                            سایز: <span style="color: #e0e0e0;">${item.size || 'اختصاصی'}</span> | 
-                            جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
-                            قیمت: <span style="color: #4ade80;">${item.price || '---'}</span>
+                            سایز: <span style="color: #e0e0e0;">${escapeHtml(item.size || 'اختصاصی')}</span> | 
+                            جنس: <span style="color: #d4af37;">${escapeHtml(translateMaterial(item.material))}</span> | 
+                            قیمت: <span style="color: #4ade80;">${escapeHtml(item.price || '---')}</span>
                         </div>
                     </div>
                 `).join('');
@@ -1609,15 +1586,15 @@ async function loadUserOrders() {
                     <div class="order-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 12px;">
                         <div class="order-code-box">
                             <span class="order-label" style="color: #aaa; font-size: 0.85rem;">کد سفارش:</span>
-                            <span class="order-code" style="color: #d4af37; font-weight: bold; font-size: 1.05rem;">${order.order_code || '---'}</span>
+                            <span class="order-code" style="color: #d4af37; font-weight: bold; font-size: 1.05rem;">${escapeHtml(order.order_code || '---')}</span>
                         </div>
                         <div class="order-date" style="font-size: 0.82rem; color: #aaa; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px;">📅 ${formatDatePersian(order.created_at)}</div>
                     </div>
                     
                     <div class="order-body">
                         <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 8px;">
-                            🏷️ <b>متریال کلی:</b> <span style="color: #d4af37;">${order.material || 'استاندارد'}</span> &nbsp;|&nbsp; 
-                            📏 <b>سایز کلی:</b> <span style="color: #fff;">${order.size || 'اختصاصی'}</span>
+                            🏷️ <b>متریال کلی:</b> <span style="color: #d4af37;">${escapeHtml(order.material || 'استاندارد')}</span> &nbsp;|&nbsp; 
+                            📏 <b>سایز کلی:</b> <span style="color: #fff;">${escapeHtml(order.size || 'اختصاصی')}</span>
                         </div>
                         <div style="margin-top: 10px;">
                             <strong style="color: #fff; font-size: 0.9rem;">آیتم‌های خرید:</strong>
@@ -1626,7 +1603,7 @@ async function loadUserOrders() {
                     </div>
 
                     <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                        <span class="order-status" style="display: inline-block; padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3);">وضعیت: ${order.status || 'در انتظار بررسی'}</span>
+                        <span class="order-status" style="display: inline-block; padding: 4px 12px; font-size: 0.8rem; border-radius: 20px; background: rgba(212,175,55,0.15); color: #d4af37; border: 1px solid rgba(212,175,55,0.3);">وضعیت: ${escapeHtml(order.status || 'در انتظار بررسی')}</span>
                         ${['در انتظار بررسی', 'تایید شده و در حال ساخت'].includes(order.status || 'در انتظار بررسی') ? `<button onclick="cancelOrder('${order.id}')" style="background: transparent; border: 1px solid #f87171; color: #f87171; padding: 5px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">لغو سفارش</button>` : ''}
                     </div>
                 </div>
@@ -2237,7 +2214,7 @@ async function loadAdminProductsList() {
         <div style="max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
             ${prods.map(p => `
                 <div style="display: flex; align-items: center; gap: 12px; background: #1e1e1e; border: 1px solid rgba(212,175,55,0.2); border-radius: 8px; padding: 8px 12px; ${p.is_available === false ? 'opacity: 0.55;' : ''}">
-                    <img src="${p.img}" alt="${escapeHtml(p.title)}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; flex-shrink: 0;">
+                    <img src="${safeImageUrl(p.img)}" alt="${escapeHtml(p.title)}" style="width: 44px; height: 44px; object-fit: cover; border-radius: 6px; flex-shrink: 0;">
                     <div style="flex: 1; min-width: 0;">
                         <div style="color: #fff; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(p.title)}</div>
                         <div style="color: #999; font-size: 0.75rem;">${escapeHtml(p.category)} · ${escapeHtml(p.price)}${p.is_available === false ? ' · <span style="color:#ef4444;">ناموجود</span>' : ''}</div>
@@ -2464,9 +2441,9 @@ async function loadAdminDashboard() {
                     <div style="background: rgba(255,255,255,0.03); border-right: 3px solid #d4af37; padding: 8px 12px; margin: 6px 0; border-radius: 6px; font-size: 0.88rem;">
                         <div><strong style="color: #fff;">${escapeHtml(item.title)}</strong></div>
                         <div style="color: #aaa; font-size: 0.8rem; margin-top: 3px;">
-                            سایز: <span style="color: #e0e0e0;">${item.size || 'اختصاصی'}</span> | 
-                            جنس: <span style="color: #d4af37;">${translateMaterial(item.material)}</span> | 
-                            قیمت: <span style="color: #4ade80;">${item.price || '---'}</span>
+                            سایز: <span style="color: #e0e0e0;">${escapeHtml(item.size || 'اختصاصی')}</span> | 
+                            جنس: <span style="color: #d4af37;">${escapeHtml(translateMaterial(item.material))}</span> | 
+                            قیمت: <span style="color: #4ade80;">${escapeHtml(item.price || '---')}</span>
                         </div>
                     </div>
                 `).join('');
@@ -2484,7 +2461,7 @@ async function loadAdminDashboard() {
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 12px;">
                         <div>
                             <span style="color: #aaa; font-size: 0.85rem;">کد سفارش:</span>
-                            <span style="color: #d4af37; font-weight: bold; font-size: 1.1rem; margin-right: 5px;">${order.order_code || '---'}</span>
+                            <span style="color: #d4af37; font-weight: bold; font-size: 1.1rem; margin-right: 5px;">${escapeHtml(order.order_code || '---')}</span>
                         </div>
                         <span style="font-size: 0.82rem; color: #aaa; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 6px;">📅 ${formatDatePersian(order.created_at)}</span>
                     </div>
@@ -2494,12 +2471,13 @@ async function loadAdminDashboard() {
                         <p style="color: #4ade80; margin-bottom: 4px;">📞 <strong>شماره تماس:</strong> <span style="direction: ltr; display: inline-block;">${escapeHtml(phone)}</span></p>
                         <p style="color: #f59e0b; margin-bottom: 4px;">📮 <strong>کد پستی:</strong> <span style="direction: ltr; display: inline-block;">${escapeHtml(postcode)}</span></p>
                         <p style="color: #e0e0e0; margin-bottom: 4px;">📍 <strong>آدرس پستی:</strong> ${escapeHtml(address)}</p>
-                        <p style="color: #aaa; margin-bottom: 4px;">🏷️ <strong>متریال / سایز:</strong> ${order.material || 'استاندارد'} / ${order.size || 'اختصاصی'}</p>
+                        <p style="color: #aaa; margin-bottom: 4px;">🏷️ <strong>متریال / سایز:</strong> ${escapeHtml(order.material || 'استاندارد')} / ${escapeHtml(order.size || 'اختصاصی')}</p>
                     </div>
 
                     <div style="margin: 12px 0;">
                         <strong style="color: #fff; font-size: 0.9rem;">آیتم‌های سفارش:</strong>
                         ${itemsHtml}
+                        ${order.items?.some(item => item.type === 'custom' && item.img && !item.img.startsWith('data:')) ? `<button type="button" class="admin-design-button" data-order-id="${escapeHtml(order.id)}" onclick="viewCustomDesign(this.dataset.orderId)">دیدن تصویر سفارش اختصاصی</button>` : ''}
                     </div>
 
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; flex-wrap: wrap; gap: 10px;">
@@ -2526,34 +2504,26 @@ async function loadAdminDashboard() {
 }
 
 async function updateOrderStatus(orderId, newStatus) {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-    const { error } = await supabaseClient
-        .from('custom_orders')
-        .update({ status: newStatus })
-        .eq('id', orderId);
-
-    if (error) {
-        alert("خطا در به روزرسانی وضعیت: " + error.message);
-    } else {
-        alert("وضعیت سفارش با موفقیت بروزرسانی شد.");
-    }
+    try { await callOrderAction({ action: 'status', id: orderId, status: newStatus }); showToast('وضعیت سفارش به‌روز شد.', 'success'); }
+    catch (error) { showToast(error.message, 'error'); loadAdminDashboard(); }
+}
+async function deleteOrder(orderId) {
+    if (!confirm('این سفارش برای همیشه حذف شود؟')) return;
+    try { await callOrderAction({ action: 'delete', id: orderId }); showToast('سفارش حذف شد.', 'success'); loadAdminDashboard(); }
+    catch (error) { showToast(error.message, 'error'); }
 }
 
-async function deleteOrder(orderId) {
-    if (!supabaseClient) return alert("خطا در اتصال به دیتابیس!");
-    if (!confirm("آیا از حذف این سفارش اطمینان دارید؟")) return;
-
-    const { error } = await supabaseClient
-        .from('custom_orders')
-        .delete()
-        .eq('id', orderId);
-
-    if (error) {
-        alert("خطا در حذف سفارش: " + error.message);
-    } else {
-        alert("سفارش حذف شد.");
-        loadAdminDashboard();
-    }
+async function viewCustomDesign(orderId) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) return showToast('ابتدا وارد حساب مدیر شوید.', 'error');
+    try {
+        const response = await fetch(`/api/order-image?orderId=${encodeURIComponent(orderId)}`, {
+            headers: { Authorization: `Bearer ${session.access_token}` }
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error);
+        window.open(result.url, '_blank', 'noopener,noreferrer');
+    } catch (error) { showToast(error.message || 'نمایش تصویر ممکن نیست.', 'error'); }
 }
 
 async function loadAdminUsers() {
@@ -2771,7 +2741,7 @@ function initSearchLogic() {
         } else {
             resultsBox.innerHTML = matches.map(p => `
                 <a class="search-result-item" href="/collections?category=${encodeURIComponent(p.category)}&product=${p.id}">
-                    <img src="${p.img}" alt="${escapeHtml(p.title)}" loading="lazy">
+                    <img src="${safeImageUrl(p.img)}" alt="${escapeHtml(p.title)}" loading="lazy">
                     <div class="search-result-info">
                         <span class="search-result-title">${escapeHtml(p.title)}</span>
                         <span class="search-result-price">${escapeHtml(p.price)}</span>
@@ -2811,5 +2781,27 @@ function initSearchLogic() {
             closeResults();
             searchInput.blur();
         }
+    });
+}
+
+function initMobileNavigation() {
+    if (document.querySelector('.mobile-dock')) return;
+    const current = location.pathname;
+    const items = [
+        ['/', '⌂', 'خانه'], ['/#collection', '▦', 'مجموعه‌ها'],
+        ['/custom-order', '✦', 'سفارشی'], ['/cart', '▣', 'سبد'], ['/orders', '◉', 'حساب']
+    ];
+    const dock = document.createElement('nav');
+    dock.className = 'mobile-dock';
+    dock.setAttribute('aria-label', 'دسترسی سریع موبایل');
+    dock.innerHTML = items.map(([href, icon, label]) => {
+        const active = href === '/' ? current === '/' : current === href.split('#')[0] && href !== '/#collection';
+        return `<a href="${href}" ${active ? 'aria-current="page"' : ''}><span class="dock-icon" aria-hidden="true">${icon}</span><span>${label}</span>${href === '/cart' ? '<span class="mobile-cart-count" hidden>0</span>' : ''}</a>`;
+    }).join('');
+    document.body.appendChild(dock);
+    const menu = document.querySelector('.menu');
+    if (menu) { menu.setAttribute('role', 'button'); menu.setAttribute('tabindex', '0'); menu.setAttribute('aria-label', 'باز کردن فهرست'); }
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true');
     });
 }

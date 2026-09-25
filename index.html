@@ -20,6 +20,7 @@
     <link rel="icon" type="image/png" href="assets/images/logo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="upgrade.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <style>
         #support-modal {
@@ -258,7 +259,7 @@
                         "name": "تابلوهای آویرا در چه سایزهایی موجود است؟",
                         "acceptedAnswer": {
                             "@type": "Answer",
-                            "text": "تابلوهای آویرا در پنج سایز ۲۰×۲۰، ۲۰×۳۰، ۳۰×۴۰، ۳۰×۴۵ و ۴۰×۶۰ سانتی‌متر تولید می‌شوند و قیمت بر اساس سایز انتخابی محاسبه می‌شود."
+                            "text": "تابلوهای آویرا در شش سایز ۲۰×۲۰، ۲۰×۳۰، ۳۰×۴۰، ۳۰×۴۵، ۳۷×۲۷ و ۲۸×۲۰ سانتی‌متر تولید می‌شوند و قیمت بر اساس سایز انتخابی محاسبه می‌شود."
                         }
                     },
                     {
@@ -354,7 +355,7 @@
             </div>
         </div>
 
-        <div class="menu" id="mobile-menu-btn">☰</div>
+        <div class="menu" id="mobile-menu-btn" role="button" tabindex="0" aria-label="باز کردن فهرست">☰</div>
     </header>
 
     <!-- Hero -->
@@ -420,7 +421,7 @@
         <div class="faq-list">
             <details class="faq-item">
                 <summary>تابلوهای آویرا در چه سایزهایی موجود است؟</summary>
-                <p>تابلوهای آویرا در پنج سایز ۲۰×۲۰، ۲۰×۳۰، ۳۰×۴۰، ۳۰×۴۵ و ۴۰×۶۰ سانتی‌متر تولید می‌شوند. سایز روی صفحه‌ی هر طرح قابل انتخاب است و قیمت به‌صورت خودکار بر اساس سایز محاسبه می‌شود.</p>
+                <p>تابلوهای آویرا در شش سایز ۲۰×۲۰، ۲۰×۳۰، ۳۰×۴۰، ۳۰×۴۵، ۳۷×۲۷ و ۲۸×۲۰ سانتی‌متر تولید می‌شوند. سایز روی صفحه‌ی هر طرح قابل انتخاب است و قیمت به‌صورت خودکار بر اساس سایز محاسبه می‌شود.</p>
             </details>
             <details class="faq-item">
                 <summary>چه جنس و کیفیتی برای تابلوها ارائه می‌شود؟</summary>
@@ -472,27 +473,6 @@
         </div>
         <p>© 2026 AVIRA</p>
     </footer>
-
-    <!-- مودال جزئیات پک ویژه -->
-    <div id="bundle-modal" class="modal">
-        <div class="modal-content bundle-modal-content">
-            <span class="close-btn" onclick="closeBundleModal()">&times;</span>
-            <h2 id="bundle-modal-title">عنوان پک</h2>
-            <p class="bundle-desc" id="bundle-modal-desc"></p>
-
-            <div class="bundle-modal-items" id="bundle-modal-items"></div>
-
-            <div class="price-display">
-                <span>قیمت کل پک (سایز ۱۸×۲۰ / جنس Normal):</span>
-                <span class="price" id="bundle-modal-price">0 Toman</span>
-                <span class="original-price" id="bundle-modal-original-price"></span>
-                <span class="discount-badge" id="bundle-modal-discount-badge"></span>
-            </div>
-
-            <button class="btn-submit" onclick="addBundleToCart()">افزودن همه به سبد خرید</button>
-            <p class="bundle-note">💡 هر طرح با سایز ۱۸×۲۰ و جنس Normal به سبد اضافه می‌شه. اگه سایز یا جنس دیگه‌ای می‌خوای، همون طرح رو جدا از داخل کالکشن مربوطه انتخاب کن.</p>
-        </div>
-    </div>
 
     <!-- دکمه شناور پشتیبانی -->
     <div class="floating-support-btn" onclick="openSupportModal()">
